@@ -1,0 +1,34 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: 结构色智能设计
+      - paragraph [ref=e7]: 双语业务工作台
+    - button "切换语言 · EN" [ref=e8] [cursor=pointer]
+  - generic [ref=e9]:
+    - heading "把颜色需求翻译成可落地的膜层方案" [level=1] [ref=e10]
+    - paragraph [ref=e11]: 输入目标颜色和业务要求，系统会输出可制造的 Ag-SiO2-Ag 膜层组合、推荐理由，以及需要提前关注的工艺风险。
+  - generic [ref=e12]:
+    - heading "先看这些关键信息" [level=2] [ref=e13]
+    - paragraph [ref=e14]: 先判断系统是否可用，再看当前推荐方案、备选方案和制造提醒。训练细节与操作命令保留在下方，避免干扰业务判断。
+  - generic [ref=e15]:
+    - paragraph [ref=e16]: 加载中
+    - heading "正在读取算法状态" [level=2] [ref=e17]
+    - paragraph [ref=e18]: 正在同步训练结果、运行环境和当前可用度。
+  - generic [ref=e19]:
+    - generic [ref=e21]:
+      - heading "发起新的设计需求" [level=2] [ref=e22]
+      - paragraph [ref=e23]: 建议先用一句业务语言描述目标外观、应用场景或参考样品，再填写目标颜色和候选数量。
+    - generic [ref=e24]:
+      - generic [ref=e25]: 业务需求说明
+      - textbox "业务需求说明" [ref=e26]:
+        - /placeholder: 例如：希望复现接近暖铜色的结构色，用于展示样片，优先保证制造稳定性和交付可行性。
+        - text: 希望复现接近暖铜色的结构色，用于展示样片，优先保证制造稳定性和交付可行性。
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]: 目标颜色
+        - textbox "目标颜色" [ref=e30]: "#bf6f4f"
+      - generic [ref=e31]:
+        - generic [ref=e32]: 候选数量
+        - spinbutton "候选数量" [ref=e33]: "3"
+    - paragraph [ref=e34]: 系统会先给出推荐方案，再给出备选方案与制造提醒。
+    - button "生成业务方案" [ref=e36] [cursor=pointer]

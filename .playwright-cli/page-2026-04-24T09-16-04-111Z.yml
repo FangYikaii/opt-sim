@@ -1,0 +1,122 @@
+- generic [ref=e244]:
+  - generic [ref=e245]:
+    - generic [ref=e246]:
+      - paragraph [ref=e247]: 结构色业务决策台
+      - generic [ref=e248]:
+        - heading "Opt-Sim 结构色业务决策台" [level=1] [ref=e249]
+        - paragraph [ref=e250]: "当前方案单: Ag-SiO2-Ag 复现实验方案单"
+        - paragraph [ref=e251]: "当前步骤: 选择方案"
+        - paragraph [ref=e252]: "正在查看: 先填需求"
+        - paragraph [ref=e253]: "下一步: 确认导出"
+    - generic [ref=e254]:
+      - generic [ref=e255]:
+        - generic [ref=e256]: 待业务确认
+        - generic [ref=e257]: 方案单 run-demo-live
+      - generic [ref=e258]:
+        - button "切换语言 · EN" [ref=e259] [cursor=pointer]
+        - link "新建需求" [ref=e260] [cursor=pointer]:
+          - /url: /
+        - button "查看候选方案" [ref=e261] [cursor=pointer]
+  - generic [ref=e262]:
+    - complementary "项目上下文" [ref=e263]:
+      - generic [ref=e264]:
+        - generic [ref=e265]:
+          - heading "目标素材" [level=2] [ref=e266]
+          - generic [ref=e267]: "1"
+        - list [ref=e268]:
+          - listitem [ref=e269]:
+            - generic [ref=e272]: 参考目标
+            - paragraph [ref=e273]: "颜色目标 · #BF6F4F"
+      - generic [ref=e274]:
+        - generic [ref=e275]:
+          - heading "方案记录" [level=2] [ref=e276]
+          - generic [ref=e277]: "1"
+        - list [ref=e278]:
+          - listitem [ref=e279]:
+            - link "Ag-SiO2-Ag 复现实验方案单" [ref=e280] [cursor=pointer]:
+              - /url: /runs/run-demo-live
+              - generic [ref=e282]: Ag-SiO2-Ag 复现实验方案单
+            - generic [ref=e283]:
+              - generic [ref=e284]: 待业务确认
+              - generic [ref=e285]: 17:14:51
+    - main "结构色设计工作区" [ref=e286]:
+      - generic [ref=e287]:
+        - generic [ref=e288]:
+          - generic [ref=e289]:
+            - paragraph [ref=e290]: 实验进度
+            - heading "当前实验步骤" [level=2] [ref=e291]
+            - paragraph [ref=e292]: 只保留关键状态与下一步操作。
+          - generic [ref=e293]: 4 步
+        - list [ref=e294]:
+          - listitem [ref=e295]:
+            - button "1 先填需求 已完成 先确认目标颜色、需求说明和基础输出约束。 返回修改需求" [active] [ref=e296] [cursor=pointer]:
+              - generic [ref=e297]: "1"
+              - generic [ref=e298]:
+                - generic [ref=e299]:
+                  - heading "先填需求" [level=3] [ref=e300]
+                  - generic [ref=e301]: 已完成
+                - paragraph [ref=e302]: 先确认目标颜色、需求说明和基础输出约束。
+                - generic [ref=e303]: 返回修改需求
+          - listitem [ref=e304]:
+            - button "2 生成候选 已完成 系统执行候选生成、仿真校验和结果排序。 查看生成进度" [ref=e305] [cursor=pointer]:
+              - generic [ref=e306]: "2"
+              - generic [ref=e307]:
+                - generic [ref=e308]:
+                  - heading "生成候选" [level=3] [ref=e309]
+                  - generic [ref=e310]: 已完成
+                - paragraph [ref=e311]: 系统执行候选生成、仿真校验和结果排序。
+                - generic [ref=e312]: 查看生成进度
+          - listitem [ref=e313]:
+            - button "3 选择方案 当前 只比较推荐方案、备选方案和制造提醒。 查看候选方案" [ref=e314] [cursor=pointer]:
+              - generic [ref=e315]: "3"
+              - generic [ref=e316]:
+                - generic [ref=e317]:
+                  - heading "选择方案" [level=3] [ref=e318]
+                  - generic [ref=e319]: 当前
+                - paragraph [ref=e320]: 只比较推荐方案、备选方案和制造提醒。
+                - generic [ref=e321]: 查看候选方案
+          - listitem [ref=e322]:
+            - button "4 确认导出 未开始 最后确认尺寸、格式和切片计划，再进入导出。 查看导出规格" [disabled] [ref=e323]:
+              - generic [ref=e324]: "4"
+              - generic [ref=e325]:
+                - generic [ref=e326]:
+                  - heading "确认导出" [level=3] [ref=e327]
+                  - generic [ref=e328]: 未开始
+                - paragraph [ref=e329]: 最后确认尺寸、格式和切片计划，再进入导出。
+                - generic [ref=e330]: 查看导出规格
+      - article [ref=e332]:
+        - generic [ref=e333]:
+          - generic [ref=e334]:
+            - paragraph [ref=e335]: 当前状态
+            - heading "先填需求" [level=2] [ref=e625]
+          - generic [ref=e337]: "#BF6F4F"
+        - paragraph [ref=e626]: 这一步只确认输入条件，避免候选结果干扰当前判断。
+        - generic [ref=e627]:
+          - generic [ref=e628]:
+            - generic [ref=e629]: 目标颜色
+            - generic [ref=e632]: "#BF6F4F"
+          - generic [ref=e633]:
+            - generic [ref=e634]: 可制造厚度范围
+            - generic [ref=e635]: Ag 10-30 nm / SiO2 60-180 nm
+          - generic [ref=e636]:
+            - generic [ref=e637]: 交付模式
+            - generic [ref=e638]: 先预览、后生成 TIFF 交付
+        - generic [ref=e639]:
+          - generic [ref=e640]: 需求说明
+          - paragraph [ref=e641]: 希望复现接近暖铜色的结构色，用于展示样片，优先保证制造稳定性和交付可行性。
+        - link "返回修改需求" [ref=e643] [cursor=pointer]:
+          - /url: /
+    - complementary [ref=e357]:
+      - generic [ref=e591]:
+        - generic [ref=e592]:
+          - generic [ref=e593]:
+            - heading "算法准备度" [level=3] [ref=e594]
+            - paragraph [ref=e595]: Ag-SiO2-Ag 生成式逆向设计与薄膜仿真流程
+          - generic [ref=e596]: 快速验证
+        - paragraph [ref=e597]: 全流程可运行，但当前模型仍处于原型验证阶段。
+        - generic [ref=e598]:
+          - generic [ref=e599]: 最佳复现实验色差 25.19
+          - generic [ref=e600]: 厚度恢复命中率 7.3%
+          - generic [ref=e601]: 生成候选优于检索的次数 0/3
+          - generic [ref=e602]: 最近训练设备 GPU / CUDA
+        - paragraph [ref=e603]: "已检测到 3 组训练产物。最新产物为 `cgan_reproduction_smoke_batch`。当前最佳平均色差为 25.19，论文参考值为 0.44。"

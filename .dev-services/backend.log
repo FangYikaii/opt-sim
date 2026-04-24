@@ -1,0 +1,307 @@
+INFO:     Will watch for changes in these directories: ['/home/fangyikai/code/opt-sim']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [1169824] using StatReload
+INFO:     Started server process [1169970]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Will watch for changes in these directories: ['/home/fangyikai/code/opt-sim']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [1177862] using StatReload
+INFO:     Started server process [1177961]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:56046 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59786 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59870 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33750 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1177961]
+INFO:     Stopping reloader process [1177862]
+INFO:     Will watch for changes in these directories: ['/home/fangyikai/code/opt-sim']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [1184737] using StatReload
+INFO:     Started server process [1184836]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:45586 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1184836]
+INFO:     Stopping reloader process [1184737]
+INFO:     Will watch for changes in these directories: ['/home/fangyikai/code/opt-sim']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [1186209] using StatReload
+INFO:     Started server process [1186308]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:52400 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34130 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:34136 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:34114 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54382 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46222 - "POST /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46226 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58552 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58552 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58552 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend/app/runtime_store.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1186308]
+INFO:     Started server process [1230399]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/agent.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1230399]
+INFO:     Started server process [1230713]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:37930 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48710 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57414 - "OPTIONS /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57414 - "POST /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52242 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57414 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52256 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52258 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52272 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52274 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52278 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52256 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52258 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52272 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52274 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52278 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52702 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52712 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52720 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52734 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52740 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52702 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52712 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52744 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52720 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52734 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52740 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37036 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37040 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37052 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37060 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37066 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37074 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37040 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37036 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37060 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37052 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37066 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48008 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48018 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48034 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48048 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48008 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48052 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48034 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48018 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48048 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48054 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48052 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46838 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60604 - "OPTIONS /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60604 - "POST /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60604 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46544 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46558 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46548 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46568 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46580 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46544 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46548 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46568 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46558 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46580 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58624 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47476 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend/tests/test_inverse_design_runtime.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1230713]
+INFO:     Started server process [1294993]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_inverse_design_runtime.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1294993]
+INFO:     Started server process [1298498]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:59922 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1298498]
+INFO:     Started server process [1301712]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:46182 - "HEAD /api/health HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:45104 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54470 - "OPTIONS /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54472 - "POST /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54472 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36092 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36110 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36098 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36130 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36126 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36092 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36110 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36130 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36098 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36126 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40590 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35256 - "OPTIONS /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35256 - "POST /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35256 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40300 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40296 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40304 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40310 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40324 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40300 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40296 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40304 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40310 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40324 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend/tests/test_inverse_design_runtime.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1301712]
+INFO:     Started server process [1314195]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/inverse_design.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1314195]
+INFO:     Started server process [1314492]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithm_overview.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1314492]
+INFO:     Started server process [1315686]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/inverse_design.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1315686]
+INFO:     Started server process [1315971]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1315971]
+INFO:     Started server process [1316327]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithm_overview.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1316327]
+INFO:     Started server process [1316942]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_inverse_design_runtime.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1316942]
+INFO:     Started server process [1317153]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1317153]
+INFO:     Started server process [1317408]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:38862 - "GET /api/runs/run-demo-live HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38872 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38884 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38890 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38844 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38852 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38862 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38884 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38890 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38872 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38844 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47548 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1317408]
+INFO:     Started server process [1322618]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1322618]
+INFO:     Started server process [1322961]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1322961]
+INFO:     Started server process [1323191]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1323191]
+INFO:     Started server process [1323471]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:37302 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38102 - "OPTIONS /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38102 - "POST /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38102 - "GET /api/project HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55920 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55926 - "GET /api/runs/run-demo-live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55968 - "GET /api/runs/run-demo-live/timeline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55942 - "GET /api/runs/run-demo-live/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55952 - "GET /api/runs/run-demo-live/targets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55920 - "GET /api/runs/run-demo-live/candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55926 - "GET /api/runs/run-demo-live/constraints HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55942 - "GET /api/runs/run-demo-live/artifacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55968 - "GET /api/runs/run-demo-live/export-estimate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55952 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47910 - "GET /api/algorithm-overview HTTP/1.1" 200 OK

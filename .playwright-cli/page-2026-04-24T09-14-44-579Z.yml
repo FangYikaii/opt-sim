@@ -1,0 +1,233 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: 结构色智能设计
+      - paragraph [ref=e7]: 实验工作台
+    - button "切换语言 · EN" [ref=e8] [cursor=pointer]
+  - generic [ref=e9]:
+    - heading "把颜色需求翻译成可落地的膜层方案" [level=1] [ref=e10]
+    - paragraph [ref=e11]: 按顺序完成：检查系统状态、填写需求、评审候选方案、确认导出。
+  - generic [ref=e12]:
+    - heading "先看这些关键信息" [level=2] [ref=e13]
+    - paragraph [ref=e14]: 先判断系统是否可用，再看当前推荐方案、备选方案和制造提醒。训练细节与操作命令保留在下方，避免干扰业务判断。
+  - generic [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - paragraph [ref=e18]: 实验流程
+        - heading "按以下顺序完成实验" [level=2] [ref=e19]
+        - paragraph [ref=e20]: 先确认系统状态，再提交需求与评审结果。
+      - generic [ref=e21]: 4 步
+    - list [ref=e22]:
+      - listitem [ref=e23]:
+        - button "1 先填需求 当前 先确认目标颜色、需求说明和基础输出约束。" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: "1"
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - heading "先填需求" [level=3] [ref=e28]
+              - generic [ref=e29]: 当前
+            - paragraph [ref=e30]: 先确认目标颜色、需求说明和基础输出约束。
+      - listitem [ref=e31]:
+        - button "2 生成候选 未开始 系统执行候选生成、仿真校验和结果排序。" [ref=e32] [cursor=pointer]:
+          - generic [ref=e33]: "2"
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - heading "生成候选" [level=3] [ref=e36]
+              - generic [ref=e37]: 未开始
+            - paragraph [ref=e38]: 系统执行候选生成、仿真校验和结果排序。
+      - listitem [ref=e39]:
+        - button "3 选择方案 未开始 只比较推荐方案、备选方案和制造提醒。" [ref=e40] [cursor=pointer]:
+          - generic [ref=e41]: "3"
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - heading "选择方案" [level=3] [ref=e44]
+              - generic [ref=e45]: 未开始
+            - paragraph [ref=e46]: 只比较推荐方案、备选方案和制造提醒。
+      - listitem [ref=e47]:
+        - button "4 确认导出 未开始 最后确认尺寸、格式和切片计划，再进入导出。" [ref=e48] [cursor=pointer]:
+          - generic [ref=e49]: "4"
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - heading "确认导出" [level=3] [ref=e52]
+              - generic [ref=e53]: 未开始
+            - paragraph [ref=e54]: 最后确认尺寸、格式和切片计划，再进入导出。
+  - generic [ref=e77]:
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - paragraph [ref=e80]: 算法状态
+        - heading "系统状态" [level=2] [ref=e81]
+        - paragraph [ref=e82]: 输入目标颜色后，系统生成可制造膜层候选并给出排序结果。
+      - generic [ref=e83]: 快速验证
+    - generic [ref=e84]:
+      - heading "流程摘要" [level=3] [ref=e85]
+      - paragraph [ref=e86]: 输入目标颜色后，系统生成可制造膜层候选并给出排序结果。
+    - generic [ref=e87]:
+      - article [ref=e88]:
+        - text: 当前状态
+        - paragraph [ref=e89]: 全流程可运行，但当前模型仍处于原型验证阶段。
+      - article [ref=e90]:
+        - text: 训练设备
+        - paragraph [ref=e91]: 已确认 CUDA 训练，设备为 NVIDIA GeForce RTX 5060 Ti。
+      - article [ref=e92]:
+        - text: 训练状态
+        - paragraph [ref=e93]: "已检测到 3 组训练产物。最新产物为 `cgan_reproduction_smoke_batch`。当前最佳平均色差为 25.19，论文参考值为 0.44。"
+      - article [ref=e94]:
+        - text: 运行环境
+        - paragraph [ref=e95]: 运行环境已检测到 CUDA，当前优先使用 NVIDIA GeForce RTX 5060 Ti。
+    - paragraph [ref=e96]: 流程：生成候选 -> 物理仿真 -> 微调优化 -> 排序输出。
+    - generic [ref=e97]:
+      - article [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]: 最佳复现实验色差
+          - generic [ref=e101]: 不满足
+        - strong [ref=e102]: "25.19"
+        - paragraph [ref=e103]: "当前表现最好的实验是 `cgan_reproduction_smoke_de2000`，论文参考值为 0.44。"
+      - article [ref=e104]:
+        - generic [ref=e105]:
+          - generic [ref=e106]: 厚度恢复命中率
+          - generic [ref=e107]: 不满足
+        - strong [ref=e108]: 7.3%
+        - paragraph [ref=e109]: 厚度恢复命中率，论文参考值为 93.9%。
+      - article [ref=e110]:
+        - generic [ref=e111]:
+          - generic [ref=e112]: 生成候选优于检索的次数
+          - generic [ref=e113]: 需关注
+        - strong [ref=e114]: 0/3
+        - paragraph [ref=e115]: 生成候选优于检索基线的目标数量。
+      - article [ref=e116]:
+        - generic [ref=e117]:
+          - generic [ref=e118]: 最近训练设备
+          - generic [ref=e119]: 通过
+        - strong [ref=e120]: GPU / CUDA
+        - paragraph [ref=e121]: NVIDIA GeForce RTX 5060 Ti
+    - generic [ref=e122]:
+      - article [ref=e123]:
+        - generic [ref=e124]:
+          - heading "对比样例" [level=3] [ref=e125]
+          - generic [ref=e126]: 3 个样例
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e131]: "#4f86c6"
+            - generic [ref=e132]:
+              - generic [ref=e133]: 检索基线 13.27
+              - generic [ref=e134]: 生成候选 49.48
+            - generic [ref=e135]: 检索基线更优
+          - generic [ref=e136]:
+            - generic [ref=e139]: "#d15f3f"
+            - generic [ref=e140]:
+              - generic [ref=e141]: 检索基线 3.46
+              - generic [ref=e142]: 生成候选 27.93
+            - generic [ref=e143]: 检索基线更优
+          - generic [ref=e144]:
+            - generic [ref=e147]: "#66aa55"
+            - generic [ref=e148]:
+              - generic [ref=e149]: 检索基线 7.33
+              - generic [ref=e150]: 生成候选 49.70
+            - generic [ref=e151]: 检索基线更优
+      - article [ref=e152]:
+        - generic [ref=e153]:
+          - heading "训练记录" [level=3] [ref=e154]
+          - generic [ref=e155]: 3 条记录
+        - generic [ref=e156]:
+          - generic [ref=e157]:
+            - generic [ref=e158]:
+              - generic [ref=e159]:
+                - heading "cgan_reproduction_smoke" [level=3] [ref=e160]
+                - paragraph [ref=e161]: 2026-04-24 11:49:11 CST
+              - generic [ref=e162]: 快速验证
+            - generic [ref=e163]:
+              - generic [ref=e164]: 训练轮次 5
+              - generic [ref=e165]: 每色样本数 16
+              - generic [ref=e166]: GPU / CUDA
+              - generic [ref=e167]: NVIDIA GeForce RTX 5060 Ti
+            - paragraph [ref=e168]: cgan_reproduction_smoke 运行于 CUDA (NVIDIA GeForce RTX 5060 Ti)。阶段：快速验证；最佳平均色差 32.19；厚度命中率 13.8%；生成候选胜出 0/3。更新时间：2026-04-24 11:49:11 CST。
+          - generic [ref=e169]:
+            - generic [ref=e170]:
+              - generic [ref=e171]:
+                - heading "cgan_reproduction_smoke_batch" [level=3] [ref=e172]
+                - paragraph [ref=e173]: 2026-04-24 11:57:59 CST
+              - generic [ref=e174]: 快速验证
+            - generic [ref=e175]:
+              - generic [ref=e176]: 训练轮次 1
+              - generic [ref=e177]: 每色样本数 8
+              - generic [ref=e178]: GPU / CUDA
+              - generic [ref=e179]: NVIDIA GeForce RTX 5060 Ti
+            - paragraph [ref=e180]: cgan_reproduction_smoke_batch 运行于 CUDA (NVIDIA GeForce RTX 5060 Ti)。阶段：快速验证；最佳平均色差 30.19；厚度命中率 5.8%；生成候选胜出 0/3。更新时间：2026-04-24 11:57:59 CST。
+          - generic [ref=e181]:
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - heading "cgan_reproduction_smoke_de2000" [level=3] [ref=e184]
+                - paragraph [ref=e185]: 2026-04-24 11:54:27 CST
+              - generic [ref=e186]: 快速验证
+            - generic [ref=e187]:
+              - generic [ref=e188]: 训练轮次 2
+              - generic [ref=e189]: 每色样本数 8
+              - generic [ref=e190]: GPU / CUDA
+              - generic [ref=e191]: NVIDIA GeForce RTX 5060 Ti
+            - paragraph [ref=e192]: cgan_reproduction_smoke_de2000 运行于 CUDA (NVIDIA GeForce RTX 5060 Ti)。阶段：快速验证；最佳平均色差 25.19；厚度命中率 7.3%；生成候选胜出 0/3。更新时间：2026-04-24 11:54:27 CST。
+  - generic [ref=e59]:
+    - generic [ref=e61]:
+      - heading "发起新的设计需求" [level=2] [ref=e62]
+      - paragraph [ref=e63]: 用一句话描述目标外观或用途，再填写目标颜色和候选数量。
+    - generic [ref=e64]:
+      - generic [ref=e65]: 业务需求说明
+      - textbox "业务需求说明" [ref=e66]:
+        - /placeholder: 例如：希望复现接近暖铜色的结构色，用于展示样片，优先保证制造稳定性和交付可行性。
+        - text: 希望复现接近暖铜色的结构色，用于展示样片，优先保证制造稳定性和交付可行性。
+    - generic [ref=e67]:
+      - generic [ref=e68]:
+        - generic [ref=e69]: 目标颜色
+        - textbox "目标颜色" [ref=e70]: "#bf6f4f"
+      - generic [ref=e71]:
+        - generic [ref=e72]: 候选数量
+        - spinbutton "候选数量" [ref=e73]: "3"
+    - paragraph [ref=e74]: 生成后先看推荐方案，再看制造提醒。
+    - button "正在生成方案..." [disabled] [ref=e242]
+  - generic [ref=e193]:
+    - generic [ref=e194]:
+      - generic [ref=e195]:
+        - paragraph [ref=e196]: 操作说明
+        - heading "系统启动步骤" [level=2] [ref=e197]
+      - generic [ref=e198]: 6 步
+    - list [ref=e199]:
+      - listitem [ref=e200]:
+        - generic [ref=e201]:
+          - generic [ref=e202]: "1"
+          - heading "激活项目环境" [level=3] [ref=e203]
+        - paragraph [ref=e204]: 使用项目专用的 Conda 环境，确保 FastAPI、PyTorch、NumPy 和 sklearn 依赖完整可用。
+        - generic [ref=e205]: cd /home/fangyikai/code/opt-sim conda activate opt_sim
+        - paragraph [ref=e206]: "预期结果: `python` 可以正常导入 FastAPI 和 torch，且无报错。"
+      - listitem [ref=e207]:
+        - generic [ref=e208]:
+          - generic [ref=e209]: "2"
+          - heading "启动后端接口" [level=3] [ref=e210]
+        - paragraph [ref=e211]: 后端负责提供逆向设计接口、工作区数据，以及算法概况信息。
+        - generic [ref=e212]: cd /home/fangyikai/code/opt-sim conda activate opt_sim uvicorn backend.app.main:app --reload --port 8000
+        - paragraph [ref=e213]: "预期结果: Open http://127.0.0.1:8000/api/health and receive `{\\\"status\\\":\\\"ok\\\"}`."
+      - listitem [ref=e214]:
+        - generic [ref=e215]:
+          - generic [ref=e216]: "3"
+          - heading "启动前端工作台" [level=3] [ref=e217]
+        - paragraph [ref=e218]: 前端页面会展示算法状态、候选方案排序和操作说明。
+        - generic [ref=e219]: cd /home/fangyikai/code/opt-sim/frontend npm run dev
+        - paragraph [ref=e220]: "预期结果: 打开 http://127.0.0.1:5173，可以看到带算法概况的首页。"
+      - listitem [ref=e221]:
+        - generic [ref=e222]:
+          - generic [ref=e223]: "4"
+          - heading "提交示例业务需求" [level=3] [ref=e224]
+        - paragraph [ref=e225]: 输入一句业务需求和一个目标颜色，即可生成可评审的方案单。
+        - generic [ref=e226]: "curl -X POST http://127.0.0.1:8000/api/agent/design-run \\ -H 'Content-Type: application/json' \\ -d '{\"requirementText\":\"Reproduce a warm copper structural color with the Ag-SiO2-Ag paper route.\",\"targetHex\":\"#bf6f4f\",\"topK\":3}'"
+        - paragraph [ref=e227]: "预期结果: 返回结果会包含 `activeRun`、`candidates`、`constraints` 和 `exportEstimate`。"
+      - listitem [ref=e228]:
+        - generic [ref=e229]:
+          - generic [ref=e230]: "5"
+          - heading "执行快速复训" [level=3] [ref=e231]
+        - paragraph [ref=e232]: "快速刷新轻量级复现实验结果，并更新 `backend/artifacts/` 下的产物。"
+        - generic [ref=e233]: cd /home/fangyikai/code/opt-sim conda activate opt_sim python3 backend/scripts/train_cgan_reproduction.py --dataset-source paper --output-dir backend/artifacts/cgan_reproduction_smoke --epochs 5 --regressor-epochs 5 --batch-size 512 --paper-samples-per-lab 16 --device auto
+        - paragraph [ref=e234]: "预期结果: `metrics.json`、`loss_history.csv`、`candidate_samples.csv` 和 `generator_checkpoint.pt` 会被更新。"
+      - listitem [ref=e235]:
+        - generic [ref=e236]:
+          - generic [ref=e237]: "6"
+          - heading "执行论文级训练尝试" [level=3] [ref=e238]
+        - paragraph [ref=e239]: 通过更高的训练轮次和样本规模，从快速验证进一步逼近论文目标指标。
+        - generic [ref=e240]: cd /home/fangyikai/code/opt-sim conda activate opt_sim python3 backend/scripts/train_cgan_reproduction.py --dataset-source paper --paper-samples-per-lab 1000 --epochs 100000 --regressor-epochs 10000 --device cuda
+        - paragraph [ref=e241]: "预期结果: 任务完成后，将新的 `paper_reproduction` 指标与 `paper_targets` 做对比。"

@@ -1,0 +1,1912 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Opt-Sim API",
+    "description": "Prototype API for the Opt-Sim microstructure design workspace.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/project": {
+      "get": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Read Project",
+        "operationId": "read_project_api_project_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceProject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/algorithm-overview": {
+      "get": {
+        "tags": [
+          "algorithm"
+        ],
+        "summary": "Read Algorithm Overview",
+        "operationId": "read_algorithm_overview_api_algorithm_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlgorithmOverview"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Read Runs",
+        "operationId": "read_runs_api_runs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RunSummary"
+                  },
+                  "type": "array",
+                  "title": "Response Read Runs Api Runs Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Read Run",
+        "operationId": "read_run_api_runs__run_id__get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSummary"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/draft": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Read Run Draft",
+        "operationId": "read_run_draft_api_runs__run_id__draft_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceDraft"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/targets": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Read Run Targets",
+        "operationId": "read_run_targets_api_runs__run_id__targets_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TargetAsset"
+                  },
+                  "title": "Response Read Run Targets Api Runs  Run Id  Targets Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/timeline": {
+      "get": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Read Run Timeline",
+        "operationId": "read_run_timeline_api_runs__run_id__timeline_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimelineEvent"
+                  },
+                  "title": "Response Read Run Timeline Api Runs  Run Id  Timeline Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/candidates": {
+      "get": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Read Run Candidates",
+        "operationId": "read_run_candidates_api_runs__run_id__candidates_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CandidateSolution"
+                  },
+                  "title": "Response Read Run Candidates Api Runs  Run Id  Candidates Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/constraints": {
+      "get": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Read Run Constraints",
+        "operationId": "read_run_constraints_api_runs__run_id__constraints_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConstraintCheck"
+                  },
+                  "title": "Response Read Run Constraints Api Runs  Run Id  Constraints Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/export-estimate": {
+      "get": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Read Run Export Estimate",
+        "operationId": "read_run_export_estimate_api_runs__run_id__export_estimate_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportEstimate"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/artifacts": {
+      "get": {
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "Read Run Artifacts",
+        "operationId": "read_run_artifacts_api_runs__run_id__artifacts_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ArtifactSummary"
+                  },
+                  "title": "Response Read Run Artifacts Api Runs  Run Id  Artifacts Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/artifacts/{artifact_id}": {
+      "get": {
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "Read Artifact",
+        "operationId": "read_artifact_api_artifacts__artifact_id__get",
+        "parameters": [
+          {
+            "name": "artifact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Artifact Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workspace": {
+      "get": {
+        "tags": [
+          "workspace"
+        ],
+        "summary": "Read Default Workspace",
+        "operationId": "read_default_workspace_api_workspace_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/workspace": {
+      "get": {
+        "tags": [
+          "workspace"
+        ],
+        "summary": "Read Workspace For Run",
+        "operationId": "read_workspace_for_run_api_runs__run_id__workspace_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorPayload"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/design-run": {
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Create Design Run",
+        "operationId": "create_design_run_api_agent_design_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DesignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DesignRunResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlgorithmExperiment": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "updatedAt": {
+            "type": "string",
+            "title": "Updatedat"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "stageState": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "warning",
+              "fail",
+              "unknown"
+            ],
+            "title": "Stagestate",
+            "default": "unknown"
+          },
+          "epochs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Epochs"
+          },
+          "regressorEpochs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regressorepochs"
+          },
+          "batchSize": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Batchsize"
+          },
+          "sampleCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Samplecount"
+          },
+          "device": {
+            "type": "string",
+            "title": "Device",
+            "default": "unknown"
+          },
+          "deviceName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Devicename"
+          },
+          "checkpointReady": {
+            "type": "boolean",
+            "title": "Checkpointready",
+            "default": false
+          },
+          "lossHistoryReady": {
+            "type": "boolean",
+            "title": "Losshistoryready",
+            "default": false
+          },
+          "metricsReady": {
+            "type": "boolean",
+            "title": "Metricsready",
+            "default": false
+          },
+          "meanBestDeltaE": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meanbestdeltae"
+          },
+          "paperTargetMeanBestDeltaE": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Papertargetmeanbestdeltae"
+          },
+          "d2Within5nmRatio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D2Within5Nmratio"
+          },
+          "paperTargetD2Within5nmRatio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Papertargetd2Within5Nmratio"
+          },
+          "averageRetrievalDeltaE": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Averageretrievaldeltae"
+          },
+          "averageCganDeltaE": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Averagecgandeltae"
+          },
+          "cganBeatsRetrievalCount": {
+            "type": "integer",
+            "title": "Cganbeatsretrievalcount",
+            "default": 0
+          },
+          "totalTargetsCompared": {
+            "type": "integer",
+            "title": "Totaltargetscompared",
+            "default": 0
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "updatedAt",
+          "stage",
+          "summary"
+        ],
+        "title": "AlgorithmExperiment"
+      },
+      "AlgorithmHeadlineMetric": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "warning",
+              "fail",
+              "unknown"
+            ],
+            "title": "State",
+            "default": "unknown"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "value",
+          "detail"
+        ],
+        "title": "AlgorithmHeadlineMetric"
+      },
+      "AlgorithmOperationStep": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "command": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Command"
+          },
+          "expectedResult": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectedresult"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description"
+        ],
+        "title": "AlgorithmOperationStep"
+      },
+      "AlgorithmOverview": {
+        "properties": {
+          "algorithmName": {
+            "type": "string",
+            "title": "Algorithmname"
+          },
+          "businessGoal": {
+            "type": "string",
+            "title": "Businessgoal"
+          },
+          "workflowSummary": {
+            "type": "string",
+            "title": "Workflowsummary"
+          },
+          "plainExplanation": {
+            "type": "string",
+            "title": "Plainexplanation"
+          },
+          "currentAssessment": {
+            "type": "string",
+            "title": "Currentassessment"
+          },
+          "trainingConclusion": {
+            "type": "string",
+            "title": "Trainingconclusion"
+          },
+          "gpuTrainingSummary": {
+            "type": "string",
+            "title": "Gputrainingsummary"
+          },
+          "currentEnvironmentSummary": {
+            "type": "string",
+            "title": "Currentenvironmentsummary"
+          },
+          "artifactRootPath": {
+            "type": "string",
+            "title": "Artifactrootpath"
+          },
+          "guideDocumentPath": {
+            "type": "string",
+            "title": "Guidedocumentpath"
+          },
+          "bestExperimentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bestexperimentid"
+          },
+          "latestExperimentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestexperimentid"
+          },
+          "bestExperiment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlgorithmExperiment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latestExperiment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlgorithmExperiment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "experiments": {
+            "items": {
+              "$ref": "#/components/schemas/AlgorithmExperiment"
+            },
+            "type": "array",
+            "title": "Experiments"
+          },
+          "headlineMetrics": {
+            "items": {
+              "$ref": "#/components/schemas/AlgorithmHeadlineMetric"
+            },
+            "type": "array",
+            "title": "Headlinemetrics"
+          },
+          "targetComparisons": {
+            "items": {
+              "$ref": "#/components/schemas/AlgorithmTargetComparison"
+            },
+            "type": "array",
+            "title": "Targetcomparisons"
+          },
+          "operationSteps": {
+            "items": {
+              "$ref": "#/components/schemas/AlgorithmOperationStep"
+            },
+            "type": "array",
+            "title": "Operationsteps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "algorithmName",
+          "businessGoal",
+          "workflowSummary",
+          "plainExplanation",
+          "currentAssessment",
+          "trainingConclusion",
+          "gpuTrainingSummary",
+          "currentEnvironmentSummary",
+          "artifactRootPath",
+          "guideDocumentPath",
+          "experiments",
+          "headlineMetrics",
+          "targetComparisons",
+          "operationSteps"
+        ],
+        "title": "AlgorithmOverview"
+      },
+      "AlgorithmTargetComparison": {
+        "properties": {
+          "targetHex": {
+            "type": "string",
+            "title": "Targethex"
+          },
+          "retrievalDeltaE": {
+            "type": "number",
+            "title": "Retrievaldeltae"
+          },
+          "cganDeltaE": {
+            "type": "number",
+            "title": "Cgandeltae"
+          },
+          "winner": {
+            "type": "string",
+            "enum": [
+              "retrieval",
+              "cgan",
+              "tie"
+            ],
+            "title": "Winner"
+          }
+        },
+        "type": "object",
+        "required": [
+          "targetHex",
+          "retrievalDeltaE",
+          "cganDeltaE",
+          "winner"
+        ],
+        "title": "AlgorithmTargetComparison"
+      },
+      "ApiErrorPayload": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ApiErrorPayload"
+      },
+      "ArtifactDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "report",
+              "preview",
+              "export"
+            ],
+            "title": "Type"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "running",
+              "pending"
+            ],
+            "title": "Status"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "metadata": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactMetadataItem"
+            },
+            "type": "array",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "runId",
+          "name",
+          "type",
+          "status",
+          "description",
+          "metadata"
+        ],
+        "title": "ArtifactDetail"
+      },
+      "ArtifactMetadataItem": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "ArtifactMetadataItem"
+      },
+      "ArtifactSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "report",
+              "preview",
+              "export"
+            ],
+            "title": "Type"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "running",
+              "pending"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "type",
+          "status"
+        ],
+        "title": "ArtifactSummary"
+      },
+      "CandidateMetric": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "CandidateMetric"
+      },
+      "CandidateParameter": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "CandidateParameter"
+      },
+      "CandidateSolution": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "group": {
+            "type": "string",
+            "title": "Group"
+          },
+          "selected": {
+            "type": "boolean",
+            "title": "Selected",
+            "default": false
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Recommended",
+              "Robust",
+              "Watch",
+              "Blocked"
+            ],
+            "title": "Status"
+          },
+          "parameters": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateParameter"
+            },
+            "type": "array",
+            "title": "Parameters"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateMetric"
+            },
+            "type": "array",
+            "title": "Metrics"
+          },
+          "targetColorHex": {
+            "type": "string",
+            "title": "Targetcolorhex"
+          },
+          "simulatedColorHex": {
+            "type": "string",
+            "title": "Simulatedcolorhex"
+          },
+          "processPlusColorHex": {
+            "type": "string",
+            "title": "Processpluscolorhex"
+          },
+          "processMinusColorHex": {
+            "type": "string",
+            "title": "Processminuscolorhex"
+          },
+          "rationale": {
+            "type": "string",
+            "title": "Rationale"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "rank",
+          "group",
+          "status",
+          "parameters",
+          "metrics",
+          "targetColorHex",
+          "simulatedColorHex",
+          "processPlusColorHex",
+          "processMinusColorHex",
+          "rationale"
+        ],
+        "title": "CandidateSolution"
+      },
+      "ConstraintCheck": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "warning",
+              "fail",
+              "unknown"
+            ],
+            "title": "State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "detail",
+          "state"
+        ],
+        "title": "ConstraintCheck"
+      },
+      "DesignRequest": {
+        "properties": {
+          "requirementText": {
+            "type": "string",
+            "minLength": 4,
+            "title": "Requirementtext"
+          },
+          "targetHex": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "title": "Targethex"
+          },
+          "topK": {
+            "type": "integer",
+            "maximum": 8.0,
+            "minimum": 1.0,
+            "title": "Topk",
+            "default": 3
+          }
+        },
+        "type": "object",
+        "required": [
+          "requirementText",
+          "targetHex"
+        ],
+        "title": "DesignRequest"
+      },
+      "DesignRunResponse": {
+        "properties": {
+          "activeRun": {
+            "$ref": "#/components/schemas/RunSummary"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/WorkspaceDraft"
+          },
+          "targets": {
+            "items": {
+              "$ref": "#/components/schemas/TargetAsset"
+            },
+            "type": "array",
+            "title": "Targets"
+          },
+          "timeline": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineEvent"
+            },
+            "type": "array",
+            "title": "Timeline"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateSolution"
+            },
+            "type": "array",
+            "title": "Candidates"
+          },
+          "constraints": {
+            "items": {
+              "$ref": "#/components/schemas/ConstraintCheck"
+            },
+            "type": "array",
+            "title": "Constraints"
+          },
+          "exportEstimate": {
+            "$ref": "#/components/schemas/ExportEstimate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "activeRun",
+          "draft",
+          "targets",
+          "timeline",
+          "candidates",
+          "constraints",
+          "exportEstimate"
+        ],
+        "title": "DesignRunResponse"
+      },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "details": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorBody"
+      },
+      "ExportEstimate": {
+        "properties": {
+          "dimensions": {
+            "type": "string",
+            "title": "Dimensions"
+          },
+          "fileSize": {
+            "type": "string",
+            "title": "Filesize"
+          },
+          "tilePlan": {
+            "type": "string",
+            "title": "Tileplan"
+          },
+          "format": {
+            "type": "string",
+            "title": "Format"
+          },
+          "progress": {
+            "type": "integer",
+            "title": "Progress"
+          },
+          "tileProgress": {
+            "type": "string",
+            "title": "Tileprogress"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dimensions",
+          "fileSize",
+          "tilePlan",
+          "format",
+          "progress",
+          "tileProgress"
+        ],
+        "title": "ExportEstimate"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "RunSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Draft",
+              "Validating",
+              "Simulating",
+              "Ranking",
+              "Needs approval",
+              "Exporting",
+              "Complete",
+              "Failed"
+            ],
+            "title": "Status"
+          },
+          "updatedAt": {
+            "type": "string",
+            "title": "Updatedat"
+          },
+          "warning": {
+            "type": "boolean",
+            "title": "Warning",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "updatedAt"
+        ],
+        "title": "RunSummary"
+      },
+      "TargetAsset": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "color",
+              "image",
+              "multi-view"
+            ],
+            "title": "Type"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "swatchHex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Swatchhex"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "type",
+          "detail"
+        ],
+        "title": "TargetAsset"
+      },
+      "TimelineEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "tool",
+              "warning",
+              "approval",
+              "result"
+            ],
+            "title": "Type"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "body": {
+            "type": "string",
+            "title": "Body"
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meta"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Draft",
+                  "Validating",
+                  "Simulating",
+                  "Ranking",
+                  "Needs approval",
+                  "Exporting",
+                  "Complete",
+                  "Failed"
+                ]
+              },
+              {
+                "type": "string",
+                "const": "Running"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "actionLabel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actionlabel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "label",
+          "title",
+          "body"
+        ],
+        "title": "TimelineEvent"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorkspaceDetail": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/WorkspaceProject"
+          },
+          "activeRun": {
+            "$ref": "#/components/schemas/RunSummary"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/WorkspaceDraft"
+          },
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/RunSummary"
+            },
+            "type": "array",
+            "title": "Runs"
+          },
+          "targets": {
+            "items": {
+              "$ref": "#/components/schemas/TargetAsset"
+            },
+            "type": "array",
+            "title": "Targets"
+          },
+          "artifacts": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactSummary"
+            },
+            "type": "array",
+            "title": "Artifacts"
+          },
+          "timeline": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineEvent"
+            },
+            "type": "array",
+            "title": "Timeline"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateSolution"
+            },
+            "type": "array",
+            "title": "Candidates"
+          },
+          "constraints": {
+            "items": {
+              "$ref": "#/components/schemas/ConstraintCheck"
+            },
+            "type": "array",
+            "title": "Constraints"
+          },
+          "exportEstimate": {
+            "$ref": "#/components/schemas/ExportEstimate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project",
+          "activeRun",
+          "draft",
+          "runs",
+          "targets",
+          "artifacts",
+          "timeline",
+          "candidates",
+          "constraints",
+          "exportEstimate"
+        ],
+        "title": "WorkspaceDetail"
+      },
+      "WorkspaceDraft": {
+        "properties": {
+          "requirementText": {
+            "type": "string",
+            "title": "Requirementtext"
+          },
+          "targetLabel": {
+            "type": "string",
+            "title": "Targetlabel"
+          },
+          "targetValue": {
+            "type": "string",
+            "title": "Targetvalue"
+          },
+          "heightWindow": {
+            "type": "string",
+            "title": "Heightwindow"
+          },
+          "exportMode": {
+            "type": "string",
+            "title": "Exportmode"
+          }
+        },
+        "type": "object",
+        "required": [
+          "requirementText",
+          "targetLabel",
+          "targetValue",
+          "heightWindow",
+          "exportMode"
+        ],
+        "title": "WorkspaceDraft"
+      },
+      "WorkspaceProject": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "title": "WorkspaceProject"
+      }
+    }
+  }
+}

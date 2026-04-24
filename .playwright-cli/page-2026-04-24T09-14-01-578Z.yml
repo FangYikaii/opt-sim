@@ -1,0 +1,4 @@
+- generic [ref=e3]:
+  - paragraph [ref=e4]: "404"
+  - heading "页面不存在" [level=1] [ref=e5]
+  - paragraph [ref=e6]: 当前地址没有对应的业务页面，请返回首页重新发起需求。

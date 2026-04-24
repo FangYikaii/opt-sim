@@ -1,0 +1,337 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+import numpy as np
+from sklearn.neighbors import NearestNeighbors
+
+from ..algorithm_overview import get_algorithm_overview, resolve_selected_checkpoint_path
+from ..models import CandidateMetric, CandidateParameter, CandidateSolution, ConstraintCheck, ExportEstimate
+from .cgan import load_model_bundle, sample_designs_from_bundle, sample_designs_from_cgan
+from .optics import (
+    delta_e_2000,
+    hex_to_lab,
+    reflectance_spectrum_ag_sio2_ag,
+    spectrum_to_xyz,
+    transmittance_spectrum_ag_sio2_ag,
+    xyz_to_lab,
+    xyz_to_srgb_hex,
+)
+
+
+@dataclass
+class InverseDesignResult:
+    candidates: list[CandidateSolution]
+    constraints: list[ConstraintCheck]
+    export_estimate: ExportEstimate
+
+
+@dataclass(frozen=True)
+class EvaluatedDesign:
+    design: tuple[float, float, float]
+    delta_e: float
+    simulated_hex: str
+    plus_delta_e: float
+    plus_hex: str
+    minus_delta_e: float
+    minus_hex: str
+    drift: float
+    source: str
+    composite_score: float
+
+
+def _evaluate_design(
+    d_ag_bottom: float,
+    d_sio2: float,
+    d_ag_top: float,
+    target_lab: np.ndarray,
+) -> tuple[float, str]:
+    spectrum = transmittance_spectrum_ag_sio2_ag(d_ag_bottom, d_sio2, d_ag_top)
+    xyz = spectrum_to_xyz(spectrum)
+    lab = xyz_to_lab(xyz)
+    delta_e = delta_e_2000(lab, target_lab)
+    simulated_hex = xyz_to_srgb_hex(xyz)
+    return delta_e, simulated_hex
+
+
+def _evaluate_candidate(
+    d_ag_bottom: float,
+    d_sio2: float,
+    d_ag_top: float,
+    target_lab: np.ndarray,
+    *,
+    source: str,
+) -> EvaluatedDesign:
+    base_delta_e, base_hex = _evaluate_design(d_ag_bottom, d_sio2, d_ag_top, target_lab)
+    plus_delta_e, plus_hex = _evaluate_design(
+        min(30.0, d_ag_bottom + 0.5),
+        min(180.0, d_sio2 + 0.5),
+        min(30.0, d_ag_top + 0.5),
+        target_lab,
+    )
+    minus_delta_e, minus_hex = _evaluate_design(
+        max(10.0, d_ag_bottom - 0.5),
+        max(60.0, d_sio2 - 0.5),
+        max(10.0, d_ag_top - 0.5),
+        target_lab,
+    )
+    plus_drift = plus_delta_e - base_delta_e
+    minus_drift = minus_delta_e - base_delta_e
+    drift = max(abs(plus_drift), abs(minus_drift))
+    composite_score = base_delta_e + 0.35 * drift
+    return EvaluatedDesign(
+        design=(float(d_ag_bottom), float(d_sio2), float(d_ag_top)),
+        delta_e=float(base_delta_e),
+        simulated_hex=base_hex,
+        plus_delta_e=float(plus_delta_e),
+        plus_hex=plus_hex,
+        minus_delta_e=float(minus_delta_e),
+        minus_hex=minus_hex,
+        drift=float(drift),
+        source=source,
+        composite_score=float(composite_score),
+    )
+
+
+def _iter_local_variants(
+    design: tuple[float, float, float],
+    *,
+    step_ag_nm: float,
+    step_sio2_nm: float,
+) -> list[tuple[float, float, float]]:
+    d_ag_bottom, d_sio2, d_ag_top = design
+    variants: set[tuple[float, float, float]] = set()
+    for delta_bottom in (-step_ag_nm, 0.0, step_ag_nm):
+        for delta_sio2 in (-step_sio2_nm, 0.0, step_sio2_nm):
+            for delta_top in (-step_ag_nm, 0.0, step_ag_nm):
+                variants.add(
+                    (
+                        float(np.clip(d_ag_bottom + delta_bottom, 10.0, 30.0)),
+                        float(np.clip(d_sio2 + delta_sio2, 60.0, 180.0)),
+                        float(np.clip(d_ag_top + delta_top, 10.0, 30.0)),
+                    )
+                )
+    return sorted(variants)
+
+
+def _refine_design(
+    base_design: tuple[float, float, float],
+    target_lab: np.ndarray,
+    *,
+    source: str,
+) -> EvaluatedDesign:
+    current_best = _evaluate_candidate(*base_design, target_lab, source=source)
+    search_schedule = [(1.0, 2.0)]
+
+    for step_ag_nm, step_sio2_nm in search_schedule:
+        improved = True
+        while improved:
+            improved = False
+            for candidate_design in _iter_local_variants(
+                current_best.design,
+                step_ag_nm=step_ag_nm,
+                step_sio2_nm=step_sio2_nm,
+            ):
+                candidate = _evaluate_candidate(
+                    *candidate_design,
+                    target_lab,
+                    source=source,
+                )
+                if candidate.composite_score + 1e-9 < current_best.composite_score:
+                    current_best = candidate
+                    improved = True
+
+    refined_source = "cGAN+refined" if "cGAN" in source else "refined"
+    return EvaluatedDesign(
+        design=current_best.design,
+        delta_e=current_best.delta_e,
+        simulated_hex=current_best.simulated_hex,
+        plus_delta_e=current_best.plus_delta_e,
+        plus_hex=current_best.plus_hex,
+        minus_delta_e=current_best.minus_delta_e,
+        minus_hex=current_best.minus_hex,
+        drift=current_best.drift,
+        source=refined_source,
+        composite_score=current_best.composite_score,
+    )
+
+
+def _status_and_rationale(rank: int, drift: float, source: str) -> tuple[str, str]:
+    if rank == 1:
+        return "Recommended", (
+            "Best overall match after combining nominal color error with a local manufacturability refinement pass."
+        )
+    if drift < 0.8:
+        return "Robust", (
+            f"{source} candidate remains relatively stable under +/-0.5 nm process perturbation."
+        )
+    return "Watch", (
+        "Nominal color match is usable, but small fabrication perturbations still shift color noticeably."
+    )
+
+
+def _load_saved_cgan_bundle():
+    overview = get_algorithm_overview()
+    if overview.bestExperimentId is None:
+        return None
+
+    checkpoint_path = resolve_selected_checkpoint_path(overview.bestExperimentId)
+    if checkpoint_path is None:
+        return None
+
+    try:
+        return load_model_bundle(checkpoint_path)
+    except Exception:
+        return None
+
+
+def _sample_gan_designs(
+    *,
+    target_lab: np.ndarray,
+    lab_array: np.ndarray,
+    design_array: np.ndarray,
+    sample_count: int,
+) -> np.ndarray:
+    lower_bounds = design_array.min(axis=0)
+    upper_bounds = design_array.max(axis=0)
+
+    saved_bundle = _load_saved_cgan_bundle()
+    if saved_bundle is not None:
+        generated_designs = sample_designs_from_bundle(saved_bundle, target_lab, sample_count=sample_count)
+    else:
+        generated_designs = sample_designs_from_cgan(
+            target_lab=target_lab,
+            lab_samples=lab_array,
+            design_samples=design_array,
+            sample_count=sample_count,
+        )
+
+    return np.clip(generated_designs, lower_bounds, upper_bounds)
+
+
+def run_inverse_design(target_hex: str, top_k: int = 3) -> InverseDesignResult:
+    target_lab = hex_to_lab(target_hex)
+
+    grid = []
+    labs = []
+    rgb_hexes = []
+    for d_ag_bottom in np.arange(10.0, 31.0, 2.0):
+        for d_sio2 in np.arange(60.0, 181.0, 5.0):
+            for d_ag_top in np.arange(10.0, 31.0, 2.0):
+                spectrum = transmittance_spectrum_ag_sio2_ag(
+                    d_ag_bottom,
+                    d_sio2,
+                    d_ag_top,
+                )
+                xyz = spectrum_to_xyz(spectrum)
+                lab = xyz_to_lab(xyz)
+                grid.append((float(d_ag_bottom), float(d_sio2), float(d_ag_top)))
+                labs.append(lab)
+                rgb_hexes.append(xyz_to_srgb_hex(xyz))
+
+    lab_array = np.vstack(labs)
+    design_array = np.array(grid, dtype=np.float64)
+    neighbors = NearestNeighbors(n_neighbors=top_k)
+    neighbors.fit(lab_array)
+    distances, indices = neighbors.kneighbors(target_lab.reshape(1, -1))
+
+    gan_designs = _sample_gan_designs(
+        target_lab=target_lab,
+        lab_array=lab_array[::12],
+        design_array=design_array[::12],
+        sample_count=max(12, top_k * 6),
+    )
+
+    evaluated_candidates: dict[tuple[float, float, float], EvaluatedDesign] = {}
+
+    for distance, idx in zip(distances[0], indices[0]):
+        retrieval_design = tuple(float(value) for value in grid[int(idx)])
+        retrieval_candidate = _evaluate_candidate(*retrieval_design, target_lab, source="retrieval")
+        retrieval_refined = _refine_design(retrieval_design, target_lab, source="retrieval")
+        evaluated_candidates[retrieval_candidate.design] = retrieval_candidate
+        evaluated_candidates[retrieval_refined.design] = retrieval_refined
+
+    for design in gan_designs[: max(top_k * 3, 6)]:
+        design_tuple = tuple(float(value) for value in design)
+        gan_candidate = _evaluate_candidate(*design_tuple, target_lab, source="cGAN+TMM")
+        gan_refined = _refine_design(design_tuple, target_lab, source="cGAN+TMM")
+        evaluated_candidates[gan_candidate.design] = gan_candidate
+        evaluated_candidates[gan_refined.design] = gan_refined
+
+    ranked_candidates = sorted(
+        evaluated_candidates.values(),
+        key=lambda candidate: (candidate.composite_score, candidate.delta_e, candidate.drift),
+    )
+
+    candidates: list[CandidateSolution] = []
+    for rank, candidate in enumerate(ranked_candidates[:top_k], start=1):
+        d_ag_bottom, d_sio2, d_ag_top = candidate.design
+        plus_drift = candidate.plus_delta_e - candidate.delta_e
+        minus_drift = candidate.minus_delta_e - candidate.delta_e
+        status, rationale = _status_and_rationale(rank, candidate.drift, candidate.source)
+
+        candidates.append(
+            CandidateSolution(
+                id=f"C-{rank:03d}",
+                rank=rank,
+                group=f"Group {chr(64 + rank)}",
+                selected=rank == 1,
+                status=status,
+                parameters=[
+                    CandidateParameter(label="Ag bottom", value=f"{d_ag_bottom:.1f} nm"),
+                    CandidateParameter(label="SiO2", value=f"{d_sio2:.1f} nm"),
+                    CandidateParameter(label="Ag top", value=f"{d_ag_top:.1f} nm"),
+                ],
+                metrics=[
+                    CandidateMetric(label="DeltaE", value=f"{candidate.delta_e:.2f}"),
+                    CandidateMetric(label="Composite score", value=f"{candidate.composite_score:.2f}"),
+                    CandidateMetric(label="Process drift", value=f"{plus_drift:+.2f} / {minus_drift:+.2f}"),
+                    CandidateMetric(
+                        label="Manufacturability",
+                        value="High" if candidate.drift < 1.0 else ("Medium" if candidate.drift < 2.0 else "Low"),
+                    ),
+                    CandidateMetric(label="Source", value=candidate.source),
+                ],
+                targetColorHex=target_hex.lower(),
+                simulatedColorHex=candidate.simulated_hex,
+                processPlusColorHex=candidate.plus_hex,
+                processMinusColorHex=candidate.minus_hex,
+                rationale=rationale,
+            )
+        )
+
+    constraints = [
+        ConstraintCheck(
+            id="constraint-height",
+            label="Ag thickness bounds",
+            detail="All returned Ag layers remain within the sampled 10-30 nm fabrication window.",
+            state="pass",
+        ),
+        ConstraintCheck(
+            id="constraint-sio2",
+            label="SiO2 thickness bounds",
+            detail="Dielectric thickness remains inside the 60-180 nm search window used for retrieval.",
+            state="pass",
+        ),
+        ConstraintCheck(
+            id="constraint-robustness",
+            label="Process sensitivity",
+            detail="Ranking includes plus/minus 0.5 nm perturbation to approximate fabrication error.",
+            state="warning",
+        ),
+    ]
+
+    export_estimate = ExportEstimate(
+        dimensions="160000 x 320000 px",
+        fileSize="2.4 GB est.",
+        tilePlan="512 tiles, 10k x 10k each",
+        format="16-bit TIFF",
+        progress=0,
+        tileProgress="0 / 512 tiles",
+    )
+
+    return InverseDesignResult(
+        candidates=candidates,
+        constraints=constraints,
+        export_estimate=export_estimate,
+    )

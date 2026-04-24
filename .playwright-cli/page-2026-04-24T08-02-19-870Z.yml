@@ -1,0 +1,192 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: Structural Color Planning
+      - paragraph [ref=e7]: Bilingual decision workspace
+    - button "Switch language · 中" [active] [ref=e201] [cursor=pointer]
+  - generic [ref=e9]:
+    - heading "Turn color intent into a manufacturable film-stack plan" [level=1] [ref=e202]
+    - paragraph [ref=e11]: Enter a target color and business requirement. The system returns manufacturable Ag-SiO2-Ag stack options, the recommendation logic, and the fabrication risks worth checking early.
+  - generic [ref=e12]:
+    - heading "What to review first" [level=2] [ref=e203]
+    - paragraph [ref=e14]: Start with system readiness, then review the recommended option, alternatives, and fabrication watchouts. Training detail and command-level instructions stay below so business users can focus on decisions.
+  - generic [ref=e37]:
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - paragraph [ref=e40]: Algorithm overview
+        - heading "Current business readiness" [level=2] [ref=e204]
+        - paragraph [ref=e42]: Given a target structural color, generate several manufacturable Ag-SiO2-Ag thickness triples, verify them with physics simulation, and surface the most reviewable options to the user.
+      - generic [ref=e43]: Smoke validation
+    - generic [ref=e44]:
+      - heading "Plain-language explanation" [level=3] [ref=e205]
+      - paragraph [ref=e46]: "In plain language: the model first guesses a few film-thickness recipes for the requested color, then physics simulation checks which guesses are truly close to that color and which ones are more stable under small fabrication errors, and finally a local search nudges each promising recipe to a better nearby setting."
+    - generic [ref=e47]:
+      - article [ref=e48]:
+        - text: Current assessment
+        - paragraph [ref=e49]: The full pipeline runs end-to-end, but the current cGAN quality is still far from the paper-level target. It is best understood as a validated prototype rather than a finished production model.
+      - article [ref=e50]:
+        - text: Training device
+        - paragraph [ref=e51]: Yes. The saved experiment artifacts show CUDA training on NVIDIA GeForce RTX 5060 Ti.
+      - article [ref=e52]:
+        - text: Training conclusion
+        - paragraph [ref=e53]: "Training has already run and produced checkpoints in 3 experiment folders. The latest artifact is `cgan_reproduction_smoke_batch`. However, the best current paper-style mean DeltaE is 25.19, while the paper reference is 0.44. Treat the model as trained, but not fully finished."
+      - article [ref=e54]:
+        - text: Runtime environment
+        - paragraph [ref=e55]: Current backend environment detects CUDA and prefers GPU training on NVIDIA GeForce RTX 5060 Ti.
+    - generic [ref=e56]:
+      - article [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e59]: Best reproduction DeltaE
+          - generic [ref=e60]: Fail
+        - strong [ref=e61]: "25.19"
+        - paragraph [ref=e62]: "Best current experiment is `cgan_reproduction_smoke_de2000`. Paper reference is 0.44."
+      - article [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]: Thickness recovery hit rate
+          - generic [ref=e66]: Fail
+        - strong [ref=e67]: 7.3%
+        - paragraph [ref=e68]: Thickness recovery accuracy. Paper reference is 93.9%.
+      - article [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]: Generative wins vs retrieval
+          - generic [ref=e72]: Watch
+        - strong [ref=e73]: 0/3
+        - paragraph [ref=e74]: How many demo targets were better with cGAN-generated candidates than nearest retrieval.
+      - article [ref=e75]:
+        - generic [ref=e76]:
+          - generic [ref=e77]: Latest training device
+          - generic [ref=e78]: Pass
+        - strong [ref=e79]: GPU / CUDA
+        - paragraph [ref=e80]: NVIDIA GeForce RTX 5060 Ti
+    - generic [ref=e81]:
+      - article [ref=e82]:
+        - generic [ref=e83]:
+          - heading "Example comparisons" [level=3] [ref=e206]
+          - generic [ref=e85]: 3 targets
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - generic [ref=e90]: "#4f86c6"
+            - generic [ref=e91]:
+              - generic [ref=e92]: Retrieval baseline 13.27
+              - generic [ref=e93]: Generative option 49.48
+            - generic [ref=e94]: Retrieval baseline wins
+          - generic [ref=e95]:
+            - generic [ref=e98]: "#d15f3f"
+            - generic [ref=e99]:
+              - generic [ref=e100]: Retrieval baseline 3.46
+              - generic [ref=e101]: Generative option 27.93
+            - generic [ref=e102]: Retrieval baseline wins
+          - generic [ref=e103]:
+            - generic [ref=e106]: "#66aa55"
+            - generic [ref=e107]:
+              - generic [ref=e108]: Retrieval baseline 7.33
+              - generic [ref=e109]: Generative option 49.70
+            - generic [ref=e110]: Retrieval baseline wins
+      - article [ref=e111]:
+        - generic [ref=e112]:
+          - heading "Training history" [level=3] [ref=e207]
+          - generic [ref=e114]: 3 records
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - generic [ref=e118]:
+                - heading "cgan_reproduction_smoke" [level=3] [ref=e119]
+                - paragraph [ref=e120]: 2026-04-24 11:49:11 CST
+              - generic [ref=e121]: Smoke validation
+            - generic [ref=e122]:
+              - generic [ref=e123]: Epochs 5
+              - generic [ref=e124]: Samples per color 16
+              - generic [ref=e125]: GPU / CUDA
+              - generic [ref=e126]: NVIDIA GeForce RTX 5060 Ti
+            - paragraph [ref=e127]: cgan_reproduction_smoke ran on CUDA (NVIDIA GeForce RTX 5060 Ti). Stage=Smoke run. Mean best DeltaE=32.19 vs paper reference 0.44. d2 within 5 nm=13.8%. cGAN beat retrieval on 0/3 demo targets. Updated 2026-04-24 11:49:11 CST.
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - heading "cgan_reproduction_smoke_batch" [level=3] [ref=e131]
+                - paragraph [ref=e132]: 2026-04-24 11:57:59 CST
+              - generic [ref=e133]: Smoke validation
+            - generic [ref=e134]:
+              - generic [ref=e135]: Epochs 1
+              - generic [ref=e136]: Samples per color 8
+              - generic [ref=e137]: GPU / CUDA
+              - generic [ref=e138]: NVIDIA GeForce RTX 5060 Ti
+            - paragraph [ref=e139]: cgan_reproduction_smoke_batch ran on CUDA (NVIDIA GeForce RTX 5060 Ti). Stage=Smoke run. Mean best DeltaE=30.19 vs paper reference 0.44. d2 within 5 nm=5.8%. cGAN beat retrieval on 0/3 demo targets. Updated 2026-04-24 11:57:59 CST.
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - heading "cgan_reproduction_smoke_de2000" [level=3] [ref=e143]
+                - paragraph [ref=e144]: 2026-04-24 11:54:27 CST
+              - generic [ref=e145]: Smoke validation
+            - generic [ref=e146]:
+              - generic [ref=e147]: Epochs 2
+              - generic [ref=e148]: Samples per color 8
+              - generic [ref=e149]: GPU / CUDA
+              - generic [ref=e150]: NVIDIA GeForce RTX 5060 Ti
+            - paragraph [ref=e151]: cgan_reproduction_smoke_de2000 ran on CUDA (NVIDIA GeForce RTX 5060 Ti). Stage=Smoke run. Mean best DeltaE=25.19 vs paper reference 0.44. d2 within 5 nm=7.3%. cGAN beat retrieval on 0/3 demo targets. Updated 2026-04-24 11:54:27 CST.
+  - generic [ref=e19]:
+    - generic [ref=e21]:
+      - heading "Start a new design brief" [level=2] [ref=e208]
+      - paragraph [ref=e23]: Describe the target appearance, sample objective, or business context in one sentence, then provide the target color and option count.
+    - generic [ref=e24]:
+      - generic [ref=e25]: Business requirement
+      - textbox "Business requirement" [ref=e209]:
+        - /placeholder: "For example: Reproduce a warm copper structural color for a display sample, prioritizing manufacturing stability and delivery readiness."
+        - text: Reproduce a warm copper structural color for a display sample, prioritizing manufacturing stability and delivery readiness.
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]: Target color
+        - textbox "Target color" [ref=e210]: "#bf6f4f"
+      - generic [ref=e31]:
+        - generic [ref=e32]: Options
+        - spinbutton "Options" [ref=e211]: "3"
+    - paragraph [ref=e34]: The system will return a recommended option first, followed by alternatives and manufacturing watchouts.
+    - button "Generate proposal" [ref=e212] [cursor=pointer]
+  - generic [ref=e152]:
+    - generic [ref=e153]:
+      - generic [ref=e154]:
+        - paragraph [ref=e155]: Operator guide
+        - heading "How to start and refresh the system" [level=2] [ref=e213]
+      - generic [ref=e157]: 6 steps
+    - list [ref=e158]:
+      - listitem [ref=e159]:
+        - generic [ref=e160]:
+          - generic [ref=e161]: step-1
+          - heading "Activate the project environment" [level=3] [ref=e214]
+        - paragraph [ref=e163]: Use the dedicated Conda environment so FastAPI, PyTorch, NumPy and sklearn are all available.
+        - generic [ref=e164]: cd /home/fangyikai/code/opt-sim conda activate opt_sim
+        - paragraph [ref=e165]: "Expected result: `python` can import FastAPI and torch without errors."
+      - listitem [ref=e166]:
+        - generic [ref=e167]:
+          - generic [ref=e168]: step-2
+          - heading "Start the backend API" [level=3] [ref=e215]
+        - paragraph [ref=e170]: The backend exposes inverse-design APIs, workspace data, and this algorithm overview.
+        - generic [ref=e171]: cd /home/fangyikai/code/opt-sim conda activate opt_sim uvicorn backend.app.main:app --reload --port 8000
+        - paragraph [ref=e172]: "Expected result: Open http://127.0.0.1:8000/api/health and receive `{\\\"status\\\":\\\"ok\\\"}`."
+      - listitem [ref=e173]:
+        - generic [ref=e174]:
+          - generic [ref=e175]: step-3
+          - heading "Start the frontend workspace" [level=3] [ref=e216]
+        - paragraph [ref=e177]: The Vue app shows algorithm status, candidate ranking, and the operator guide.
+        - generic [ref=e178]: cd /home/fangyikai/code/opt-sim/frontend npm run dev
+        - paragraph [ref=e179]: "Expected result: Open http://127.0.0.1:5173 and see the home page with the algorithm overview panel."
+      - listitem [ref=e180]:
+        - generic [ref=e181]:
+          - generic [ref=e182]: step-4
+          - heading "Submit a demo business request" [level=3] [ref=e217]
+        - paragraph [ref=e184]: Send one requirement sentence and one target color to create a reviewable run.
+        - generic [ref=e185]: "curl -X POST http://127.0.0.1:8000/api/agent/design-run \\ -H 'Content-Type: application/json' \\ -d '{\"requirementText\":\"Reproduce a warm copper structural color with the Ag-SiO2-Ag paper route.\",\"targetHex\":\"#bf6f4f\",\"topK\":3}'"
+        - paragraph [ref=e186]: "Expected result: The response includes `activeRun`, `candidates`, `constraints`, and `exportEstimate`."
+      - listitem [ref=e187]:
+        - generic [ref=e188]:
+          - generic [ref=e189]: step-5
+          - heading "Run a smoke re-training job" [level=3] [ref=e218]
+        - paragraph [ref=e191]: "Refresh the lightweight reproduction outputs quickly and update artifacts under `backend/artifacts/`."
+        - generic [ref=e192]: cd /home/fangyikai/code/opt-sim conda activate opt_sim python3 backend/scripts/train_cgan_reproduction.py --dataset-source paper --output-dir backend/artifacts/cgan_reproduction_smoke --epochs 5 --regressor-epochs 5 --batch-size 512 --paper-samples-per-lab 16 --device auto
+        - paragraph [ref=e193]: "Expected result: `metrics.json`, `loss_history.csv`, `candidate_samples.csv`, and `generator_checkpoint.pt` are refreshed."
+      - listitem [ref=e194]:
+        - generic [ref=e195]:
+          - generic [ref=e196]: step-6
+          - heading "Run a paper-grade training attempt" [level=3] [ref=e219]
+        - paragraph [ref=e198]: Move from smoke validation toward the paper target metrics with many more epochs and samples.
+        - generic [ref=e199]: cd /home/fangyikai/code/opt-sim conda activate opt_sim python3 backend/scripts/train_cgan_reproduction.py --dataset-source paper --paper-samples-per-lab 1000 --epochs 100000 --regressor-epochs 10000 --device cuda
+        - paragraph [ref=e200]: "Expected result: Compare the new `paper_reproduction` metrics against `paper_targets` after the run completes."

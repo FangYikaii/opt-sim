@@ -1,0 +1,109 @@
+{
+  "dataset": {
+    "samples": 45000,
+    "stack": "Ag-SiO2-Ag",
+    "physics_mode": "transmittance",
+    "design_bounds_nm": {
+      "ag_bottom": [
+        0.0,
+        50.0
+      ],
+      "sio2": [
+        0.0,
+        1000.0
+      ],
+      "ag_top": [
+        0.0,
+        50.0
+      ]
+    }
+  },
+  "runtime": {
+    "device": "cuda",
+    "cuda_available": true,
+    "torch_version": "2.11.0+cu128",
+    "torch_cuda_version": "12.8",
+    "device_name": "NVIDIA GeForce RTX 5060 Ti",
+    "device_count": 1
+  },
+  "training": {
+    "epochs": 5,
+    "batch_size": 512,
+    "noise_dim": 2,
+    "learning_rate": 0.002,
+    "evaluator_learning_rate": 0.0004,
+    "seed": 42,
+    "device": "cuda",
+    "regressor_epochs": 5
+  },
+  "targets": [
+    {
+      "target_hex": "#4f86c6",
+      "retrieval_best_delta_e": 13.26853621508243,
+      "cgan_best_delta_e": 67.41944451337078,
+      "cgan_unique_rounded_0p1nm": 6,
+      "cgan_mean_pairwise_distance_nm": 381.3615921293588,
+      "cgan_parameter_span_nm": {
+        "ag_bottom": 45.03713783149284,
+        "sio2": 742.7314028154369,
+        "ag_top": 35.23286654022241
+      }
+    },
+    {
+      "target_hex": "#d15f3f",
+      "retrieval_best_delta_e": 3.464558216601685,
+      "cgan_best_delta_e": 40.269667154138624,
+      "cgan_unique_rounded_0p1nm": 6,
+      "cgan_mean_pairwise_distance_nm": 32.68197570560903,
+      "cgan_parameter_span_nm": {
+        "ag_bottom": 29.95238439803265,
+        "sio2": 67.29905966250419,
+        "ag_top": 32.490545417143636
+      }
+    },
+    {
+      "target_hex": "#66aa55",
+      "retrieval_best_delta_e": 7.330665422828072,
+      "cgan_best_delta_e": 75.11346450932021,
+      "cgan_unique_rounded_0p1nm": 6,
+      "cgan_mean_pairwise_distance_nm": 315.11217696621696,
+      "cgan_parameter_span_nm": {
+        "ag_bottom": 5.245589800563685,
+        "sio2": 663.5301782774651,
+        "ag_top": 17.247298706118915
+      }
+    }
+  ],
+  "paper_reproduction": {
+    "samples_per_lab": 16,
+    "mean_best_delta_e": 32.18713909476762,
+    "mean_solution_groups": 2.7884,
+    "max_solution_groups": 7,
+    "d2_ground_truth_within_5nm_ratio": 0.1382,
+    "jsd": {
+      "d1": 0.1527089098152343,
+      "d2": 0.2973558312300243,
+      "d3": 0.21636186472867663
+    }
+  },
+  "paper_targets": {
+    "lab_regressor_mean_delta_e": 0.19,
+    "generator_mean_best_delta_e_with_1000_z": 0.44,
+    "mean_solution_groups_with_1000_z": 3.58,
+    "d2_ground_truth_within_5nm_ratio": 0.939,
+    "jsd": {
+      "d1": 0.069,
+      "d2": 0.067,
+      "d3": 0.066
+    }
+  },
+  "artifacts": {
+    "selected_checkpoint": "generator_checkpoint_best.pt",
+    "best_available_checkpoint": "generator_checkpoint_best.pt",
+    "final_checkpoint": "generator_checkpoint.pt",
+    "available_checkpoints": [
+      "generator_checkpoint_best.pt",
+      "generator_checkpoint.pt"
+    ]
+  }
+}
