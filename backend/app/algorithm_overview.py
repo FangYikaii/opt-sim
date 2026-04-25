@@ -6,12 +6,15 @@ from pathlib import Path
 from statistics import mean
 from typing import Any
 
+from .config import get_agent_settings
 from .schemas import (
+    ActiveModelInfo,
     AlgorithmExperiment,
     AlgorithmHeadlineMetric,
     AlgorithmOperationStep,
     AlgorithmOverview,
     AlgorithmTargetComparison,
+    AgentConfigurationSummary,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -314,6 +317,88 @@ def _target_comparisons(best_experiment: AlgorithmExperiment | None) -> list[Alg
     return comparisons
 
 
+def _build_active_model_info(best_experiment: AlgorithmExperiment | None) -> ActiveModelInfo | None:
+    if best_experiment is None:
+        return None
+
+    checkpoint_path = resolve_selected_checkpoint_path(best_experiment.id)
+    if checkpoint_path is None:
+        return ActiveModelInfo(
+            status="fallback",
+            source="runtime-fallback",
+            label="Runtime lightweight cGAN",
+            experimentId=best_experiment.id,
+            summary="No persisted checkpoint was resolved, so inverse design will fall back to runtime lightweight cGAN sampling.",
+            meanBestDeltaE=best_experiment.meanBestDeltaE,
+            updatedAt=best_experiment.updatedAt,
+        )
+
+    metrics = _safe_load_json(ARTIFACTS_DIR / best_experiment.id / "metrics.json") or {}
+    artifacts = metrics.get("artifacts") or {}
+
+    return ActiveModelInfo(
+        status="ready",
+        source="best-experiment",
+        label="Best trained paper-reproduction checkpoint",
+        experimentId=best_experiment.id,
+        checkpointFile=checkpoint_path.name,
+        checkpointPath=str(checkpoint_path),
+        checkpointMetricName=(
+            str(artifacts["selected_checkpoint_metric_name"])
+            if artifacts.get("selected_checkpoint_metric_name") is not None
+            else None
+        ),
+        checkpointMetricValue=(
+            float(artifacts["selected_checkpoint_metric_value"])
+            if artifacts.get("selected_checkpoint_metric_value") is not None
+            else None
+        ),
+        meanBestDeltaE=best_experiment.meanBestDeltaE,
+        updatedAt=best_experiment.updatedAt,
+        summary=(
+            f"Runtime inverse design uses `{checkpoint_path.name}` from `{best_experiment.id}` as the active production checkpoint."
+        ),
+    )
+
+
+def _build_agent_configuration_summary() -> AgentConfigurationSummary:
+    settings = get_agent_settings()
+    configured = bool(settings.api_key)
+
+    if not settings.enabled:
+        mode = "disabled"
+        summary = "Decision support agent is disabled by configuration."
+    elif configured:
+        mode = "live"
+        summary = (
+            f"Decision support agent is enabled and will call {settings.provider_label} using `{settings.model}`."
+        )
+    else:
+        mode = "fallback"
+        summary = (
+            "Decision support agent is enabled, but no API key is configured, so the backend will use heuristic decision support."
+        )
+
+    return AgentConfigurationSummary(
+        enabled=settings.enabled,
+        configured=configured,
+        mode=mode,
+        providerLabel=settings.provider_label,
+        model=settings.model,
+        apiBaseUrl=settings.api_base_url,
+        summary=summary,
+    )
+
+
+def get_active_model_info() -> ActiveModelInfo | None:
+    experiments = [experiment for experiment, _ in _list_experiments()]
+    return _build_active_model_info(_pick_best_experiment(experiments))
+
+
+def get_agent_configuration_summary() -> AgentConfigurationSummary:
+    return _build_agent_configuration_summary()
+
+
 def _operation_steps() -> list[AlgorithmOperationStep]:
     repo_root = str(ROOT)
     return [
@@ -384,6 +469,8 @@ def get_algorithm_overview() -> AlgorithmOverview:
     experiments = [experiment for experiment, _ in raw_experiments]
     latest_experiment = max(raw_experiments, key=lambda item: item[1])[0] if raw_experiments else None
     best_experiment = _pick_best_experiment(experiments)
+    active_model = _build_active_model_info(best_experiment)
+    agent_configuration = _build_agent_configuration_summary()
     _, environment_summary = _runtime_probe()
 
     if best_experiment is None:
@@ -446,6 +533,8 @@ def get_algorithm_overview() -> AlgorithmOverview:
         latestExperimentId=latest_experiment.id if latest_experiment else None,
         bestExperiment=best_experiment,
         latestExperiment=latest_experiment,
+        activeModel=active_model,
+        agentConfiguration=agent_configuration,
         experiments=experiments,
         headlineMetrics=_headline_metrics(
             best_experiment=best_experiment,

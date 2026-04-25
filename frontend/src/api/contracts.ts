@@ -1,13 +1,16 @@
 import type { components } from './generated-types'
 
 export type ApiErrorPayload = components['schemas']['ApiErrorPayload']
+export type ActiveModelInfo = components['schemas']['ActiveModelInfo']
 export type AlgorithmExperiment = components['schemas']['AlgorithmExperiment']
 export type AlgorithmHeadlineMetric = components['schemas']['AlgorithmHeadlineMetric']
 export type AlgorithmOperationStep = components['schemas']['AlgorithmOperationStep']
 export type AlgorithmOverview = components['schemas']['AlgorithmOverview']
 export type AlgorithmTargetComparison = components['schemas']['AlgorithmTargetComparison']
+export type AgentConfigurationSummary = components['schemas']['AgentConfigurationSummary']
 export type DesignRequest = components['schemas']['DesignRequest']
 export type DesignRunResponse = components['schemas']['DesignRunResponse']
+export type DecisionSupport = components['schemas']['DecisionSupport']
 export type RunSummary = components['schemas']['RunSummary']
 export type WorkspaceDraft = components['schemas']['WorkspaceDraft']
 export type TargetAsset = components['schemas']['TargetAsset']
@@ -30,6 +33,9 @@ export interface WorkspaceDetail {
   candidates: CandidateSolution[]
   constraints: ConstraintCheck[]
   exportEstimate: ExportEstimate
+  activeModel: ActiveModelInfo
+  agentConfiguration: AgentConfigurationSummary
+  decisionSupport: DecisionSupport
 }
 
 export interface WorkspaceService {

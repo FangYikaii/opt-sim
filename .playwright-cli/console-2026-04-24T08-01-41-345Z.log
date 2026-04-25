@@ -510,3 +510,253 @@
     at connect (http://127.0.0.1:5173/@vite/client:278:21)
     at connect (http://127.0.0.1:5173/@vite/client:362:45)
     at  (http://127.0.0.1:5173/@vite/client:926:11)
+[84870418ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[84870788ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[84870789ms] ApiClientError: Run not found: run-demo-live
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2043:20)
+    at promise callback*queueFlush (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1974:66)
+    at queuePostFlushCb (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1984:2)
+    at queueEffectWithSuspense (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:6303:23)
+    at doWatch/baseWatchOptions.scheduler (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2385:24)
+    at watch$1/effect.scheduler< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1673:48)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:439:33)
+    at endBatch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:489:7)
+    at notify (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:704:4)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:696:8)
+    at set value (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1355:13)
+    at finalizeNavigation (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=4f4a0b4c:2629:3)
+    at createRouter/pushWithRedirect/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=4f4a0b4c:2557:23)
+    at promise callback*pushWithRedirect (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=4f4a0b4c:2545:257)
+    at push (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=4f4a0b4c:2498:10)
+    at install (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=4f4a0b4c:2745:9)
+    at use (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:4475:13)
+    at  (http://127.0.0.1:5173/src/main.ts:5:16)
+[84948330ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[84948330ms] [ERROR] [JavaScript Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://127.0.0.1:8000/api/runs/run-demo-live/workspace. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500."] @ :0
+[84948331ms] TypeError: NetworkError when attempting to fetch resource.
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2043:20)
+[85007165ms] [ERROR] [JavaScript Error: "Loading module from “http://127.0.0.1:5173/src/pages/HomePage.vue?t=1777102708506” was blocked because of a disallowed MIME type (“”)." {file: "http://127.0.0.1:5173/runs/run-demo-live" line: 0}] @ http://127.0.0.1:5173/runs/run-demo-live:0
+[85007165ms] [ERROR] [vite] Error @ http://127.0.0.1:5173/@vite/client:509
+[85007165ms] [ERROR] [vite] Failed to reload /src/pages/HomePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[85007165ms] [WARNING] [JavaScript Warning: "Loading failed for the module with source “http://127.0.0.1:5173/src/pages/HomePage.vue?t=1777102708506”." {file: "http://127.0.0.1:5173/@vite/client" line: 0}] @ http://127.0.0.1:5173/@vite/client:0
+[85062262ms] [ERROR] [vite] Error @ http://127.0.0.1:5173/@vite/client:509
+[85062262ms] [ERROR] [vite] Failed to reload /src/pages/WorkspacePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[85062262ms] [ERROR] [JavaScript Error: "Loading module from “http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102763603” was blocked because of a disallowed MIME type (“”)." {file: "http://127.0.0.1:5173/runs/run-demo-live" line: 0}] @ http://127.0.0.1:5173/runs/run-demo-live:0
+[85062262ms] [WARNING] [JavaScript Warning: "Loading failed for the module with source “http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102763603”." {file: "http://127.0.0.1:5173/@vite/client" line: 0}] @ http://127.0.0.1:5173/@vite/client:0
+[85154595ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[85154596ms] [ERROR] [JavaScript Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://127.0.0.1:8000/api/runs/run-demo-live/workspace. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500."] @ :0
+[85154596ms] TypeError: NetworkError when attempting to fetch resource.
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2043:20)
+    at promise callback*queueFlush (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1974:66)
+    at queueJob (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1970:3)
+    at reload (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2134:39)
+    at tryWrap/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2158:11)
+    at  (http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102649657:153:23)
+    at accept/< (http://127.0.0.1:5173/@vite/client:61:95)
+    at fetchUpdate/< (http://127.0.0.1:5173/@vite/client:213:54)
+    at queueUpdate/< (http://127.0.0.1:5173/@vite/client:191:55)
+    at queueUpdate (http://127.0.0.1:5173/@vite/client:191:33)
+    at async*handleMessage/< (http://127.0.0.1:5173/@vite/client:943:55)
+    at handleMessage (http://127.0.0.1:5173/@vite/client:942:38)
+    at async*createHMRHandler/</< (http://127.0.0.1:5173/@vite/client:446:49)
+    at dequeue (http://127.0.0.1:5173/@vite/client:468:8)
+    at enqueue/< (http://127.0.0.1:5173/@vite/client:460:9)
+    at enqueue (http://127.0.0.1:5173/@vite/client:454:10)
+    at createHMRHandler/< (http://127.0.0.1:5173/@vite/client:446:28)
+    at onMessage (http://127.0.0.1:5173/@vite/client:294:15)
+    at createWebSocketModuleRunnerTransport/connect/< (http://127.0.0.1:5173/@vite/client:402:14)
+    at EventListener.handleEvent*connect (http://127.0.0.1:5173/@vite/client:401:11)
+    at connect (http://127.0.0.1:5173/@vite/client:847:23)
+    at connect (http://127.0.0.1:5173/@vite/client:278:21)
+    at connect (http://127.0.0.1:5173/@vite/client:362:45)
+    at  (http://127.0.0.1:5173/@vite/client:926:11)
+[85580797ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[85580797ms] [ERROR] [JavaScript Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://127.0.0.1:8000/api/runs/run-demo-live/workspace. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500."] @ :0
+[85580798ms] TypeError: NetworkError when attempting to fetch resource.
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2043:20)
+    at promise callback*queueFlush (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1974:66)
+    at queueJob (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1970:3)
+    at reload (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2134:39)
+    at tryWrap/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2158:11)
+    at  (http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102855899:1184:23)
+    at accept/< (http://127.0.0.1:5173/@vite/client:61:95)
+    at fetchUpdate/< (http://127.0.0.1:5173/@vite/client:213:54)
+    at queueUpdate/< (http://127.0.0.1:5173/@vite/client:191:55)
+    at queueUpdate (http://127.0.0.1:5173/@vite/client:191:33)
+    at async*handleMessage/< (http://127.0.0.1:5173/@vite/client:943:55)
+    at handleMessage (http://127.0.0.1:5173/@vite/client:942:38)
+    at async*createHMRHandler/</< (http://127.0.0.1:5173/@vite/client:446:49)
+    at dequeue (http://127.0.0.1:5173/@vite/client:468:8)
+    at dequeue/< (http://127.0.0.1:5173/@vite/client:470:9)
+    at Async*dequeue (http://127.0.0.1:5173/@vite/client:468:56)
+    at enqueue/< (http://127.0.0.1:5173/@vite/client:460:9)
+    at enqueue (http://127.0.0.1:5173/@vite/client:454:10)
+    at createHMRHandler/< (http://127.0.0.1:5173/@vite/client:446:28)
+    at onMessage (http://127.0.0.1:5173/@vite/client:294:15)
+    at createWebSocketModuleRunnerTransport/connect/< (http://127.0.0.1:5173/@vite/client:402:14)
+    at EventListener.handleEvent*connect (http://127.0.0.1:5173/@vite/client:401:11)
+    at connect (http://127.0.0.1:5173/@vite/client:847:23)
+    at connect (http://127.0.0.1:5173/@vite/client:278:21)
+    at connect (http://127.0.0.1:5173/@vite/client:362:45)
+    at  (http://127.0.0.1:5173/@vite/client:926:11)
+[85720980ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[85722368ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[85722369ms] [ERROR] [JavaScript Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://127.0.0.1:8000/api/runs/run-demo-live/workspace. (Reason: CORS request did not succeed). Status code: (null)."] @ :0
+[85722369ms] TypeError: NetworkError when attempting to fetch resource.
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2043:20)
+    at promise callback*queueFlush (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1974:66)
+    at queuePostFlushCb (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1984:2)
+    at queueEffectWithSuspense (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6303:23)
+    at doWatch/baseWatchOptions.scheduler (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2385:24)
+    at watch$1/effect.scheduler< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1673:48)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:439:33)
+    at endBatch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:489:7)
+    at notify (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:704:4)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:696:8)
+    at set value (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1355:13)
+    at finalizeNavigation (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2629:3)
+    at createRouter/pushWithRedirect/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2557:23)
+    at promise callback*pushWithRedirect (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2545:257)
+    at push (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2498:10)
+    at install (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2745:9)
+    at use (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:4475:13)
+    at  (http://127.0.0.1:5173/src/main.ts:5:16)
+[85869596ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[85870016ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[85870017ms] ApiClientError: Run not found: run-demo-live
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2043:20)
+    at promise callback*queueFlush (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1974:66)
+    at queuePostFlushCb (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1984:2)
+    at queueEffectWithSuspense (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6303:23)
+    at doWatch/baseWatchOptions.scheduler (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2385:24)
+    at watch$1/effect.scheduler< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1673:48)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:439:33)
+    at endBatch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:489:7)
+    at notify (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:704:4)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:696:8)
+    at set value (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1355:13)
+    at finalizeNavigation (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2629:3)
+    at createRouter/pushWithRedirect/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2557:23)
+    at promise callback*pushWithRedirect (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2545:257)
+    at push (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2498:10)
+    at install (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2745:9)
+    at use (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:4475:13)
+    at  (http://127.0.0.1:5173/src/main.ts:5:16)
+[85885946ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[85888201ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[85888201ms] [ERROR] [JavaScript Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://127.0.0.1:8000/api/runs/run-demo-live/workspace. (Reason: CORS request did not succeed). Status code: (null)."] @ :0
+[85888202ms] TypeError: NetworkError when attempting to fetch resource.
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2043:20)
+    at promise callback*queueFlush (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1974:66)
+    at queuePostFlushCb (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1984:2)
+    at queueEffectWithSuspense (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6303:23)
+    at doWatch/baseWatchOptions.scheduler (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2385:24)
+    at watch$1/effect.scheduler< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1673:48)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:439:33)
+    at endBatch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:489:7)
+    at notify (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:704:4)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:696:8)
+    at set value (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1355:13)
+    at finalizeNavigation (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2629:3)
+    at createRouter/pushWithRedirect/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2557:23)
+    at promise callback*pushWithRedirect (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2545:257)
+    at push (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2498:10)
+    at install (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2745:9)
+    at use (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:4475:13)
+    at  (http://127.0.0.1:5173/src/main.ts:5:16)
+[86079075ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[86080584ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[86080585ms] [ERROR] [JavaScript Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://127.0.0.1:8000/api/runs/run-demo-live/workspace. (Reason: CORS request did not succeed). Status code: (null)."] @ :0
+[86080585ms] TypeError: NetworkError when attempting to fetch resource.
+    at logError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1935:19)
+    at handleError (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1927:10)
+    at callWithAsyncErrorHandling/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1892:15)
+    at promise callback*callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1891:34)
+    at injectHook/hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3781:42)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2043:20)
+    at promise callback*queueFlush (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1974:66)
+    at queuePostFlushCb (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1984:2)
+    at queueEffectWithSuspense (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6303:23)
+    at doWatch/baseWatchOptions.scheduler (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2385:24)
+    at watch$1/effect.scheduler< (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1673:48)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:439:33)
+    at endBatch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:489:7)
+    at notify (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:704:4)
+    at trigger (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:696:8)
+    at set value (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1355:13)
+    at finalizeNavigation (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2629:3)
+    at createRouter/pushWithRedirect/< (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2557:23)
+    at promise callback*pushWithRedirect (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2545:257)
+    at push (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2498:10)
+    at install (http://127.0.0.1:5173/node_modules/.vite/deps/vue-router.js?v=1a44554a:2745:9)
+    at use (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:4475:13)
+    at  (http://127.0.0.1:5173/src/main.ts:5:16)
+[88084400ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[88085869ms] [ERROR] [JavaScript Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://127.0.0.1:8000/api/runs/run-demo-live/workspace. (Reason: CORS request did not succeed). Status code: (null)."] @ :0

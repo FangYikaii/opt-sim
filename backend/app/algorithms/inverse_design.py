@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Literal
 
 import numpy as np
@@ -42,15 +43,14 @@ class EvaluatedDesign:
     composite_score: float
 
 
-def _evaluate_design(
+@lru_cache(maxsize=65536)
+def _cached_design_response(
     d_ag_bottom: float,
     d_sio2: float,
     d_ag_top: float,
-    target_lab: np.ndarray,
-    *,
     theta_deg: float,
     polarization: Polarization,
-) -> tuple[float, str]:
+) -> tuple[np.ndarray, np.ndarray, str]:
     spectrum = transmittance_spectrum_ag_sio2_ag(
         d_ag_bottom,
         d_sio2,
@@ -60,8 +60,26 @@ def _evaluate_design(
     )
     xyz = spectrum_to_xyz(spectrum)
     lab = xyz_to_lab(xyz)
+    return spectrum, lab, xyz_to_srgb_hex(xyz)
+
+
+def _evaluate_design(
+    d_ag_bottom: float,
+    d_sio2: float,
+    d_ag_top: float,
+    target_lab: np.ndarray,
+    *,
+    theta_deg: float,
+    polarization: Polarization,
+) -> tuple[float, str]:
+    _, lab, simulated_hex = _cached_design_response(
+        d_ag_bottom,
+        d_sio2,
+        d_ag_top,
+        float(theta_deg),
+        polarization,
+    )
     delta_e = delta_e_2000(lab, target_lab)
-    simulated_hex = xyz_to_srgb_hex(xyz)
     return delta_e, simulated_hex
 
 
@@ -243,6 +261,27 @@ def _sample_gan_designs(
     return np.clip(generated_designs, lower_bounds, upper_bounds)
 
 
+def _retrieval_grid(
+    theta_deg: float,
+    polarization: Polarization,
+) -> tuple[list[tuple[float, float, float]], np.ndarray]:
+    grid: list[tuple[float, float, float]] = []
+    labs: list[np.ndarray] = []
+    for d_ag_bottom in np.arange(10.0, 31.0, 2.0):
+        for d_sio2 in np.arange(60.0, 181.0, 5.0):
+            for d_ag_top in np.arange(10.0, 31.0, 2.0):
+                _, lab, _ = _cached_design_response(
+                    float(d_ag_bottom),
+                    float(d_sio2),
+                    float(d_ag_top),
+                    float(theta_deg),
+                    polarization,
+                )
+                grid.append((float(d_ag_bottom), float(d_sio2), float(d_ag_top)))
+                labs.append(lab)
+    return grid, np.vstack(labs)
+
+
 def _format_polarization_label(polarization: Polarization) -> str:
     if polarization == "te":
         return "TE"
@@ -259,26 +298,7 @@ def run_inverse_design(
 ) -> InverseDesignResult:
     target_lab = hex_to_lab(target_hex)
 
-    grid = []
-    labs = []
-    rgb_hexes = []
-    for d_ag_bottom in np.arange(10.0, 31.0, 2.0):
-        for d_sio2 in np.arange(60.0, 181.0, 5.0):
-            for d_ag_top in np.arange(10.0, 31.0, 2.0):
-                spectrum = transmittance_spectrum_ag_sio2_ag(
-                    d_ag_bottom,
-                    d_sio2,
-                    d_ag_top,
-                    theta_deg=theta_deg,
-                    polarization=polarization,
-                )
-                xyz = spectrum_to_xyz(spectrum)
-                lab = xyz_to_lab(xyz)
-                grid.append((float(d_ag_bottom), float(d_sio2), float(d_ag_top)))
-                labs.append(lab)
-                rgb_hexes.append(xyz_to_srgb_hex(xyz))
-
-    lab_array = np.vstack(labs)
+    grid, lab_array = _retrieval_grid(theta_deg, polarization)
     design_array = np.array(grid, dtype=np.float64)
     neighbors = NearestNeighbors(n_neighbors=top_k)
     neighbors.fit(lab_array)
@@ -312,7 +332,7 @@ def run_inverse_design(
         evaluated_candidates[retrieval_candidate.design] = retrieval_candidate
         evaluated_candidates[retrieval_refined.design] = retrieval_refined
 
-    for design in gan_designs[: max(top_k * 3, 6)]:
+    for design in gan_designs[: max(top_k * 2, 4)]:
         design_tuple = tuple(float(value) for value in design)
         gan_candidate = _evaluate_candidate(
             *design_tuple,

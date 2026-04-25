@@ -8,6 +8,7 @@ from .algorithm import (
 from .agent import DesignRequest, DesignRunResponse
 from .artifacts import ArtifactDetail, ArtifactMetadataItem, ArtifactSummary
 from .common import ApiErrorPayload, ErrorBody
+from .decision import ActiveModelInfo, AgentConfigurationSummary, DecisionSupport
 from .project import WorkspaceProject
 from .review import (
     CandidateMetric,
@@ -27,8 +28,11 @@ __all__ = [
     "AlgorithmOverview",
     "AlgorithmTargetComparison",
     "ApiErrorPayload",
+    "ActiveModelInfo",
+    "AgentConfigurationSummary",
     "DesignRequest",
     "DesignRunResponse",
+    "DecisionSupport",
     "ArtifactDetail",
     "ArtifactMetadataItem",
     "ArtifactSummary",

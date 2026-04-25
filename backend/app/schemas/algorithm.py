@@ -4,6 +4,8 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from .decision import ActiveModelInfo, AgentConfigurationSummary
+
 
 StatusState = Literal["pass", "warning", "fail", "unknown"]
 
@@ -70,6 +72,8 @@ class AlgorithmOverview(BaseModel):
     latestExperimentId: str | None = None
     bestExperiment: AlgorithmExperiment | None = None
     latestExperiment: AlgorithmExperiment | None = None
+    activeModel: ActiveModelInfo | None = None
+    agentConfiguration: AgentConfigurationSummary | None = None
     experiments: list[AlgorithmExperiment]
     headlineMetrics: list[AlgorithmHeadlineMetric]
     targetComparisons: list[AlgorithmTargetComparison]

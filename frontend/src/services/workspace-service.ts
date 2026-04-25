@@ -2,18 +2,10 @@ import type {
   ApiErrorPayload,
   AlgorithmOverview,
   ArtifactDetail,
-  ArtifactSummary,
-  CandidateSolution,
-  ConstraintCheck,
   DesignRequest,
   DesignRunResponse,
-  ExportEstimate,
   RunSummary,
-  TargetAsset,
-  TimelineEvent,
-  WorkspaceDraft,
   WorkspaceDetail,
-  WorkspaceProject,
   WorkspaceService,
 } from '../api/contracts'
 
@@ -95,43 +87,7 @@ export const workspaceService: WorkspaceService = {
 
   async getWorkspaceDetail(runId?: string): Promise<WorkspaceDetail> {
     const resolvedRunId = runId ?? (await getDefaultRunId())
-
-    const [
-      project,
-      runs,
-      activeRun,
-      draft,
-      targets,
-      timeline,
-      candidates,
-      constraints,
-      exportEstimate,
-      artifacts,
-    ] = await Promise.all([
-      requestJson<WorkspaceProject>('/api/project'),
-      requestJson<RunSummary[]>('/api/runs'),
-      requestJson<RunSummary>(`/api/runs/${resolvedRunId}`),
-      requestJson<WorkspaceDraft>(`/api/runs/${resolvedRunId}/draft`),
-      requestJson<TargetAsset[]>(`/api/runs/${resolvedRunId}/targets`),
-      requestJson<TimelineEvent[]>(`/api/runs/${resolvedRunId}/timeline`),
-      requestJson<CandidateSolution[]>(`/api/runs/${resolvedRunId}/candidates`),
-      requestJson<ConstraintCheck[]>(`/api/runs/${resolvedRunId}/constraints`),
-      requestJson<ExportEstimate>(`/api/runs/${resolvedRunId}/export-estimate`),
-      requestJson<ArtifactSummary[]>(`/api/runs/${resolvedRunId}/artifacts`),
-    ])
-
-    return {
-      project,
-      activeRun,
-      draft,
-      runs,
-      targets,
-      artifacts,
-      timeline,
-      candidates,
-      constraints,
-      exportEstimate,
-    }
+    return requestJson<WorkspaceDetail>(`/api/runs/${resolvedRunId}/workspace`)
   },
 
   async getArtifactDetail(artifactId: string): Promise<ArtifactDetail> {

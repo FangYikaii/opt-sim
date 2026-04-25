@@ -186,6 +186,9 @@ def test_design_run_api_exposes_refined_candidate_metrics() -> None:
     assert "Polarization" in metric_labels
     assert payload["draft"]["incidenceAngleValue"] == "45.0 deg"
     assert payload["draft"]["polarizationValue"] == "TM"
+    assert payload["activeModel"]["status"] in {"ready", "fallback"}
+    assert payload["agentConfiguration"]["mode"] in {"live", "fallback", "disabled"}
+    assert payload["decisionSupport"]["recommendedCandidateId"] == payload["candidates"][0]["id"]
 
 
 def test_artifact_detail_records_ranking_condition_and_export_metadata() -> None:
@@ -224,3 +227,5 @@ def test_artifact_detail_records_ranking_condition_and_export_metadata() -> None
     assert export_metadata["ranked_under"] == "45.0 deg, TM"
     assert export_metadata["polarization"] == "TM"
     assert export_metadata["delivery_format"] == payload["exportEstimate"]["format"]
+    assert report_metadata["decision_confidence"] in {"high", "medium", "low"}
+    assert "active_model" in export_metadata

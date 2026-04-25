@@ -4,6 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from .decision import ActiveModelInfo, AgentConfigurationSummary, DecisionSupport
 from .review import CandidateSolution, ConstraintCheck, ExportEstimate
 from .runs import RunSummary, TargetAsset, WorkspaceDraft
 from .timeline import TimelineEvent
@@ -25,3 +26,6 @@ class DesignRunResponse(BaseModel):
     candidates: list[CandidateSolution]
     constraints: list[ConstraintCheck]
     exportEstimate: ExportEstimate
+    activeModel: ActiveModelInfo
+    agentConfiguration: AgentConfigurationSummary
+    decisionSupport: DecisionSupport

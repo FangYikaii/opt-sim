@@ -94,6 +94,7 @@ def get_workspace_detail(run_id: str | None = None) -> WorkspaceDetail:
         workspace = get_runtime_workspace(run_id)
         if workspace is not None:
             return workspace
+        raise KeyError(f"Run not found: {run_id}")
 
     runs = list_runtime_runs()
     if not runs:

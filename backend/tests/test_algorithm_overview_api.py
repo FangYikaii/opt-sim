@@ -18,3 +18,5 @@ def test_algorithm_overview_endpoint_returns_artifact_backed_summary() -> None:
     assert len(payload["experiments"]) >= 1
     assert len(payload["headlineMetrics"]) >= 1
     assert len(payload["operationSteps"]) >= 1
+    assert payload["activeModel"] is not None
+    assert payload["agentConfiguration"] is not None

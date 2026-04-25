@@ -280,6 +280,57 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ActiveModelInfo */
+        ActiveModelInfo: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ready" | "fallback";
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "best-experiment" | "runtime-fallback";
+            /** Label */
+            label: string;
+            /** Experimentid */
+            experimentId?: string | null;
+            /** Checkpointfile */
+            checkpointFile?: string | null;
+            /** Checkpointpath */
+            checkpointPath?: string | null;
+            /** Checkpointmetricname */
+            checkpointMetricName?: string | null;
+            /** Checkpointmetricvalue */
+            checkpointMetricValue?: number | null;
+            /** Meanbestdeltae */
+            meanBestDeltaE?: number | null;
+            /** Updatedat */
+            updatedAt?: string | null;
+            /** Summary */
+            summary: string;
+        };
+        /** AgentConfigurationSummary */
+        AgentConfigurationSummary: {
+            /** Enabled */
+            enabled: boolean;
+            /** Configured */
+            configured: boolean;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "live" | "fallback" | "disabled";
+            /** Providerlabel */
+            providerLabel: string;
+            /** Model */
+            model: string;
+            /** Apibaseurl */
+            apiBaseUrl: string;
+            /** Summary */
+            summary: string;
+        };
         /** AlgorithmExperiment */
         AlgorithmExperiment: {
             /** Id */
@@ -405,6 +456,8 @@ export interface components {
             latestExperimentId?: string | null;
             bestExperiment?: components["schemas"]["AlgorithmExperiment"] | null;
             latestExperiment?: components["schemas"]["AlgorithmExperiment"] | null;
+            activeModel?: components["schemas"]["ActiveModelInfo"] | null;
+            agentConfiguration?: components["schemas"]["AgentConfigurationSummary"] | null;
             /** Experiments */
             experiments: components["schemas"]["AlgorithmExperiment"][];
             /** Headlinemetrics */
@@ -540,6 +593,31 @@ export interface components {
              */
             state: "pass" | "warning" | "fail" | "unknown";
         };
+        /** DecisionSupport */
+        DecisionSupport: {
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "heuristic" | "llm";
+            /**
+             * Confidence
+             * @enum {string}
+             */
+            confidence: "high" | "medium" | "low";
+            /** Headline */
+            headline: string;
+            /** Summary */
+            summary: string;
+            /** Recommendedcandidateid */
+            recommendedCandidateId?: string | null;
+            /** Nextaction */
+            nextAction: string;
+            /** Rationale */
+            rationale: string[];
+            /** Risks */
+            risks: string[];
+        };
         /** DesignRequest */
         DesignRequest: {
             /** Requirementtext */
@@ -576,6 +654,9 @@ export interface components {
             /** Constraints */
             constraints: components["schemas"]["ConstraintCheck"][];
             exportEstimate: components["schemas"]["ExportEstimate"];
+            activeModel: components["schemas"]["ActiveModelInfo"];
+            agentConfiguration: components["schemas"]["AgentConfigurationSummary"];
+            decisionSupport: components["schemas"]["DecisionSupport"];
         };
         /** ErrorBody */
         ErrorBody: {
@@ -694,6 +775,9 @@ export interface components {
             /** Constraints */
             constraints: components["schemas"]["ConstraintCheck"][];
             exportEstimate: components["schemas"]["ExportEstimate"];
+            activeModel: components["schemas"]["ActiveModelInfo"];
+            agentConfiguration: components["schemas"]["AgentConfigurationSummary"];
+            decisionSupport: components["schemas"]["DecisionSupport"];
         };
         /** WorkspaceDraft */
         WorkspaceDraft: {

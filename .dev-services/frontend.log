@@ -1046,3 +1046,334 @@ connect@http://127.0.0.1:5173/@vite/client:362:45
  > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
 
 9:36:54 PM [vite] (client) hmr update /src/style.css
+3:36:11 PM [vite] vite.config.ts changed, restarting server...
+3:36:11 PM [vite] server restarted.
+3:36:11 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:36:11 PM [vite] (client) [Unhandled rejection] ApiClientError: Run not found: run-demo-live
+ > requestJson src/services/workspace-service.ts:47:12
+    45 |      }
+    46 |      if (payload.detail && 'error' in payload.detail) {
+    47 |        throw new ApiClientError(payload.detail)
+       |              ^
+    48 |      }
+    49 |      throw new Error(`Request failed with status ${response.status}`)
+ > Object.getWorkspaceDetail src/services/workspace-service.ts:110:8
+ > loadWorkspace src/pages/WorkspacePage.vue:42:38
+ > src/pages/WorkspacePage.vue:64:2
+
+3:36:12 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:36:12 PM [vite] (client) [Unhandled rejection] ApiClientError: Run not found: run-demo-live
+ > ApiClientError src/services/workspace-service.ts:27:4
+    25 |  
+    26 |    constructor(payload: ApiErrorPayload) {
+    27 |      super(payload.error.message)
+       |      ^
+    28 |      this.name = 'ApiClientError'
+    29 |      this.code = payload.error.code
+ > requestJson src/services/workspace-service.ts:47:12
+ > async*getWorkspaceDetail src/services/workspace-service.ts:114:6
+ > loadWorkspace src/pages/WorkspacePage.vue:43:21
+ > setup/< src/pages/WorkspacePage.vue:64:8
+ > createHook/</< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:44
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:38
+ > injectHook/hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:45
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:22
+ > promise callback*queueFlush node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:322:42
+ > queuePostFlushCb node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:336:2
+ > queueEffectWithSuspense node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:7543:21
+ > doWatch/baseWatchOptions.scheduler node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:891:28
+ > watch$1/effect.scheduler< node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:1935:49
+ > trigger node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:278:11
+ > endBatch node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:336:12
+ > notify node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:627:6
+ > trigger node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:601:9
+ > set value node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:1532:17
+ > finalizeNavigation node_modules/vue-router/dist/vue-router.mjs:1388:2
+ > createRouter/pushWithRedirect/< node_modules/vue-router/dist/vue-router.mjs:1316:22
+ > promise callback*pushWithRedirect node_modules/vue-router/dist/vue-router.mjs:1304:256
+ > push node_modules/vue-router/dist/vue-router.mjs:1257:9
+ > install node_modules/vue-router/dist/vue-router.mjs:1504:9
+ > use node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:4171:17
+ > src/main.ts:6:15
+
+3:37:14 PM [vite] (client) hmr update /src/components/AlgorithmOverviewPanel.vue, /src/components/AppShell.vue, /src/components/TopBar.vue, /src/components/InspectorPanel.vue, /src/components/AgentTimeline.vue, /src/components/BottomDrawer.vue, /src/components/ArtifactDetailPanel.vue
+3:37:29 PM [vite] (client) hmr update /src/pages/HomePage.vue, /src/pages/WorkspacePage.vue
+3:37:29 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:37:29 PM [vite] (client) [Unhandled rejection] TypeError: Failed to fetch
+ > requestJson src/services/workspace-service.ts:27:25
+    25 |  
+    26 |  async function requestJson<T>(path: string): Promise<T> {
+    27 |    const response = await fetch(`${API_BASE_URL}${path}`, {
+       |                           ^
+    28 |      headers: {
+    29 |        Accept: 'application/json',
+ > Object.getWorkspaceDetail src/services/workspace-service.ts:90:11
+ > loadWorkspace src/pages/WorkspacePage.vue:43:21
+ > src/pages/WorkspacePage.vue:64:8
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:39
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:16
+ > hook.__weh.hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:18
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:4
+
+3:37:29 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:37:29 PM [vite] (client) [Unhandled rejection] TypeError: NetworkError when attempting to fetch resource.
+
+3:38:28 PM [vite] (client) hmr update /src/pages/HomePage.vue
+3:38:28 PM [vite] (client) [console.error] [vite] Failed to reload /src/pages/HomePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above)
+3:38:28 PM [vite] (client) [console.error] [vite] TypeError: error loading dynamically imported module: http://127.0.0.1:5173/src/pages/HomePage.vue?t=1777102708506
+3:38:28 PM [vite] (client) [console.error] [vite] Failed to reload /src/pages/HomePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above)
+3:39:13 PM [vite] (client) hmr update /src/pages/HomePage.vue
+3:39:23 PM [vite] (client) hmr update /src/pages/WorkspacePage.vue
+3:39:23 PM [vite] (client) [console.error] [vite] Failed to reload /src/pages/WorkspacePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above)
+3:39:23 PM [vite] (client) [console.error] [vite] TypeError: error loading dynamically imported module: http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102763603
+3:39:23 PM [vite] (client) [console.error] [vite] Failed to reload /src/pages/WorkspacePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above)
+3:40:55 PM [vite] (client) hmr update /src/pages/WorkspacePage.vue
+3:40:55 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:40:55 PM [vite] (client) [Unhandled rejection] TypeError: Failed to fetch
+ > requestJson src/services/workspace-service.ts:27:25
+    25 |  
+    26 |  async function requestJson<T>(path: string): Promise<T> {
+    27 |    const response = await fetch(`${API_BASE_URL}${path}`, {
+       |                           ^
+    28 |      headers: {
+    29 |        Accept: 'application/json',
+ > Object.getWorkspaceDetail src/services/workspace-service.ts:90:11
+ > loadWorkspace src/pages/WorkspacePage.vue:60:49
+ > src/pages/WorkspacePage.vue:78:8
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:39
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:16
+ > hook.__weh.hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:18
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:4
+
+3:40:55 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:40:55 PM [vite] (client) [Unhandled rejection] TypeError: NetworkError when attempting to fetch resource.
+
+3:41:56 PM [vite] (client) hmr update /src/style.css
+3:48:02 PM [vite] (client) hmr update /src/pages/HomePage.vue
+3:48:02 PM [vite] (client) hmr update /src/pages/WorkspacePage.vue
+3:48:02 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:48:02 PM [vite] (client) [Unhandled rejection] TypeError: Failed to fetch
+ > requestJson src/services/workspace-service.ts:27:25
+    25 |  
+    26 |  async function requestJson<T>(path: string): Promise<T> {
+    27 |    const response = await fetch(`${API_BASE_URL}${path}`, {
+       |                           ^
+    28 |      headers: {
+    29 |        Accept: 'application/json',
+ > Object.getWorkspaceDetail src/services/workspace-service.ts:90:11
+ > loadWorkspace src/pages/WorkspacePage.vue:68:49
+ > src/pages/WorkspacePage.vue:86:8
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:39
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:16
+ > hook.__weh.hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:18
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:4
+
+3:48:02 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:48:02 PM [vite] (client) [Unhandled rejection] TypeError: NetworkError when attempting to fetch resource.
+
+
+> frontend@0.0.0 dev
+> vite --host 127.0.0.1 --port 5173
+
+
+  VITE v8.0.9  ready in 126 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+3:50:23 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:50:23 PM [vite] (client) [Unhandled rejection] TypeError: NetworkError when attempting to fetch resource.
+
+3:50:24 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:50:24 PM [vite] (client) [Unhandled rejection] TypeError: Failed to fetch
+ > requestJson src/services/workspace-service.ts:27:25
+    25 |  
+    26 |  async function requestJson<T>(path: string): Promise<T> {
+    27 |    const response = await fetch(`${API_BASE_URL}${path}`, {
+       |                           ^
+    28 |      headers: {
+    29 |        Accept: 'application/json',
+ > Object.getWorkspaceDetail src/services/workspace-service.ts:90:11
+ > loadWorkspace src/pages/WorkspacePage.vue:68:49
+ > src/pages/WorkspacePage.vue:86:8
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:39
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:16
+ > hook.__weh.hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:18
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:4
+
+3:52:50 PM [vite] ../.env changed, restarting server...
+3:52:50 PM [vite] server restarted.
+3:52:51 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:52:51 PM [vite] (client) [Unhandled rejection] ApiClientError: Run not found: run-demo-live
+ > requestJson src/services/workspace-service.ts:39:12
+    37 |      }
+    38 |      if (payload.detail && 'error' in payload.detail) {
+    39 |        throw new ApiClientError(payload.detail)
+       |              ^
+    40 |      }
+    41 |      throw new Error(`Request failed with status ${response.status}`)
+ > loadWorkspace src/pages/WorkspacePage.vue:68:26
+ > src/pages/WorkspacePage.vue:86:2
+
+3:52:51 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:52:51 PM [vite] (client) [Unhandled rejection] ApiClientError: Run not found: run-demo-live
+ > ApiClientError src/services/workspace-service.ts:19:4
+    17 |  
+    18 |    constructor(payload: ApiErrorPayload) {
+    19 |      super(payload.error.message)
+       |      ^
+    20 |      this.name = 'ApiClientError'
+    21 |      this.code = payload.error.code
+ > requestJson src/services/workspace-service.ts:39:12
+ > async*getWorkspaceDetail src/services/workspace-service.ts:90:11
+ > loadWorkspace src/pages/WorkspacePage.vue:68:49
+ > setup/< src/pages/WorkspacePage.vue:86:8
+ > createHook/</< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:44
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:38
+ > injectHook/hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:45
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:22
+ > promise callback*queueFlush node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:322:42
+ > queuePostFlushCb node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:336:2
+ > queueEffectWithSuspense node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:7543:21
+ > doWatch/baseWatchOptions.scheduler node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:891:28
+ > watch$1/effect.scheduler< node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:1935:49
+ > trigger node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:278:11
+ > endBatch node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:336:12
+ > notify node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:627:6
+ > trigger node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:601:9
+ > set value node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js:1532:17
+ > finalizeNavigation node_modules/vue-router/dist/vue-router.mjs:1388:2
+ > createRouter/pushWithRedirect/< node_modules/vue-router/dist/vue-router.mjs:1316:22
+ > promise callback*pushWithRedirect node_modules/vue-router/dist/vue-router.mjs:1304:256
+ > push node_modules/vue-router/dist/vue-router.mjs:1257:9
+ > install node_modules/vue-router/dist/vue-router.mjs:1504:9
+ > use node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:4171:17
+ > src/main.ts:6:15
+
+
+> frontend@0.0.0 dev
+> vite --host 127.0.0.1 --port 5173
+
+
+  VITE v8.0.9  ready in 125 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+3:53:09 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:53:09 PM [vite] (client) [Unhandled rejection] TypeError: Failed to fetch
+ > requestJson src/services/workspace-service.ts:27:25
+    25 |  
+    26 |  async function requestJson<T>(path: string): Promise<T> {
+    27 |    const response = await fetch(`${API_BASE_URL}${path}`, {
+       |                           ^
+    28 |      headers: {
+    29 |        Accept: 'application/json',
+ > Object.getWorkspaceDetail src/services/workspace-service.ts:90:11
+ > loadWorkspace src/pages/WorkspacePage.vue:68:49
+ > src/pages/WorkspacePage.vue:86:8
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:39
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:16
+ > hook.__weh.hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:18
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:4
+
+3:53:09 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:53:09 PM [vite] (client) [Unhandled rejection] TypeError: NetworkError when attempting to fetch resource.
+
+
+> frontend@0.0.0 dev
+> vite --host 127.0.0.1 --port 5173
+
+
+  VITE v8.0.9  ready in 132 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+3:56:21 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:56:21 PM [vite] (client) [Unhandled rejection] TypeError: NetworkError when attempting to fetch resource.
+
+3:56:22 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView> 
+  at <App>
+3:56:22 PM [vite] (client) [Unhandled rejection] TypeError: Failed to fetch
+ > requestJson src/services/workspace-service.ts:27:25
+    25 |  
+    26 |  async function requestJson<T>(path: string): Promise<T> {
+    27 |    const response = await fetch(`${API_BASE_URL}${path}`, {
+       |                           ^
+    28 |      headers: {
+    29 |        Accept: 'application/json',
+ > Object.getWorkspaceDetail src/services/workspace-service.ts:90:11
+ > loadWorkspace src/pages/WorkspacePage.vue:68:49
+ > src/pages/WorkspacePage.vue:86:8
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3096:39
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:18
+ > callWithAsyncErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:206:16
+ > hook.__weh.hook.__weh node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:3076:18
+ > flushPostFlushCbs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:385:27
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:427:4
+
+4:23:51 PM [vite] (client) hmr update /src/pages/WorkspacePage.vue
+
+> frontend@0.0.0 dev
+> vite --host 127.0.0.1 --port 5173
+
+
+  VITE v8.0.9  ready in 127 ms
+
+  ➜  Local:   http://127.0.0.1:5173/

@@ -700,6 +700,167 @@
   },
   "components": {
     "schemas": {
+      "ActiveModelInfo": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "fallback"
+            ],
+            "title": "Status"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "best-experiment",
+              "runtime-fallback"
+            ],
+            "title": "Source"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "experimentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experimentid"
+          },
+          "checkpointFile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpointfile"
+          },
+          "checkpointPath": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpointpath"
+          },
+          "checkpointMetricName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpointmetricname"
+          },
+          "checkpointMetricValue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpointmetricvalue"
+          },
+          "meanBestDeltaE": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meanbestdeltae"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "source",
+          "label",
+          "summary"
+        ],
+        "title": "ActiveModelInfo"
+      },
+      "AgentConfigurationSummary": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "configured": {
+            "type": "boolean",
+            "title": "Configured"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "live",
+              "fallback",
+              "disabled"
+            ],
+            "title": "Mode"
+          },
+          "providerLabel": {
+            "type": "string",
+            "title": "Providerlabel"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "apiBaseUrl": {
+            "type": "string",
+            "title": "Apibaseurl"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enabled",
+          "configured",
+          "mode",
+          "providerLabel",
+          "model",
+          "apiBaseUrl",
+          "summary"
+        ],
+        "title": "AgentConfigurationSummary"
+      },
       "AlgorithmExperiment": {
         "properties": {
           "id": {
@@ -1047,6 +1208,26 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/AlgorithmExperiment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "activeModel": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActiveModelInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agentConfiguration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentConfigurationSummary"
               },
               {
                 "type": "null"
@@ -1408,6 +1589,75 @@
         ],
         "title": "ConstraintCheck"
       },
+      "DecisionSupport": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "heuristic",
+              "llm"
+            ],
+            "title": "Mode"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Confidence"
+          },
+          "headline": {
+            "type": "string",
+            "title": "Headline"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "recommendedCandidateId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommendedcandidateid"
+          },
+          "nextAction": {
+            "type": "string",
+            "title": "Nextaction"
+          },
+          "rationale": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Rationale"
+          },
+          "risks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Risks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mode",
+          "confidence",
+          "headline",
+          "summary",
+          "nextAction",
+          "rationale",
+          "risks"
+        ],
+        "title": "DecisionSupport"
+      },
       "DesignRequest": {
         "properties": {
           "requirementText": {
@@ -1490,6 +1740,15 @@
           },
           "exportEstimate": {
             "$ref": "#/components/schemas/ExportEstimate"
+          },
+          "activeModel": {
+            "$ref": "#/components/schemas/ActiveModelInfo"
+          },
+          "agentConfiguration": {
+            "$ref": "#/components/schemas/AgentConfigurationSummary"
+          },
+          "decisionSupport": {
+            "$ref": "#/components/schemas/DecisionSupport"
           }
         },
         "type": "object",
@@ -1500,7 +1759,10 @@
           "timeline",
           "candidates",
           "constraints",
-          "exportEstimate"
+          "exportEstimate",
+          "activeModel",
+          "agentConfiguration",
+          "decisionSupport"
         ],
         "title": "DesignRunResponse"
       },
@@ -1851,6 +2113,15 @@
           },
           "exportEstimate": {
             "$ref": "#/components/schemas/ExportEstimate"
+          },
+          "activeModel": {
+            "$ref": "#/components/schemas/ActiveModelInfo"
+          },
+          "agentConfiguration": {
+            "$ref": "#/components/schemas/AgentConfigurationSummary"
+          },
+          "decisionSupport": {
+            "$ref": "#/components/schemas/DecisionSupport"
           }
         },
         "type": "object",
@@ -1864,7 +2135,10 @@
           "timeline",
           "candidates",
           "constraints",
-          "exportEstimate"
+          "exportEstimate",
+          "activeModel",
+          "agentConfiguration",
+          "decisionSupport"
         ],
         "title": "WorkspaceDetail"
       },

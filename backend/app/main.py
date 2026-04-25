@@ -12,6 +12,9 @@ from .api.routes import (
     runs_router,
     workspace_router,
 )
+from .config import load_project_env
+
+load_project_env()
 
 app = FastAPI(
     title="Opt-Sim API",

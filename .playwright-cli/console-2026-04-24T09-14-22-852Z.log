@@ -74,3 +74,142 @@
     at http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2135:23
     at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:31)
     at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2032:5)
+[80508911ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[80509113ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live:0
+[80509113ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/draft:0
+[80509113ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/targets:0
+[80509113ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/timeline:0
+[80509114ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[80509118ms] ApiClientError: Run not found: run-demo-live
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts:20:10)
+    at async Promise.all (index 2)
+    at async Object.getWorkspaceDetail (http://127.0.0.1:5173/src/services/workspace-service.ts:63:116)
+    at async Promise.all (index 0)
+    at async loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue:42:40)
+    at async http://127.0.0.1:5173/src/pages/WorkspacePage.vue:59:4
+[80509115ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/candidates:0
+[80509116ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/constraints:0
+[80509116ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/export-estimate:0
+[80509116ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/artifacts:0
+[80586814ms] [ERROR] Access to fetch at 'http://127.0.0.1:8000/api/runs/run-demo-live/workspace' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:5173/runs/run-demo-live:0
+[80586814ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[80586814ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[80586814ms] TypeError: Failed to fetch
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts?t=1777102649657:13:25)
+    at Object.getWorkspaceDetail (http://127.0.0.1:5173/src/services/workspace-service.ts?t=1777102649657:63:10)
+    at loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102649657:42:76)
+    at http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102649657:59:10
+    at http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3792:87
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1890:15)
+    at hook.__weh.hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3781:16)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2043:3)
+[80645658ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5173/src/pages/HomePage.vue?t=1777102708506:0
+[80645658ms] [ERROR] [vite] Failed to reload /src/pages/HomePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[80700755ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102763603:0
+[80700755ms] [ERROR] [vite] Failed to reload /src/pages/WorkspacePage.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[80793085ms] [ERROR] Access to fetch at 'http://127.0.0.1:8000/api/runs/run-demo-live/workspace' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:5173/runs/run-demo-live:0
+[80793085ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[80793085ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[80793085ms] TypeError: Failed to fetch
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts?t=1777102649657:13:25)
+    at Object.getWorkspaceDetail (http://127.0.0.1:5173/src/services/workspace-service.ts?t=1777102649657:63:10)
+    at loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102855899:47:51)
+    at http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777102855899:63:10
+    at http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3792:87
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1890:15)
+    at hook.__weh.hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3781:16)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2043:3)
+[81219284ms] [ERROR] Access to fetch at 'http://127.0.0.1:8000/api/runs/run-demo-live/workspace' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:5173/runs/run-demo-live:0
+[81219284ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[81219284ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[81219284ms] TypeError: Failed to fetch
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts?t=1777102649657:13:25)
+    at Object.getWorkspaceDetail (http://127.0.0.1:5173/src/services/workspace-service.ts?t=1777102649657:63:10)
+    at loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777103282070:47:51)
+    at http://127.0.0.1:5173/src/pages/WorkspacePage.vue?t=1777103282070:63:10
+    at http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3792:87
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:1890:15)
+    at hook.__weh.hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:3781:16)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=676282fd:2043:3)
+[81359473ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[81361505ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[81361505ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[81361506ms] TypeError: Failed to fetch
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts:13:25)
+    at Object.getWorkspaceDetail (http://127.0.0.1:5173/src/services/workspace-service.ts:63:10)
+    at loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue:47:51)
+    at http://127.0.0.1:5173/src/pages/WorkspacePage.vue:63:10
+    at http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3792:87
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1890:15)
+    at hook.__weh.hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3781:16)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2043:3)
+[81508088ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[81508160ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[81508165ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[81508169ms] ApiClientError: Run not found: run-demo-live
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts:20:10)
+    at async loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue:47:28)
+    at async http://127.0.0.1:5173/src/pages/WorkspacePage.vue:63:4
+[81524439ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[81526565ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[81526565ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[81526572ms] TypeError: Failed to fetch
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts:13:25)
+    at Object.getWorkspaceDetail (http://127.0.0.1:5173/src/services/workspace-service.ts:63:10)
+    at loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue:47:51)
+    at http://127.0.0.1:5173/src/pages/WorkspacePage.vue:63:10
+    at http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3792:87
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1890:15)
+    at hook.__weh.hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3781:16)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2043:3)
+[81717567ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[81719597ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[81719597ms] [WARNING] [Vue warn]: Unhandled error during execution of mounted hook 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[81719598ms] TypeError: Failed to fetch
+    at requestJson (http://127.0.0.1:5173/src/services/workspace-service.ts:13:25)
+    at Object.getWorkspaceDetail (http://127.0.0.1:5173/src/services/workspace-service.ts:63:10)
+    at loadWorkspace (http://127.0.0.1:5173/src/pages/WorkspacePage.vue:47:51)
+    at http://127.0.0.1:5173/src/pages/WorkspacePage.vue:63:10
+    at http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3792:87
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1890:15)
+    at hook.__weh.hook.__weh (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:3781:16)
+    at flushPostFlushCbs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2015:25)
+    at flushJobs (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2043:3)
+[83368868ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
+[83722893ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968
+[83724929ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:8000/api/runs/run-demo-live/workspace:0
