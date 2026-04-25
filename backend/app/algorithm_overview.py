@@ -356,7 +356,7 @@ def _operation_steps() -> list[AlgorithmOperationStep]:
             description="Refresh the lightweight reproduction outputs quickly and update artifacts under `backend/artifacts/`.",
             command=(
                 f"cd {repo_root}\nconda activate opt_sim\n"
-                "python3 backend/scripts/train_cgan_reproduction.py "
+                "python3 -u backend/scripts/train_cgan_reproduction.py "
                 "--dataset-source paper --output-dir backend/artifacts/cgan_reproduction_smoke "
                 "--epochs 5 --regressor-epochs 5 --batch-size 512 --paper-samples-per-lab 16 --device auto"
             ),
@@ -371,7 +371,7 @@ def _operation_steps() -> list[AlgorithmOperationStep]:
             description="Move from smoke validation toward the paper target metrics with many more epochs and samples.",
             command=(
                 f"cd {repo_root}\nconda activate opt_sim\n"
-                "python3 backend/scripts/train_cgan_reproduction.py "
+                "python3 -u backend/scripts/train_cgan_reproduction.py "
                 "--dataset-source paper --paper-samples-per-lab 1000 --epochs 100000 --regressor-epochs 10000 --device cuda"
             ),
             expectedResult="Compare the new `paper_reproduction` metrics against `paper_targets` after the run completes.",

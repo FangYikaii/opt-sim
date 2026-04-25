@@ -62,11 +62,19 @@ const isExportStep = computed(() => props.stepId === 'export')
         <p class="composer-card__lead">{{ t('workflow.panel.briefLead') }}</p>
         <div class="composer-grid">
           <label class="field">
-            <span class="field__label">{{ t('timeline.targetLabel') }}</span>
-            <div class="field__value field__value--swatch">
-              <span class="swatch-chip" style="background-color: #bf6f4f" aria-hidden="true" />
+              <span class="field__label">{{ t('timeline.targetLabel') }}</span>
+              <div class="field__value field__value--swatch">
+              <span class="swatch-chip" :style="{ backgroundColor: props.draft.targetValue }" aria-hidden="true" />
               <span class="mono">{{ props.draft.targetValue }}</span>
             </div>
+          </label>
+          <label class="field">
+            <span class="field__label">{{ t('timeline.incidenceAngle') }}</span>
+            <span class="field__value mono">{{ props.draft.incidenceAngleValue }}</span>
+          </label>
+          <label class="field">
+            <span class="field__label">{{ t('timeline.polarization') }}</span>
+            <span class="field__value mono">{{ props.draft.polarizationValue }}</span>
           </label>
           <label class="field">
             <span class="field__label">{{ t('timeline.heightWindow') }}</span>
@@ -101,11 +109,19 @@ const isExportStep = computed(() => props.stepId === 'export')
         </div>
         <div class="composer-grid">
           <label class="field">
-            <span class="field__label">{{ t('timeline.targetLabel') }}</span>
-            <div class="field__value field__value--swatch">
-              <span class="swatch-chip" style="background-color: #bf6f4f" aria-hidden="true" />
+              <span class="field__label">{{ t('timeline.targetLabel') }}</span>
+              <div class="field__value field__value--swatch">
+              <span class="swatch-chip" :style="{ backgroundColor: props.draft.targetValue }" aria-hidden="true" />
               <span class="mono">{{ props.draft.targetValue }}</span>
             </div>
+          </label>
+          <label class="field">
+            <span class="field__label">{{ t('timeline.incidenceAngle') }}</span>
+            <span class="field__value mono">{{ props.draft.incidenceAngleValue }}</span>
+          </label>
+          <label class="field">
+            <span class="field__label">{{ t('timeline.polarization') }}</span>
+            <span class="field__value mono">{{ props.draft.polarizationValue }}</span>
           </label>
           <label class="field">
             <span class="field__label">{{ t('timeline.heightWindow') }}</span>
@@ -136,6 +152,14 @@ const isExportStep = computed(() => props.stepId === 'export')
           <label class="field">
             <span class="field__label">{{ t('timeline.targetLabel') }}</span>
             <span class="field__value mono">{{ draft.targetValue }}</span>
+          </label>
+          <label class="field">
+            <span class="field__label">{{ t('timeline.incidenceAngle') }}</span>
+            <span class="field__value mono">{{ draft.incidenceAngleValue }}</span>
+          </label>
+          <label class="field">
+            <span class="field__label">{{ t('timeline.polarization') }}</span>
+            <span class="field__value mono">{{ draft.polarizationValue }}</span>
           </label>
         </div>
         <label class="field">

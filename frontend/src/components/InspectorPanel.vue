@@ -26,7 +26,9 @@ const deltaEMetric = computed(
   () => selectedCandidate.value.metrics.find((metric) => metric.label === 'DeltaE')?.value ?? 'n/a',
 )
 const keyMetrics = computed(() =>
-  selectedCandidate.value.metrics.filter((metric) => ['DeltaE', 'Composite score', 'Manufacturability'].includes(metric.label)),
+  selectedCandidate.value.metrics.filter((metric) =>
+    ['DeltaE', 'Composite score', 'Incidence angle', 'Polarization', 'Manufacturability'].includes(metric.label),
+  ),
 )
 const topConstraints = computed(() => props.constraints.slice(0, 3))
 const {

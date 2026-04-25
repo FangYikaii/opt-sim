@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from '../i18n'
-import type { ExportEstimate, RunSummary } from '../api/contracts'
+import type { ExportEstimate, RunSummary, WorkspaceDraft } from '../api/contracts'
 
 const props = defineProps<{
   activeRun: RunSummary
+  draft: WorkspaceDraft
   exportEstimate: ExportEstimate
 }>()
 
@@ -62,6 +63,9 @@ const nextAction = computed(() => {
         <pre class="log-block">{
   "run_id": "{{ activeRun.id }}",
   "status": "{{ labelRunStatus(activeRun.status).text }}",
+  "ranked_under": "{{ draft.incidenceAngleValue }}, {{ draft.polarizationValue }}",
+  "incidence_angle": "{{ draft.incidenceAngleValue }}",
+  "polarization": "{{ draft.polarizationValue }}",
   "format": "{{ exportEstimate.format }}",
   "dimensions": "{{ exportEstimate.dimensions }}"
 }</pre>
@@ -69,6 +73,14 @@ const nextAction = computed(() => {
       <div v-if="activeTab === 'commands'" class="drawer-column">
         <p class="eyebrow">{{ t('drawer.notes') }}</p>
         <dl class="drawer-info-grid">
+          <div>
+            <dt>{{ t('timeline.incidenceAngle') }}</dt>
+            <dd>{{ draft.incidenceAngleValue }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('timeline.polarization') }}</dt>
+            <dd>{{ draft.polarizationValue }}</dd>
+          </div>
           <div>
             <dt>{{ t('drawer.deliveryFormat') }}</dt>
             <dd>{{ exportEstimate.format }}</dd>

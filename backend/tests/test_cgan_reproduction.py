@@ -5,17 +5,24 @@ import pytest
 np = pytest.importorskip("numpy")
 torch = pytest.importorskip("torch")
 
-from backend.app.algorithms.cgan import fit_lightweight_cgan, load_model_bundle, sample_designs_from_bundle
+from backend.app.algorithms.cgan import (
+    fit_lightweight_cgan,
+    load_model_bundle,
+    sample_designs_for_labs_from_bundle,
+    sample_designs_from_bundle,
+)
 from backend.app.algorithms.optics import (
     reflectance_spectrum_ag_sio2_ag,
     transmittance_spectrum_ag_sio2_ag,
 )
 from backend.scripts.train_cgan_reproduction import (
     build_ag_sio2_ag_dataset,
+    compute_checkpoint_score,
     compact_reproduction_metrics_for_json,
     collect_candidate_records,
     compute_jensen_shannon_distance,
     count_solution_groups_with_dbscan,
+    evaluate_testing_set_distribution,
     load_paper_dataset_csv,
     load_runtime_dependencies,
     save_model_bundle,
@@ -337,3 +344,274 @@ def test_save_best_checkpoint_uses_selected_generator_state(tmp_path) -> None:
 
     for key, value in checkpoint["generator_state_dict"].items():
         assert torch.equal(value, best_state[key])
+
+
+def test_sample_designs_for_labs_from_bundle_chunks_large_batches() -> None:
+    lab_samples = np.array(
+        [
+            [20.0, -2.0, 4.0],
+            [25.0, 3.0, -1.0],
+            [30.0, 7.0, 6.0],
+            [35.0, -4.0, 9.0],
+        ],
+        dtype=np.float64,
+    )
+    design_samples = np.array(
+        [
+            [10.0, 60.0, 10.0],
+            [15.0, 90.0, 14.0],
+            [22.0, 130.0, 20.0],
+            [30.0, 180.0, 30.0],
+        ],
+        dtype=np.float64,
+    )
+    bundle = fit_lightweight_cgan(
+        lab_samples,
+        design_samples,
+        epochs=1,
+        batch_size=4,
+        regressor_epochs=1,
+        seed=53,
+        record_losses=True,
+        device="cpu",
+    )
+    original_forward = bundle.generator.forward
+    batch_sizes: list[int] = []
+
+    def recording_forward(lab_norm: torch.Tensor, noise: torch.Tensor) -> torch.Tensor:
+        batch_sizes.append(int(lab_norm.shape[0]))
+        return original_forward(lab_norm, noise)
+
+    bundle.generator.forward = recording_forward  # type: ignore[method-assign]
+    samples = sample_designs_for_labs_from_bundle(
+        bundle,
+        lab_samples[:3],
+        sample_count=5,
+        seed=59,
+        device="cpu",
+        max_forward_batch_size=7,
+    )
+
+    assert samples.shape == (3, 5, 3)
+    assert batch_sizes == [7, 7, 1]
+    assert max(batch_sizes) <= 7
+
+
+def test_lightweight_cgan_emits_progress_events() -> None:
+    lab_samples = np.array(
+        [
+            [20.0, -2.0, 4.0],
+            [25.0, 3.0, -1.0],
+            [30.0, 7.0, 6.0],
+            [35.0, -4.0, 9.0],
+        ],
+        dtype=np.float64,
+    )
+    design_samples = np.array(
+        [
+            [10.0, 60.0, 10.0],
+            [15.0, 90.0, 14.0],
+            [22.0, 130.0, 20.0],
+            [30.0, 180.0, 30.0],
+        ],
+        dtype=np.float64,
+    )
+    progress_events: list[dict[str, object]] = []
+
+    def progress_callback(event: dict[str, object]) -> None:
+        progress_events.append(event)
+
+    fit_lightweight_cgan(
+        lab_samples,
+        design_samples,
+        epochs=2,
+        batch_size=4,
+        regressor_epochs=2,
+        seed=31,
+        record_losses=True,
+        progress_callback=progress_callback,
+        progress_interval=1,
+        regressor_progress_interval=1,
+    )
+
+    assert progress_events
+    assert progress_events[0]["stage"] == "regressor"
+    assert progress_events[0]["event"] == "start"
+    assert any(
+        event["stage"] == "regressor"
+        and event["event"] == "progress"
+        and event["epoch"] == 1
+        for event in progress_events
+    )
+    assert any(
+        event["stage"] == "training"
+        and event["event"] == "progress"
+        and event["epoch"] == 2
+        for event in progress_events
+    )
+    assert progress_events[-1]["stage"] == "training"
+    assert progress_events[-1]["event"] == "complete"
+
+
+def test_evaluate_testing_set_distribution_emits_progress_events() -> None:
+    design_samples, lab_samples, _ = build_ag_sio2_ag_dataset(
+        bottom_points=2,
+        sio2_points=2,
+        top_points=2,
+    )
+    bundle = fit_lightweight_cgan(
+        lab_samples,
+        design_samples,
+        epochs=1,
+        batch_size=8,
+        regressor_epochs=1,
+        seed=37,
+        record_losses=True,
+    )
+    progress_events: list[dict[str, object]] = []
+
+    metrics = evaluate_testing_set_distribution(
+        bundle=bundle,
+        test_designs=design_samples[:3],
+        test_labs=lab_samples[:3],
+        samples_per_lab=2,
+        seed=41,
+        progress_callback=progress_events.append,
+        progress_interval=1,
+        progress_phase="checkpoint",
+    )
+
+    assert metrics["samples_per_lab"] == 2
+    assert progress_events[0] == {
+        "stage": "paper_eval",
+        "event": "start",
+        "phase": "checkpoint",
+        "processed": 0,
+        "total": 3,
+    }
+    assert any(
+        event["stage"] == "paper_eval"
+        and event["event"] == "progress"
+        and event["processed"] == 2
+        and event["total"] == 3
+        for event in progress_events
+    )
+    assert progress_events[-1]["stage"] == "paper_eval"
+    assert progress_events[-1]["event"] == "complete"
+    assert progress_events[-1]["phase"] == "checkpoint"
+
+
+def test_checkpoint_score_prefers_lower_error_and_higher_coverage() -> None:
+    stronger_metrics = {
+        "mean_best_delta_e": 1.0,
+        "median_best_delta_e": 0.8,
+        "d2_ground_truth_within_5nm_ratio": 0.95,
+        "jsd": {"d1": 0.05, "d2": 0.04, "d3": 0.03},
+    }
+    weaker_metrics = {
+        "mean_best_delta_e": 2.0,
+        "median_best_delta_e": 1.6,
+        "d2_ground_truth_within_5nm_ratio": 0.70,
+        "jsd": {"d1": 0.10, "d2": 0.11, "d3": 0.12},
+    }
+
+    stronger_score = compute_checkpoint_score(stronger_metrics)
+    weaker_score = compute_checkpoint_score(weaker_metrics)
+
+    assert stronger_score < weaker_score
+
+
+def test_evaluate_testing_set_distribution_is_repeatable_for_fixed_seed() -> None:
+    design_samples, lab_samples, _ = build_ag_sio2_ag_dataset(
+        bottom_points=2,
+        sio2_points=2,
+        top_points=2,
+    )
+    bundle = fit_lightweight_cgan(
+        lab_samples,
+        design_samples,
+        epochs=1,
+        batch_size=8,
+        regressor_epochs=1,
+        seed=47,
+        record_losses=True,
+    )
+
+    metrics_a = evaluate_testing_set_distribution(
+        bundle=bundle,
+        test_designs=design_samples[:3],
+        test_labs=lab_samples[:3],
+        samples_per_lab=4,
+        seed=101,
+    )
+    metrics_b = evaluate_testing_set_distribution(
+        bundle=bundle,
+        test_designs=design_samples[:3],
+        test_labs=lab_samples[:3],
+        samples_per_lab=4,
+        seed=101,
+    )
+
+    assert metrics_a["mean_best_delta_e"] == pytest.approx(metrics_b["mean_best_delta_e"])
+    assert metrics_a["median_best_delta_e"] == pytest.approx(metrics_b["median_best_delta_e"])
+    assert metrics_a["d2_ground_truth_within_5nm_ratio"] == pytest.approx(
+        metrics_b["d2_ground_truth_within_5nm_ratio"]
+    )
+    assert metrics_a["jsd"]["d1"] == pytest.approx(metrics_b["jsd"]["d1"])
+    assert metrics_a["jsd"]["d2"] == pytest.approx(metrics_b["jsd"]["d2"])
+    assert metrics_a["jsd"]["d3"] == pytest.approx(metrics_b["jsd"]["d3"])
+
+
+def test_lightweight_cgan_stops_early_after_checkpoint_patience() -> None:
+    lab_samples = np.array(
+        [
+            [20.0, -2.0, 4.0],
+            [25.0, 3.0, -1.0],
+            [30.0, 7.0, 6.0],
+            [35.0, -4.0, 9.0],
+        ],
+        dtype=np.float64,
+    )
+    design_samples = np.array(
+        [
+            [10.0, 60.0, 10.0],
+            [15.0, 90.0, 14.0],
+            [22.0, 130.0, 20.0],
+            [30.0, 180.0, 30.0],
+        ],
+        dtype=np.float64,
+    )
+    checkpoint_epochs: list[int] = []
+    progress_events: list[dict[str, object]] = []
+
+    def checkpoint_metric_fn(bundle, epoch: int) -> float:
+        checkpoint_epochs.append(epoch)
+        return float(epoch)
+
+    bundle = fit_lightweight_cgan(
+        lab_samples,
+        design_samples,
+        epochs=10,
+        batch_size=4,
+        regressor_epochs=1,
+        seed=43,
+        record_losses=True,
+        checkpoint_metric_fn=checkpoint_metric_fn,
+        checkpoint_metric_name="test.metric",
+        checkpoint_metric_interval=2,
+        checkpoint_patience=2,
+        progress_callback=progress_events.append,
+        progress_interval=10,
+        regressor_progress_interval=1,
+    )
+
+    assert checkpoint_epochs == [2, 4, 6]
+    assert len(bundle.losses) == 6
+    assert bundle.selected_checkpoint_epoch == 2
+    assert bundle.selected_checkpoint_metric_value == pytest.approx(2.0)
+    assert any(
+        event["stage"] == "training"
+        and event["event"] == "early_stop"
+        and event["epoch"] == 6
+        for event in progress_events
+    )

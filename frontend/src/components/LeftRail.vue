@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useI18n } from '../i18n'
-import type { RunSummary, TargetAsset } from '../api/contracts'
+import type { ArtifactSummary, RunSummary, TargetAsset } from '../api/contracts'
 
 defineProps<{
   runs: RunSummary[]
   targets: TargetAsset[]
+  artifacts: ArtifactSummary[]
+  activeArtifactId: string | null
+}>()
+
+defineEmits<{
+  selectArtifact: [artifactId: string]
 }>()
 
 const { labelAssetType, labelRunStatus, localizeCopy, t } = useI18n()
@@ -58,6 +64,31 @@ const { labelAssetType, labelRunStatus, localizeCopy, t } = useI18n()
             </span>
             <span>{{ run.updatedAt }}</span>
           </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="rail-section">
+      <div class="section-header">
+        <h2>{{ t('left.artifacts') }}</h2>
+        <span class="section-meta">{{ artifacts.length }}</span>
+      </div>
+      <ul class="list-reset rail-list">
+        <li
+          v-for="artifact in artifacts"
+          :key="artifact.id"
+          class="rail-item"
+          :class="{ 'rail-item--active': artifact.id === activeArtifactId }"
+        >
+          <button class="rail-button" type="button" @click="$emit('selectArtifact', artifact.id)">
+            <div class="rail-item__row">
+              <span class="rail-item__title">{{ artifact.name }}</span>
+            </div>
+            <div class="rail-item__row rail-item__meta">
+              <span class="ghost-pill ghost-pill--small">{{ artifact.type }}</span>
+              <span>{{ artifact.status }}</span>
+            </div>
+          </button>
         </li>
       </ul>
     </section>

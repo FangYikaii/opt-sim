@@ -22,15 +22,33 @@ from .runtime_store import store_design_run
 CODEX_BASE_URL = "https://code.ppchat.vip/v1"
 
 
-def _fallback_timeline(requirement_text: str, target_hex: str) -> list[TimelineEvent]:
+def _format_polarization_label(polarization: str) -> str:
+    if polarization == "te":
+        return "TE"
+    if polarization == "tm":
+        return "TM"
+    return "Unpolarized"
+
+
+def _fallback_timeline(
+    requirement_text: str,
+    target_hex: str,
+    theta_deg: float,
+    polarization: str,
+) -> list[TimelineEvent]:
+    polarization_label = _format_polarization_label(polarization)
     return [
         TimelineEvent(
             id="evt-1",
             type="agent",
             label="System reasoning",
             title="Paper workflow selected",
-            body=f"Parsed a single-target structural color request for {target_hex.upper()} and routed it through the Ag-SiO2-Ag paper-reproduction workflow.",
-            meta="paper reproduction",
+            body=(
+                f"Parsed a single-target structural color request for {target_hex.upper()} "
+                f"at {theta_deg:.1f} degree incidence with {polarization_label} illumination and routed it through the "
+                "Ag-SiO2-Ag paper-reproduction workflow."
+            ),
+            meta="paper reproduction + angle-aware TMM",
             status="Validating",
         ),
         TimelineEvent(
@@ -38,8 +56,12 @@ def _fallback_timeline(requirement_text: str, target_hex: str) -> list[TimelineE
             type="tool",
             label="Calculation step",
             title="run_inverse_design()",
-            body="Executed the hybrid inverse-design stack: retrieval seeds, cGAN proposals, thin-film simulation, and local refinement before manufacturability-aware ranking.",
-            meta="retrieval + cgan + refinement",
+            body=(
+                "Executed the hybrid inverse-design stack: retrieval seeds, cGAN proposals, "
+                f"angle-dependent thin-film simulation at {theta_deg:.1f} degrees under {polarization_label} light, and local "
+                "refinement before manufacturability-aware ranking."
+            ),
+            meta="retrieval + cgan + angle-aware refinement",
             status="Simulating",
         ),
         TimelineEvent(
@@ -55,7 +77,12 @@ def _fallback_timeline(requirement_text: str, target_hex: str) -> list[TimelineE
     ]
 
 
-async def _call_codex_summary(requirement_text: str, target_hex: str) -> str | None:
+async def _call_codex_summary(
+    requirement_text: str,
+    target_hex: str,
+    theta_deg: float,
+    polarization: str,
+) -> str | None:
     api_key = os.getenv("CODEX_API_KEY")
     if not api_key:
         return None
@@ -69,7 +96,12 @@ async def _call_codex_summary(requirement_text: str, target_hex: str) -> str | N
             },
             {
                 "role": "user",
-                "content": f"Requirement: {requirement_text}\nTarget color: {target_hex}",
+                "content": (
+                    f"Requirement: {requirement_text}\n"
+                    f"Target color: {target_hex}\n"
+                    f"Incidence angle: {theta_deg:.1f} degrees\n"
+                    f"Polarization: {_format_polarization_label(polarization)}"
+                ),
             },
         ],
         "temperature": 0.2,
@@ -93,13 +125,28 @@ async def _call_codex_summary(requirement_text: str, target_hex: str) -> str | N
 
 
 async def run_design_agent(request: DesignRequest) -> DesignRunResponse:
-    inverse_result = run_inverse_design(request.targetHex, request.topK)
-    llm_summary = await _call_codex_summary(request.requirementText, request.targetHex)
+    inverse_result = run_inverse_design(
+        request.targetHex,
+        request.topK,
+        request.thetaDeg,
+        request.polarization,
+    )
+    llm_summary = await _call_codex_summary(
+        request.requirementText,
+        request.targetHex,
+        request.thetaDeg,
+        request.polarization,
+    )
+    polarization_label = _format_polarization_label(request.polarization)
 
     draft = WorkspaceDraft(
         requirementText=llm_summary or request.requirementText,
         targetLabel="Target color",
         targetValue=request.targetHex.upper(),
+        incidenceAngleLabel="Incidence angle",
+        incidenceAngleValue=f"{request.thetaDeg:.1f} deg",
+        polarizationLabel="Polarization",
+        polarizationValue=polarization_label,
         heightWindow="Ag 10-30 nm / SiO2 60-180 nm",
         exportMode="Preview-first TIFF planning",
     )
@@ -115,11 +162,16 @@ async def run_design_agent(request: DesignRequest) -> DesignRunResponse:
             id="target-demo",
             name="Reference target",
             type="color",
-            detail=request.targetHex.upper(),
+            detail=f"{request.targetHex.upper()} at {request.thetaDeg:.1f} deg · {polarization_label}",
             swatchHex=request.targetHex,
         )
     ]
-    timeline = _fallback_timeline(request.requirementText, request.targetHex)
+    timeline = _fallback_timeline(
+        request.requirementText,
+        request.targetHex,
+        request.thetaDeg,
+        request.polarization,
+    )
 
     return DesignRunResponse(
         activeRun=active_run,

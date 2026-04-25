@@ -20,6 +20,8 @@ const form = ref<DesignRequest>({
   requirementText: t.value('home.form.defaultRequirement'),
   targetHex: '#bf6f4f',
   topK: 3,
+  thetaDeg: 0,
+  polarization: 'unpolarized',
 })
 const requirementTouched = ref(false)
 const guideSteps = ref([
@@ -160,6 +162,18 @@ async function submitDemoRun(): Promise<void> {
         <label class="field">
           <span class="field__label">{{ t('home.form.targetHex') }}</span>
           <input v-model="form.targetHex" class="input mono" />
+        </label>
+        <label class="field">
+          <span class="field__label">{{ t('home.form.thetaDeg') }}</span>
+          <input v-model.number="form.thetaDeg" class="input mono" type="number" min="0" max="89" step="0.1" />
+        </label>
+        <label class="field">
+          <span class="field__label">{{ t('home.form.polarization') }}</span>
+          <select v-model="form.polarization" class="input">
+            <option value="unpolarized">{{ t('polarization.unpolarized') }}</option>
+            <option value="te">{{ t('polarization.te') }}</option>
+            <option value="tm">{{ t('polarization.tm') }}</option>
+          </select>
         </label>
         <label class="field">
           <span class="field__label">{{ t('home.form.topK') }}</span>

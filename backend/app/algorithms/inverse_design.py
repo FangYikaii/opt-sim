@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Literal
 
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
@@ -9,6 +10,7 @@ from ..algorithm_overview import get_algorithm_overview, resolve_selected_checkp
 from ..models import CandidateMetric, CandidateParameter, CandidateSolution, ConstraintCheck, ExportEstimate
 from .cgan import load_model_bundle, sample_designs_from_bundle, sample_designs_from_cgan
 from .optics import (
+    Polarization,
     delta_e_2000,
     hex_to_lab,
     reflectance_spectrum_ag_sio2_ag,
@@ -45,8 +47,17 @@ def _evaluate_design(
     d_sio2: float,
     d_ag_top: float,
     target_lab: np.ndarray,
+    *,
+    theta_deg: float,
+    polarization: Polarization,
 ) -> tuple[float, str]:
-    spectrum = transmittance_spectrum_ag_sio2_ag(d_ag_bottom, d_sio2, d_ag_top)
+    spectrum = transmittance_spectrum_ag_sio2_ag(
+        d_ag_bottom,
+        d_sio2,
+        d_ag_top,
+        theta_deg=theta_deg,
+        polarization=polarization,
+    )
     xyz = spectrum_to_xyz(spectrum)
     lab = xyz_to_lab(xyz)
     delta_e = delta_e_2000(lab, target_lab)
@@ -61,19 +72,32 @@ def _evaluate_candidate(
     target_lab: np.ndarray,
     *,
     source: str,
+    theta_deg: float,
+    polarization: Polarization,
 ) -> EvaluatedDesign:
-    base_delta_e, base_hex = _evaluate_design(d_ag_bottom, d_sio2, d_ag_top, target_lab)
+    base_delta_e, base_hex = _evaluate_design(
+        d_ag_bottom,
+        d_sio2,
+        d_ag_top,
+        target_lab,
+        theta_deg=theta_deg,
+        polarization=polarization,
+    )
     plus_delta_e, plus_hex = _evaluate_design(
         min(30.0, d_ag_bottom + 0.5),
         min(180.0, d_sio2 + 0.5),
         min(30.0, d_ag_top + 0.5),
         target_lab,
+        theta_deg=theta_deg,
+        polarization=polarization,
     )
     minus_delta_e, minus_hex = _evaluate_design(
         max(10.0, d_ag_bottom - 0.5),
         max(60.0, d_sio2 - 0.5),
         max(10.0, d_ag_top - 0.5),
         target_lab,
+        theta_deg=theta_deg,
+        polarization=polarization,
     )
     plus_drift = plus_delta_e - base_delta_e
     minus_drift = minus_delta_e - base_delta_e
@@ -119,8 +143,16 @@ def _refine_design(
     target_lab: np.ndarray,
     *,
     source: str,
+    theta_deg: float,
+    polarization: Polarization,
 ) -> EvaluatedDesign:
-    current_best = _evaluate_candidate(*base_design, target_lab, source=source)
+    current_best = _evaluate_candidate(
+        *base_design,
+        target_lab,
+        source=source,
+        theta_deg=theta_deg,
+        polarization=polarization,
+    )
     search_schedule = [(1.0, 2.0)]
 
     for step_ag_nm, step_sio2_nm in search_schedule:
@@ -136,6 +168,8 @@ def _refine_design(
                     *candidate_design,
                     target_lab,
                     source=source,
+                    theta_deg=theta_deg,
+                    polarization=polarization,
                 )
                 if candidate.composite_score + 1e-9 < current_best.composite_score:
                     current_best = candidate
@@ -209,7 +243,20 @@ def _sample_gan_designs(
     return np.clip(generated_designs, lower_bounds, upper_bounds)
 
 
-def run_inverse_design(target_hex: str, top_k: int = 3) -> InverseDesignResult:
+def _format_polarization_label(polarization: Polarization) -> str:
+    if polarization == "te":
+        return "TE"
+    if polarization == "tm":
+        return "TM"
+    return "Unpolarized"
+
+
+def run_inverse_design(
+    target_hex: str,
+    top_k: int = 3,
+    theta_deg: float = 0.0,
+    polarization: Polarization = "unpolarized",
+) -> InverseDesignResult:
     target_lab = hex_to_lab(target_hex)
 
     grid = []
@@ -222,6 +269,8 @@ def run_inverse_design(target_hex: str, top_k: int = 3) -> InverseDesignResult:
                     d_ag_bottom,
                     d_sio2,
                     d_ag_top,
+                    theta_deg=theta_deg,
+                    polarization=polarization,
                 )
                 xyz = spectrum_to_xyz(spectrum)
                 lab = xyz_to_lab(xyz)
@@ -246,15 +295,39 @@ def run_inverse_design(target_hex: str, top_k: int = 3) -> InverseDesignResult:
 
     for distance, idx in zip(distances[0], indices[0]):
         retrieval_design = tuple(float(value) for value in grid[int(idx)])
-        retrieval_candidate = _evaluate_candidate(*retrieval_design, target_lab, source="retrieval")
-        retrieval_refined = _refine_design(retrieval_design, target_lab, source="retrieval")
+        retrieval_candidate = _evaluate_candidate(
+            *retrieval_design,
+            target_lab,
+            source="retrieval",
+            theta_deg=theta_deg,
+            polarization=polarization,
+        )
+        retrieval_refined = _refine_design(
+            retrieval_design,
+            target_lab,
+            source="retrieval",
+            theta_deg=theta_deg,
+            polarization=polarization,
+        )
         evaluated_candidates[retrieval_candidate.design] = retrieval_candidate
         evaluated_candidates[retrieval_refined.design] = retrieval_refined
 
     for design in gan_designs[: max(top_k * 3, 6)]:
         design_tuple = tuple(float(value) for value in design)
-        gan_candidate = _evaluate_candidate(*design_tuple, target_lab, source="cGAN+TMM")
-        gan_refined = _refine_design(design_tuple, target_lab, source="cGAN+TMM")
+        gan_candidate = _evaluate_candidate(
+            *design_tuple,
+            target_lab,
+            source="cGAN+TMM",
+            theta_deg=theta_deg,
+            polarization=polarization,
+        )
+        gan_refined = _refine_design(
+            design_tuple,
+            target_lab,
+            source="cGAN+TMM",
+            theta_deg=theta_deg,
+            polarization=polarization,
+        )
         evaluated_candidates[gan_candidate.design] = gan_candidate
         evaluated_candidates[gan_refined.design] = gan_refined
 
@@ -285,6 +358,8 @@ def run_inverse_design(target_hex: str, top_k: int = 3) -> InverseDesignResult:
                 metrics=[
                     CandidateMetric(label="DeltaE", value=f"{candidate.delta_e:.2f}"),
                     CandidateMetric(label="Composite score", value=f"{candidate.composite_score:.2f}"),
+                    CandidateMetric(label="Incidence angle", value=f"{theta_deg:.1f} deg"),
+                    CandidateMetric(label="Polarization", value=_format_polarization_label(polarization)),
                     CandidateMetric(label="Process drift", value=f"{plus_drift:+.2f} / {minus_drift:+.2f}"),
                     CandidateMetric(
                         label="Manufacturability",
@@ -318,6 +393,18 @@ def run_inverse_design(target_hex: str, top_k: int = 3) -> InverseDesignResult:
             label="Process sensitivity",
             detail="Ranking includes plus/minus 0.5 nm perturbation to approximate fabrication error.",
             state="warning",
+        ),
+        ConstraintCheck(
+            id="constraint-angle",
+            label="Incidence angle",
+            detail=f"Candidates were simulated at an incident angle of {theta_deg:.1f} degrees.",
+            state="pass",
+        ),
+        ConstraintCheck(
+            id="constraint-polarization",
+            label="Polarization",
+            detail=f"Candidates were ranked using {_format_polarization_label(polarization)} light response.",
+            state="pass",
         ),
     ]
 

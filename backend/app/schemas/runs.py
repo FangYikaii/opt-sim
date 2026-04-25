@@ -29,6 +29,10 @@ class WorkspaceDraft(BaseModel):
     requirementText: str
     targetLabel: str
     targetValue: str
+    incidenceAngleLabel: str
+    incidenceAngleValue: str
+    polarizationLabel: str
+    polarizationValue: str
     heightWindow: str
     exportMode: str
 

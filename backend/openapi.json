@@ -1426,6 +1426,23 @@
             "minimum": 1.0,
             "title": "Topk",
             "default": 3
+          },
+          "thetaDeg": {
+            "type": "number",
+            "maximum": 89.0,
+            "minimum": 0.0,
+            "title": "Thetadeg",
+            "default": 0.0
+          },
+          "polarization": {
+            "type": "string",
+            "enum": [
+              "te",
+              "tm",
+              "unpolarized"
+            ],
+            "title": "Polarization",
+            "default": "unpolarized"
           }
         },
         "type": "object",
@@ -1865,6 +1882,22 @@
             "type": "string",
             "title": "Targetvalue"
           },
+          "incidenceAngleLabel": {
+            "type": "string",
+            "title": "Incidenceanglelabel"
+          },
+          "incidenceAngleValue": {
+            "type": "string",
+            "title": "Incidenceanglevalue"
+          },
+          "polarizationLabel": {
+            "type": "string",
+            "title": "Polarizationlabel"
+          },
+          "polarizationValue": {
+            "type": "string",
+            "title": "Polarizationvalue"
+          },
           "heightWindow": {
             "type": "string",
             "title": "Heightwindow"
@@ -1879,6 +1912,10 @@
           "requirementText",
           "targetLabel",
           "targetValue",
+          "incidenceAngleLabel",
+          "incidenceAngleValue",
+          "polarizationLabel",
+          "polarizationValue",
           "heightWindow",
           "exportMode"
         ],

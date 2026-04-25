@@ -7,9 +7,12 @@ from .models import (
     ArtifactDetail,
     ArtifactMetadataItem,
     ArtifactSummary,
+    CandidateSolution,
     DesignRunResponse,
+    ExportEstimate,
     RunSummary,
     WorkspaceDetail,
+    WorkspaceDraft,
     WorkspaceProject,
 )
 
@@ -30,7 +33,32 @@ PROJECT = WorkspaceProject(
 _runtime_runs: dict[str, RuntimeRunBundle] = {}
 
 
-def _build_artifacts_for_run(run: RunSummary) -> tuple[list[ArtifactSummary], dict[str, ArtifactDetail]]:
+def _selected_candidate(candidates: list[CandidateSolution]) -> CandidateSolution | None:
+    if not candidates:
+        return None
+    return next((candidate for candidate in candidates if candidate.selected), candidates[0])
+
+
+def _candidate_metric(candidate: CandidateSolution | None, label: str, default: str = "n/a") -> str:
+    if candidate is None:
+        return default
+    metric = next((item for item in candidate.metrics if item.label == label), None)
+    return metric.value if metric is not None else default
+
+
+def _build_artifacts_for_run(
+    run: RunSummary,
+    *,
+    draft: WorkspaceDraft,
+    candidates: list[CandidateSolution],
+    export_estimate: ExportEstimate,
+) -> tuple[list[ArtifactSummary], dict[str, ArtifactDetail]]:
+    selected_candidate = _selected_candidate(candidates)
+    ranked_under = f"{draft.incidenceAngleValue}, {draft.polarizationValue}"
+    selected_candidate_id = selected_candidate.id if selected_candidate is not None else "n/a"
+    selected_source = _candidate_metric(selected_candidate, "Source")
+    selected_delta_e = _candidate_metric(selected_candidate, "DeltaE")
+
     summaries = [
         ArtifactSummary(
             id=f"{run.id}-report",
@@ -52,10 +80,20 @@ def _build_artifacts_for_run(run: RunSummary) -> tuple[list[ArtifactSummary], di
             name="simulation-report.md",
             type="report",
             status="ready",
-            description="Algorithm result summary and candidate review notes for the live demo run.",
+            description=(
+                f"Algorithm result summary and candidate review notes for {selected_candidate_id}, "
+                f"ranked under {ranked_under}."
+            ),
             metadata=[
                 ArtifactMetadataItem(label="run_id", value=run.id),
                 ArtifactMetadataItem(label="status", value=run.status),
+                ArtifactMetadataItem(label="target_hex", value=draft.targetValue),
+                ArtifactMetadataItem(label="ranked_under", value=ranked_under),
+                ArtifactMetadataItem(label="incidence_angle", value=draft.incidenceAngleValue),
+                ArtifactMetadataItem(label="polarization", value=draft.polarizationValue),
+                ArtifactMetadataItem(label="recommended_candidate", value=selected_candidate_id),
+                ArtifactMetadataItem(label="recommended_source", value=selected_source),
+                ArtifactMetadataItem(label="recommended_delta_e", value=selected_delta_e),
             ],
         ),
         f"{run.id}-export-plan": ArtifactDetail(
@@ -64,10 +102,19 @@ def _build_artifacts_for_run(run: RunSummary) -> tuple[list[ArtifactSummary], di
             name="export-plan.json",
             type="export",
             status="pending",
-            description="Preview-only export plan generated from the selected candidate.",
+            description=(
+                f"Preview-only export plan generated for {selected_candidate_id}, "
+                f"ranked under {ranked_under}."
+            ),
             metadata=[
                 ArtifactMetadataItem(label="run_id", value=run.id),
                 ArtifactMetadataItem(label="status", value="pending approval"),
+                ArtifactMetadataItem(label="ranked_under", value=ranked_under),
+                ArtifactMetadataItem(label="incidence_angle", value=draft.incidenceAngleValue),
+                ArtifactMetadataItem(label="polarization", value=draft.polarizationValue),
+                ArtifactMetadataItem(label="selected_candidate", value=selected_candidate_id),
+                ArtifactMetadataItem(label="delivery_format", value=export_estimate.format),
+                ArtifactMetadataItem(label="dimensions", value=export_estimate.dimensions),
             ],
         ),
     }
@@ -98,7 +145,12 @@ def get_runtime_artifact_detail(artifact_id: str) -> ArtifactDetail | None:
 def store_design_run(response: DesignRunResponse) -> WorkspaceDetail:
     timestamp = datetime.now().strftime("%H:%M:%S")
     active_run = response.activeRun.model_copy(update={"updatedAt": timestamp})
-    artifacts, artifact_details = _build_artifacts_for_run(active_run)
+    artifacts, artifact_details = _build_artifacts_for_run(
+        active_run,
+        draft=response.draft,
+        candidates=response.candidates,
+        export_estimate=response.exportEstimate,
+    )
     workspace = WorkspaceDetail(
         project=PROJECT,
         activeRun=active_run,

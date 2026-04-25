@@ -48,6 +48,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     'home.form.defaultRequirement':
       '希望复现接近暖铜色的结构色，用于展示样片，优先保证制造稳定性和交付可行性。',
     'home.form.targetHex': '目标颜色',
+    'home.form.thetaDeg': '入射角 (deg)',
+    'home.form.polarization': '偏振态',
     'home.form.topK': '候选数量',
     'home.form.submit': '生成业务方案',
     'home.form.submitting': '正在生成方案...',
@@ -81,6 +83,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     'shell.workspaceAria': '结构色设计工作区',
     'left.targets': '目标素材',
     'left.runs': '方案记录',
+    'left.artifacts': '交付产物',
     'left.contextLabel': '项目上下文',
     'left.assetType.color': '颜色目标',
     'left.assetType.image': '图像参考',
@@ -102,6 +105,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     'timeline.step.export': '根据导出规格生成交付结果。',
     'timeline.meta': '系统如何从需求走到候选方案',
     'timeline.targetLabel': '目标颜色',
+    'timeline.incidenceAngle': '入射角',
+    'timeline.polarization': '偏振态',
     'timeline.heightWindow': '可制造厚度范围',
     'timeline.exportMode': '交付模式',
     'timeline.targetHex': '目标 HEX',
@@ -174,6 +179,12 @@ const dictionaries: Record<Locale, Dictionary> = {
     'drawer.deliveryFormat': '交付格式',
     'drawer.deliverySize': '预计体量',
     'drawer.nextAction': '下一步',
+    'artifact.title': 'Report / Manifest',
+    'artifact.subtitle': '查看当前方案单的结果说明与导出元数据。',
+    'artifact.loading': '正在读取 artifact 详情。',
+    'artifact.description': '结果说明',
+    'artifact.metadata': '元数据',
+    'artifact.empty': '当前还没有可显示的 artifact 详情。',
     'common.loading': '加载中',
     'common.unavailable': '暂时不可用',
     'common.results': '个方案',
@@ -219,6 +230,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     'metric.Latest Training Device': '最近训练设备',
     'metric.DeltaE': '色差',
     'metric.Composite score': '综合评分',
+    'metric.Incidence angle': '入射角',
+    'metric.Polarization': '偏振态',
     'metric.Process drift': '工艺波动',
     'metric.Manufacturability': '制造可行性',
     'metric.Source': '方案来源',
@@ -233,6 +246,11 @@ const dictionaries: Record<Locale, Dictionary> = {
     'constraint.Ag thickness bounds': '银层厚度范围',
     'constraint.SiO2 thickness bounds': '介质层厚度范围',
     'constraint.Process sensitivity': '工艺敏感度',
+    'constraint.Incidence angle': '入射角',
+    'constraint.Polarization': '偏振态',
+    'polarization.unpolarized': '非偏振',
+    'polarization.te': 'TE',
+    'polarization.tm': 'TM',
     'notFound.title': '页面不存在',
     'notFound.body': '当前地址没有对应的业务页面，请返回首页重新发起需求。',
   },
@@ -279,6 +297,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     'home.form.defaultRequirement':
       'Reproduce a warm copper structural color for a display sample, prioritizing manufacturing stability and delivery readiness.',
     'home.form.targetHex': 'Target color',
+    'home.form.thetaDeg': 'Incidence angle (deg)',
+    'home.form.polarization': 'Polarization',
     'home.form.topK': 'Options',
     'home.form.submit': 'Generate proposal',
     'home.form.submitting': 'Generating proposal...',
@@ -312,6 +332,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     'shell.workspaceAria': 'Structural color workspace',
     'left.targets': 'Reference inputs',
     'left.runs': 'Brief history',
+    'left.artifacts': 'Artifacts',
     'left.contextLabel': 'Project context',
     'left.assetType.color': 'Color target',
     'left.assetType.image': 'Image reference',
@@ -333,6 +354,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     'timeline.step.export': 'Generate delivery outputs from confirmed specifications.',
     'timeline.meta': 'How the system moved from the brief to ranked options',
     'timeline.targetLabel': 'Target color',
+    'timeline.incidenceAngle': 'Incidence angle',
+    'timeline.polarization': 'Polarization',
     'timeline.heightWindow': 'Manufacturable thickness window',
     'timeline.exportMode': 'Delivery mode',
     'timeline.targetHex': 'Target HEX',
@@ -405,6 +428,12 @@ const dictionaries: Record<Locale, Dictionary> = {
     'drawer.deliveryFormat': 'Output format',
     'drawer.deliverySize': 'Estimated size',
     'drawer.nextAction': 'Next step',
+    'artifact.title': 'Report / Manifest',
+    'artifact.subtitle': 'Inspect the current run summary and export metadata.',
+    'artifact.loading': 'Loading artifact detail.',
+    'artifact.description': 'Description',
+    'artifact.metadata': 'Metadata',
+    'artifact.empty': 'No artifact detail is available yet.',
     'common.loading': 'Loading',
     'common.unavailable': 'Unavailable',
     'common.results': 'options',
@@ -450,6 +479,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     'metric.Latest Training Device': 'Latest training device',
     'metric.DeltaE': 'DeltaE',
     'metric.Composite score': 'Composite score',
+    'metric.Incidence angle': 'Incidence angle',
+    'metric.Polarization': 'Polarization',
     'metric.Process drift': 'Process drift',
     'metric.Manufacturability': 'Manufacturability',
     'metric.Source': 'Source',
@@ -464,6 +495,11 @@ const dictionaries: Record<Locale, Dictionary> = {
     'constraint.Ag thickness bounds': 'Silver thickness range',
     'constraint.SiO2 thickness bounds': 'Dielectric thickness range',
     'constraint.Process sensitivity': 'Process sensitivity',
+    'constraint.Incidence angle': 'Incidence angle',
+    'constraint.Polarization': 'Polarization',
+    'polarization.unpolarized': 'Unpolarized',
+    'polarization.te': 'TE',
+    'polarization.tm': 'TM',
     'notFound.title': 'Page not found',
     'notFound.body': 'There is no business page at this address. Return home and start a new brief.',
   },
@@ -612,6 +648,18 @@ export function provideI18n(): I18nValue {
     if (label === 'Source') {
       return labelSource.value(value)
     }
+    if (label === 'Polarization') {
+      const normalized = value.toLowerCase()
+      if (normalized === 'te') {
+        return t.value('polarization.te')
+      }
+      if (normalized === 'tm') {
+        return t.value('polarization.tm')
+      }
+      if (normalized === 'unpolarized') {
+        return t.value('polarization.unpolarized')
+      }
+    }
     if (label === 'Manufacturability') {
       return translateOrFallback(dictionary.value, `metric.${value}`, value)
     }
@@ -672,6 +720,8 @@ export function provideI18n(): I18nValue {
       'Demo target': '示例目标',
       'Reference target': '参考目标',
       'Target color': '目标颜色',
+      'Incidence angle': '入射角',
+      'Polarization': '偏振态',
       'Preview-first TIFF planning': '先预览、后生成 TIFF 交付',
       '512 tiles, 10k x 10k each': '共 512 个切片，每片 10k x 10k',
       '0 / 512 tiles': '已完成 0 / 512 个切片',
@@ -696,6 +746,15 @@ export function provideI18n(): I18nValue {
         '介质层厚度保持在 60-180 nm 搜索范围内。',
       'Ranking includes plus/minus 0.5 nm perturbation to approximate fabrication error.':
         '排序已考虑 +/-0.5 nm 工艺扰动。',
+      'Candidates were ranked using TE light response.':
+        '候选方案按 TE 偏振响应进行排序。',
+      'Candidates were ranked using TM light response.':
+        '候选方案按 TM 偏振响应进行排序。',
+      'Candidates were ranked using Unpolarized light response.':
+        '候选方案按非偏振响应进行排序。',
+      'Unpolarized': '非偏振',
+      'TM': 'TM',
+      'TE': 'TE',
       'Given a target structural color, generate several manufacturable Ag-SiO2-Ag thickness triples, verify them with physics simulation, and surface the most reviewable options to the user.':
         '输入目标颜色后，系统生成可制造膜层候选并给出排序结果。',
       'The cGAN proposes multiple layer-thickness candidates from a target color. Thin-film transfer-matrix simulation recalculates color error and process drift, and a local refinement pass improves both retrieval and cGAN seeds before the UI ranks candidates.':
@@ -755,12 +814,14 @@ export function provideI18n(): I18nValue {
 
     const dynamicRules: Array<[RegExp, (...matches: string[]) => string]> = [
       [
-        /^Parsed a single-target structural color request for (#[A-F0-9]+) and routed it through the Ag-SiO2-Ag paper-reproduction workflow\.$/,
-        (targetHex) => `已识别目标颜色 ${targetHex}，进入论文复现流程。`,
+        /^Parsed a single-target structural color request for (#[A-F0-9]+) at ([\d.]+) degree incidence with (TE|TM|Unpolarized) illumination and routed it through the Ag-SiO2-Ag paper-reproduction workflow\.$/,
+        (targetHex, thetaDeg, polarization) =>
+          `已识别目标颜色 ${targetHex}，按 ${thetaDeg} 度、${labelMetricValue.value('Polarization', polarization)} 条件进入论文复现流程。`,
       ],
       [
-        /^Executed the hybrid inverse-design stack: retrieval seeds, cGAN proposals, thin-film simulation, and local refinement before manufacturability-aware ranking\.$/,
-        () => '已完成候选生成、薄膜仿真、局部优化和排序。',
+        /^Executed the hybrid inverse-design stack: retrieval seeds, cGAN proposals, angle-dependent thin-film simulation at ([\d.]+) degrees under (TE|TM|Unpolarized) light, and local refinement before manufacturability-aware ranking\.$/,
+        (thetaDeg, polarization) =>
+          `已完成候选生成、${thetaDeg} 度 ${labelMetricValue.value('Polarization', polarization)} 条件下的薄膜仿真、局部优化和排序。`,
       ],
       [
         /^The reproduction-first candidate set is ready for review before broader problem adaptation\. Requirement summary: (.+)$/,
@@ -769,6 +830,16 @@ export function provideI18n(): I18nValue {
       [
         /^(\S+) candidate remains relatively stable under \+\/-0\.5 nm process perturbation\.$/,
         (source) => `${labelSource.value(source)}在 +/-0.5 nm 扰动下保持稳定。`,
+      ],
+      [
+        /^Algorithm result summary and candidate review notes for (\S+), ranked under ([\d.]+ deg), (TE|TM|Unpolarized)\.$/,
+        (candidateId, incidenceAngle, polarization) =>
+          `算法结果摘要与候选评审备注：${candidateId}，排序条件为 ${incidenceAngle}、${labelMetricValue.value('Polarization', polarization)}。`,
+      ],
+      [
+        /^Preview-only export plan generated for (\S+), ranked under ([\d.]+ deg), (TE|TM|Unpolarized)\.$/,
+        (candidateId, incidenceAngle, polarization) =>
+          `预览版导出计划已生成：${candidateId}，排序条件为 ${incidenceAngle}、${labelMetricValue.value('Polarization', polarization)}。`,
       ],
       [
         /^Training has already run and produced checkpoints in (\d+) experiment folders\. The latest artifact is `([^`]+)`\. However, the best current paper-style mean DeltaE is ([\d.]+), while the paper reference is ([\d.]+)\. Treat the model as trained, but not fully finished\.$/,

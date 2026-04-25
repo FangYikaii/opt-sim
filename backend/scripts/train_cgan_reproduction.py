@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable
 import csv
 import json
 from dataclasses import asdict, dataclass
 import math
 from pathlib import Path
 import sys
+import time
 import zipfile
 from typing import TYPE_CHECKING, Any
 
@@ -346,7 +348,22 @@ def evaluate_testing_set_distribution(
     test_labs: np.ndarray,
     samples_per_lab: int,
     seed: int,
+    progress_callback: Callable[[dict[str, object]], None] | None = None,
+    progress_interval: int | None = None,
+    progress_phase: str = "final",
 ) -> dict[str, object]:
+    update_interval = max(progress_interval or 0, 0)
+    if progress_callback is not None:
+        progress_callback(
+            {
+                "stage": "paper_eval",
+                "event": "start",
+                "phase": progress_phase,
+                "processed": 0,
+                "total": int(len(test_labs)),
+            }
+        )
+
     generated_design_batches = sample_designs_for_labs_from_bundle(
         bundle,
         test_labs,
@@ -370,6 +387,24 @@ def evaluate_testing_set_distribution(
         )
         d2_errors = np.abs(generated_nm[:, 1] - test_designs[index, 1])
         abs_d2_errors_nm.append(float(np.min(d2_errors)))
+
+        processed = index + 1
+        if (
+            progress_callback is not None
+            and (
+                processed == len(test_labs)
+                or (update_interval > 0 and processed % update_interval == 0)
+            )
+        ):
+            progress_callback(
+                {
+                    "stage": "paper_eval",
+                    "event": "progress",
+                    "phase": progress_phase,
+                    "processed": processed,
+                    "total": int(len(test_labs)),
+                }
+            )
 
     all_generated_designs = generated_design_batches.reshape(-1, generated_design_batches.shape[-1])
     jsd = {
@@ -395,19 +430,229 @@ def evaluate_testing_set_distribution(
 
     d2_within_5nm = float(np.mean(np.array(abs_d2_errors_nm, dtype=np.float64) <= 5.0))
 
-    return {
+    metrics = {
         "samples_per_lab": samples_per_lab,
         "mean_best_delta_e": float(np.mean(best_delta_es)),
         "median_best_delta_e": float(np.median(best_delta_es)),
         "mean_solution_groups": float(np.mean(solution_group_counts)),
         "max_solution_groups": int(max(solution_group_counts, default=0)),
         "d2_ground_truth_within_5nm_ratio": d2_within_5nm,
-        "generated_designs_nm": generated_design_batches.tolist(),
+        "generated_designs_nm": generated_design_batches,
         "best_delta_e_values": best_delta_es,
         "solution_group_counts": solution_group_counts,
         "abs_d2_errors_nm": abs_d2_errors_nm,
         "jsd": jsd,
     }
+    if progress_callback is not None:
+        progress_callback(
+            {
+                "stage": "paper_eval",
+                "event": "complete",
+                "phase": progress_phase,
+                "processed": int(len(test_labs)),
+                "total": int(len(test_labs)),
+            }
+        )
+    return metrics
+
+
+def compute_checkpoint_score(metrics: dict[str, object]) -> float:
+    mean_best_delta_e = float(metrics.get("mean_best_delta_e", float("inf")))
+    median_best_delta_e = float(metrics.get("median_best_delta_e", float("inf")))
+    d2_within_5nm_ratio = float(metrics.get("d2_ground_truth_within_5nm_ratio", 0.0))
+    jsd_metrics = metrics.get("jsd", {}) or {}
+    mean_jsd = (
+        float(jsd_metrics.get("d1", 1.0))
+        + float(jsd_metrics.get("d2", 1.0))
+        + float(jsd_metrics.get("d3", 1.0))
+    ) / 3.0
+
+    # Lower is better. DeltaE dominates, then distribution alignment and d2 recovery stabilize ranking.
+    return (
+        (0.6 * mean_best_delta_e)
+        + (0.3 * median_best_delta_e)
+        + (4.0 * mean_jsd)
+        + (2.0 * (1.0 - d2_within_5nm_ratio))
+    )
+
+
+def _configure_streams_for_realtime_logs() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(line_buffering=True, write_through=True)
+
+
+def _log(message: str) -> None:
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    print(f"[{timestamp}] {message}", flush=True)
+
+
+def _format_duration(seconds: float | None) -> str:
+    if seconds is None or not math.isfinite(seconds) or seconds < 0:
+        return "unknown"
+    rounded = int(round(seconds))
+    hours, remainder = divmod(rounded, 3600)
+    minutes, secs = divmod(remainder, 60)
+    if hours:
+        return f"{hours}h{minutes:02d}m{secs:02d}s"
+    if minutes:
+        return f"{minutes}m{secs:02d}s"
+    return f"{secs}s"
+
+
+def _default_progress_interval(total_steps: int, target_updates: int, max_interval: int) -> int:
+    if total_steps <= 0:
+        return 1
+    return max(1, min(max_interval, math.ceil(total_steps / max(target_updates, 1))))
+
+
+def _build_progress_logger() -> Callable[[dict[str, object]], None]:
+    started_at: dict[tuple[str, str | None], float] = {}
+
+    def _elapsed(stage: str, phase: str | None = None) -> float | None:
+        key = (stage, phase)
+        start_time = started_at.get(key)
+        if start_time is None:
+            return None
+        return time.monotonic() - start_time
+
+    def _progress_eta(completed: int, total: int, elapsed: float | None) -> float | None:
+        if elapsed is None or elapsed <= 0 or completed <= 0 or total <= completed:
+            return None
+        return elapsed * (total - completed) / completed
+
+    def callback(event: dict[str, object]) -> None:
+        stage = str(event.get("stage", "unknown"))
+        action = str(event.get("event", "progress"))
+        phase = str(event["phase"]) if event.get("phase") is not None else None
+        key = (stage, phase)
+
+        if action == "start":
+            started_at[key] = time.monotonic()
+            if stage == "regressor":
+                _log(
+                    "Regressor pretraining started "
+                    f"(epochs={int(event['total_epochs'])}, batch_size={int(event['batch_size'])}, "
+                    f"samples={int(event['sample_count'])})"
+                )
+            elif stage == "training":
+                _log(
+                    "Adversarial training started "
+                    f"(epochs={int(event['total_epochs'])}, batch_size={int(event['batch_size'])}, "
+                    f"samples={int(event['sample_count'])}, device={event['device']})"
+                )
+            elif stage == "checkpoint":
+                metric_name = event.get("metric_name") or "checkpoint metric"
+                _log(f"Checkpoint evaluation started at epoch {int(event['epoch'])} ({metric_name})")
+            elif stage == "paper_eval":
+                label = "final paper evaluation" if phase == "final" else f"{phase} paper evaluation"
+                _log(f"{label.capitalize()} started ({int(event['total'])} targets)")
+            return
+
+        if action == "progress":
+            if stage == "regressor":
+                epoch = int(event["epoch"])
+                total_epochs = int(event["total_epochs"])
+                elapsed = _elapsed("regressor")
+                eta = _progress_eta(epoch, total_epochs, elapsed)
+                _log(
+                    "Regressor "
+                    f"{epoch}/{total_epochs} | loss={float(event['loss']):.6f} | "
+                    f"elapsed={_format_duration(elapsed)} | eta={_format_duration(eta)}"
+                )
+            elif stage == "training":
+                epoch = int(event["epoch"])
+                total_epochs = int(event["total_epochs"])
+                elapsed = _elapsed("training")
+                eta = _progress_eta(epoch, total_epochs, elapsed)
+                _log(
+                    "Train "
+                    f"{epoch}/{total_epochs} | d_loss={float(event['evaluator_loss']):.6f} | "
+                    f"g_loss={float(event['generator_loss']):.6f} | lab_mse={float(event['lab_mse']):.6f} | "
+                    f"alpha={float(event['alpha']):.4f} | elapsed={_format_duration(elapsed)} | "
+                    f"eta={_format_duration(eta)}"
+                )
+            elif stage == "paper_eval":
+                processed = int(event["processed"])
+                total = int(event["total"])
+                elapsed = _elapsed("paper_eval", phase)
+                eta = _progress_eta(processed, total, elapsed)
+                label = "final paper evaluation" if phase == "final" else f"{phase} paper evaluation"
+                _log(
+                    f"{label.capitalize()} {processed}/{total} | "
+                    f"elapsed={_format_duration(elapsed)} | eta={_format_duration(eta)}"
+                )
+            return
+
+        if action == "early_stop" and stage == "training":
+            metric_name = event.get("selected_checkpoint_metric_name")
+            metric_value = event.get("selected_checkpoint_metric_value")
+            best_epoch = event.get("selected_checkpoint_epoch")
+            summary = (
+                "Early stopping triggered "
+                f"at epoch {int(event['epoch'])} after "
+                f"{int(event['checkpoint_evals_without_improvement'])} checkpoint evaluations without improvement"
+            )
+            if best_epoch is not None:
+                summary += f" | best_checkpoint_epoch={int(best_epoch)}"
+            if metric_name is not None and metric_value is not None:
+                summary += f" | {metric_name}={float(metric_value):.6f}"
+            _log(summary)
+            return
+
+        if action == "complete":
+            elapsed = _elapsed(stage, phase)
+            if stage == "regressor":
+                _log(f"Regressor pretraining complete in {_format_duration(elapsed)}")
+            elif stage == "checkpoint":
+                metric_name = event.get("metric_name") or "checkpoint metric"
+                metric_value = event.get("metric_value")
+                metric_suffix = (
+                    f"{metric_name}={float(metric_value):.6f}"
+                    if metric_value is not None
+                    else f"{metric_name}=unavailable"
+                )
+                best_suffix = ""
+                if event.get("is_best"):
+                    best_suffix = " | new best checkpoint"
+                _log(
+                    f"Checkpoint evaluation complete at epoch {int(event['epoch'])} | "
+                    f"{metric_suffix}{best_suffix}"
+                )
+            elif stage == "training":
+                best_epoch = event.get("selected_checkpoint_epoch")
+                metric_name = event.get("selected_checkpoint_metric_name")
+                metric_value = event.get("selected_checkpoint_metric_value")
+                summary = f"Training complete in {_format_duration(elapsed)}"
+                if best_epoch is not None:
+                    summary += f" | best_checkpoint_epoch={int(best_epoch)}"
+                if metric_name is not None and metric_value is not None:
+                    summary += f" | {metric_name}={float(metric_value):.6f}"
+                _log(summary)
+            elif stage == "paper_eval":
+                label = "final paper evaluation" if phase == "final" else f"{phase} paper evaluation"
+                _log(f"{label.capitalize()} complete in {_format_duration(elapsed)}")
+
+    return callback
+
+
+def _write_checkpoint_state(
+    *,
+    output_dir: Path,
+    epoch: int,
+    metric_name: str | None,
+    metric_value: float | None,
+) -> None:
+    state = {
+        "best_checkpoint_epoch": epoch,
+        "best_checkpoint_metric_name": metric_name,
+        "best_checkpoint_metric_value": metric_value,
+    }
+    (output_dir / "checkpoint_state.json").write_text(
+        json.dumps(state, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
 
 def compact_reproduction_metrics_for_json(reproduction_metrics: dict[str, object] | None) -> dict[str, object] | None:
@@ -421,10 +666,11 @@ def compact_reproduction_metrics_for_json(reproduction_metrics: dict[str, object
     abs_d2_errors_nm = compact_metrics.pop("abs_d2_errors_nm", None)
 
     if generated_designs is not None:
+        generated_designs_array = np.asarray(generated_designs)
         compact_metrics["generated_designs_shape"] = [
-            len(generated_designs),
-            len(generated_designs[0]) if generated_designs else 0,
-            len(generated_designs[0][0]) if generated_designs and generated_designs[0] else 0,
+            int(generated_designs_array.shape[0]) if generated_designs_array.ndim >= 1 else 0,
+            int(generated_designs_array.shape[1]) if generated_designs_array.ndim >= 2 else 0,
+            int(generated_designs_array.shape[2]) if generated_designs_array.ndim >= 3 else 0,
         ]
         compact_metrics["details_file"] = "paper_reproduction_details.npz"
 
@@ -861,13 +1107,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--paper-samples-per-lab", type=int, default=1000)
     parser.add_argument("--regressor-epochs", type=int, default=10000)
     parser.add_argument("--checkpoint-eval-interval", type=int, default=500)
+    parser.add_argument("--checkpoint-patience", type=int, default=None)
+    parser.add_argument("--checkpoint-samples-per-lab", type=int, default=64)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    _configure_streams_for_realtime_logs()
     load_runtime_dependencies()
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    overall_start_time = time.monotonic()
+    progress_logger = _build_progress_logger()
 
     reproduction_metrics: dict[str, object] | None = None
     if args.dataset_source == "paper":
@@ -894,22 +1145,83 @@ def main() -> None:
             "ag_top": [10.0, 30.0],
         }
 
+    runtime_info = get_torch_runtime_info(args.device)
+    _log(
+        "Loaded dataset "
+        f"(source={args.dataset_source}, train_samples={len(design_samples)}, "
+        f"test_samples={len(test_designs)}, output_dir={args.output_dir})"
+    )
+    _log(
+        "Runtime "
+        f"(device={runtime_info['device']}, cuda_available={runtime_info['cuda_available']}, "
+        f"torch={runtime_info['torch_version']})"
+    )
+
+    regressor_progress_interval = _default_progress_interval(
+        total_steps=args.regressor_epochs,
+        target_updates=20,
+        max_interval=1000,
+    )
+    training_progress_interval = _default_progress_interval(
+        total_steps=args.epochs,
+        target_updates=50,
+        max_interval=5000,
+    )
+    paper_eval_progress_interval = _default_progress_interval(
+        total_steps=len(test_labs),
+        target_updates=20,
+        max_interval=500,
+    )
+    _log(
+        "Progress logging "
+        f"(regressor_every={regressor_progress_interval} epochs, "
+        f"train_every={training_progress_interval} epochs, "
+        f"paper_eval_every={paper_eval_progress_interval} targets, "
+        f"checkpoint_eval_interval={args.checkpoint_eval_interval}, "
+        f"checkpoint_samples_per_lab={min(args.paper_samples_per_lab, args.checkpoint_samples_per_lab)})"
+    )
+
     checkpoint_metric_fn = None
     checkpoint_metric_name = None
     checkpoint_metric_mode = "min"
+    best_checkpoint_tracker = {
+        "epoch": None,
+        "metric_value": None,
+    }
     if args.dataset_source == "paper":
         def checkpoint_metric_fn(bundle: CganBundle, epoch: int) -> float | None:
             metrics = evaluate_testing_set_distribution(
                 bundle=bundle,
                 test_designs=test_designs,
                 test_labs=test_labs,
-                samples_per_lab=min(args.paper_samples_per_lab, 64),
-                seed=args.seed + epoch,
+                samples_per_lab=min(args.paper_samples_per_lab, args.checkpoint_samples_per_lab),
+                seed=args.seed,
+                progress_callback=progress_logger,
+                progress_interval=paper_eval_progress_interval,
+                progress_phase="checkpoint",
             )
-            metric_value = metrics.get("mean_best_delta_e")
-            return float(metric_value) if metric_value is not None else None
+            metric_value_float = compute_checkpoint_score(metrics)
+            best_so_far = best_checkpoint_tracker["metric_value"]
+            if best_so_far is None or metric_value_float < float(best_so_far):
+                best_checkpoint_tracker["epoch"] = epoch
+                best_checkpoint_tracker["metric_value"] = metric_value_float
+                save_model_bundle(bundle, args.output_dir / "generator_checkpoint_best.pt")
+                _write_checkpoint_state(
+                    output_dir=args.output_dir,
+                    epoch=epoch,
+                    metric_name="paper_reproduction.checkpoint_score",
+                    metric_value=metric_value_float,
+                )
+                _log(
+                    "Persisted best checkpoint "
+                    f"(epoch={epoch}, paper_reproduction.checkpoint_score={metric_value_float:.6f}, "
+                    f"mean_best_delta_e={float(metrics['mean_best_delta_e']):.6f}, "
+                    f"median_best_delta_e={float(metrics['median_best_delta_e']):.6f}, "
+                    f"d2_within_5nm={float(metrics['d2_ground_truth_within_5nm_ratio']):.6f})"
+                )
+            return metric_value_float
 
-        checkpoint_metric_name = "paper_reproduction.mean_best_delta_e"
+        checkpoint_metric_name = "paper_reproduction.checkpoint_score"
 
     bundle = fit_lightweight_cgan(
         lab_samples,
@@ -926,7 +1238,12 @@ def main() -> None:
         checkpoint_metric_name=checkpoint_metric_name,
         checkpoint_metric_mode=checkpoint_metric_mode,
         checkpoint_metric_interval=args.checkpoint_eval_interval,
+        checkpoint_patience=args.checkpoint_patience,
+        progress_callback=progress_logger,
+        progress_interval=training_progress_interval,
+        regressor_progress_interval=regressor_progress_interval,
     )
+    _log("Collecting candidate records for target colors")
     records = collect_candidate_records(
         bundle=bundle,
         lab_samples=lab_samples,
@@ -939,14 +1256,22 @@ def main() -> None:
     )
 
     if args.dataset_source == "paper":
+        _log(
+            "Running final paper evaluation "
+            f"(samples_per_lab={args.paper_samples_per_lab}, test_targets={len(test_labs)})"
+        )
         reproduction_metrics = evaluate_testing_set_distribution(
             bundle=bundle,
             test_designs=test_designs,
             test_labs=test_labs,
             samples_per_lab=args.paper_samples_per_lab,
             seed=args.seed,
+            progress_callback=progress_logger,
+            progress_interval=paper_eval_progress_interval,
+            progress_phase="final",
         )
 
+    _log("Writing artifacts to disk")
     write_loss_csv(bundle, args.output_dir / "loss_history.csv")
     write_candidate_csv(records, args.output_dir / "candidate_samples.csv")
     save_model_bundle(bundle, args.output_dir / "generator_checkpoint.pt")
@@ -1000,11 +1325,13 @@ def main() -> None:
             output_path=args.output_dir / "paper_figure_s6_d2_accuracy.png",
         )
 
-    print(f"Wrote cGAN reproduction artifacts to {args.output_dir}")
-    print(
+    total_runtime = time.monotonic() - overall_start_time
+    _log(f"Wrote cGAN reproduction artifacts to {args.output_dir}")
+    _log(
         "Key outputs: loss_curve.png, sampling_comparison.png, candidate_diversity.png, "
         "paper_figure4_distribution_comparison.png, paper_figure5_solution_metrics.png, metrics.json"
     )
+    _log(f"Total runtime: {_format_duration(total_runtime)}")
 
 
 if __name__ == "__main__":

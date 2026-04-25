@@ -551,6 +551,17 @@ export interface components {
              * @default 3
              */
             topK: number;
+            /**
+             * Thetadeg
+             * @default 0
+             */
+            thetaDeg: number;
+            /**
+             * Polarization
+             * @default unpolarized
+             * @enum {string}
+             */
+            polarization: "te" | "tm" | "unpolarized";
         };
         /** DesignRunResponse */
         DesignRunResponse: {
@@ -692,6 +703,14 @@ export interface components {
             targetLabel: string;
             /** Targetvalue */
             targetValue: string;
+            /** Incidenceanglelabel */
+            incidenceAngleLabel: string;
+            /** Incidenceanglevalue */
+            incidenceAngleValue: string;
+            /** Polarizationlabel */
+            polarizationLabel: string;
+            /** Polarizationvalue */
+            polarizationValue: string;
             /** Heightwindow */
             heightWindow: string;
             /** Exportmode */

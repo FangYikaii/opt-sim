@@ -43,7 +43,7 @@ Optional overrides:
 cd /home/fangyikai/code/opt-sim
 conda activate opt_sim
 OPT_SIM_TORCH_DEVICE=auto python3 -m uvicorn backend.app.main:app --reload --port 8000
-OPT_SIM_TORCH_DEVICE=cuda python3 backend/scripts/train_cgan_reproduction.py --device cuda
+OPT_SIM_TORCH_DEVICE=cuda python3 -u backend/scripts/train_cgan_reproduction.py --device cuda
 ```
 
 ## Paper-Reproduction Workflow
@@ -66,10 +66,12 @@ Paper-data reproduction run:
 ```bash
 cd /home/fangyikai/code/opt-sim
 conda activate opt_sim
-python3 backend/scripts/train_cgan_reproduction.py \
+python3 -u backend/scripts/train_cgan_reproduction.py \
   --dataset-source paper \
   --paper-train-csv /path/to/training\ set.csv \
-  --paper-test-csv /path/to/testing\ set.csv
+  --paper-test-csv /path/to/testing\ set.csv \
+  --checkpoint-samples-per-lab 64 \
+  --checkpoint-patience 5
 ```
 
 Default outputs are written to `backend/artifacts/cgan_reproduction/`:

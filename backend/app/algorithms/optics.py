@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Literal
 
 import numpy as np
 
 
 WAVELENGTHS_NM = np.arange(380.0, 781.0, 5.0)
+Polarization = Literal["te", "tm", "unpolarized"]
 
 
 @dataclass(frozen=True)
@@ -20,9 +22,34 @@ AG = Material("Ag", 0.13 - 3.98j)
 QUARTZ = Material("quartz", 1.46 + 0.0j)
 
 
-def _characteristic_matrix(refractive_index: complex, thickness_nm: float, wavelength_nm: float) -> np.ndarray:
-    delta = 2.0 * np.pi * refractive_index * thickness_nm / wavelength_nm
-    eta = refractive_index
+def _snell_cosine(refractive_index: complex, incident_index: complex, sin_incident: complex) -> complex:
+    sin_theta = incident_index * sin_incident / refractive_index
+    cos_theta = np.sqrt(1.0 - sin_theta * sin_theta + 0.0j)
+    if np.real(cos_theta) < 0.0:
+        cos_theta = -cos_theta
+    if abs(np.real(cos_theta)) < 1e-12 and np.imag(cos_theta) < 0.0:
+        cos_theta = -cos_theta
+    return cos_theta
+
+
+def _admittance(refractive_index: complex, cos_theta: complex, polarization: Literal["te", "tm"]) -> complex:
+    if polarization == "te":
+        return refractive_index * cos_theta
+    return refractive_index / cos_theta
+
+
+def _characteristic_matrix(
+    refractive_index: complex,
+    thickness_nm: float,
+    wavelength_nm: float,
+    *,
+    incident_index: complex,
+    sin_incident: complex,
+    polarization: Literal["te", "tm"],
+) -> np.ndarray:
+    cos_theta = _snell_cosine(refractive_index, incident_index, sin_incident)
+    delta = 2.0 * np.pi * refractive_index * cos_theta * thickness_nm / wavelength_nm
+    eta = _admittance(refractive_index, cos_theta, polarization)
     return np.array(
         [
             [np.cos(delta), 1j * np.sin(delta) / eta],
@@ -38,13 +65,26 @@ def _stack_amplitudes(
     *,
     incident_index: complex,
     substrate_index: complex,
+    theta_deg: float,
+    polarization: Literal["te", "tm"],
 ) -> tuple[complex, complex]:
+    incident_theta = np.deg2rad(theta_deg)
+    sin_incident = np.sin(incident_theta) + 0.0j
     matrix = np.identity(2, dtype=np.complex128)
     for refractive_index, thickness_nm in layers:
-        matrix = matrix @ _characteristic_matrix(refractive_index, thickness_nm, wavelength_nm)
+        matrix = matrix @ _characteristic_matrix(
+            refractive_index,
+            thickness_nm,
+            wavelength_nm,
+            incident_index=incident_index,
+            sin_incident=sin_incident,
+            polarization=polarization,
+        )
 
-    eta0 = incident_index
-    etas = substrate_index
+    cos_theta_0 = _snell_cosine(incident_index, incident_index, sin_incident)
+    cos_theta_s = _snell_cosine(substrate_index, incident_index, sin_incident)
+    eta0 = _admittance(incident_index, cos_theta_0, polarization)
+    etas = _admittance(substrate_index, cos_theta_s, polarization)
     b = matrix[0, 0] + matrix[0, 1] * etas
     c = matrix[1, 0] + matrix[1, 1] * etas
     denominator = eta0 * b + c
@@ -53,28 +93,34 @@ def _stack_amplitudes(
     return reflection, transmission
 
 
-def fabry_perot_response_ag_sio2_ag(
-    d_ag_bottom_nm: float,
-    d_sio2_nm: float,
-    d_ag_top_nm: float,
+def _stack_response(
+    layers: list[tuple[complex, float]],
+    *,
+    incident_index: complex,
+    substrate_index: complex,
+    theta_deg: float,
+    polarization: Literal["te", "tm"],
 ) -> tuple[np.ndarray, np.ndarray]:
-    layers = [
-        (AG.refractive_index, d_ag_bottom_nm),
-        (SIO2.refractive_index, d_sio2_nm),
-        (AG.refractive_index, d_ag_top_nm),
-    ]
-
     reflectance: list[float] = []
     transmittance: list[float] = []
+    incident_theta = np.deg2rad(theta_deg)
+    sin_incident = np.sin(incident_theta) + 0.0j
+    cos_theta_0 = _snell_cosine(incident_index, incident_index, sin_incident)
+    cos_theta_s = _snell_cosine(substrate_index, incident_index, sin_incident)
+    eta0 = _admittance(incident_index, cos_theta_0, polarization)
+    etas = _admittance(substrate_index, cos_theta_s, polarization)
+
     for wavelength_nm in WAVELENGTHS_NM:
         reflection, transmission = _stack_amplitudes(
             layers,
             wavelength_nm,
-            incident_index=AIR.refractive_index,
-            substrate_index=QUARTZ.refractive_index,
+            incident_index=incident_index,
+            substrate_index=substrate_index,
+            theta_deg=theta_deg,
+            polarization=polarization,
         )
         reflectance.append(float(np.clip(np.abs(reflection) ** 2, 0.0, 1.0)))
-        power_ratio = float(np.real(QUARTZ.refractive_index / AIR.refractive_index))
+        power_ratio = float(np.real(etas / eta0))
         transmittance.append(float(np.clip(power_ratio * (np.abs(transmission) ** 2), 0.0, 1.0)))
 
     return (
@@ -83,15 +129,63 @@ def fabry_perot_response_ag_sio2_ag(
     )
 
 
+def fabry_perot_response_ag_sio2_ag(
+    d_ag_bottom_nm: float,
+    d_sio2_nm: float,
+    d_ag_top_nm: float,
+    *,
+    theta_deg: float = 0.0,
+    polarization: Polarization = "unpolarized",
+) -> tuple[np.ndarray, np.ndarray]:
+    layers = [
+        (AG.refractive_index, d_ag_bottom_nm),
+        (SIO2.refractive_index, d_sio2_nm),
+        (AG.refractive_index, d_ag_top_nm),
+    ]
+
+    if polarization == "unpolarized":
+        reflectance_te, transmittance_te = _stack_response(
+            layers,
+            incident_index=AIR.refractive_index,
+            substrate_index=QUARTZ.refractive_index,
+            theta_deg=theta_deg,
+            polarization="te",
+        )
+        reflectance_tm, transmittance_tm = _stack_response(
+            layers,
+            incident_index=AIR.refractive_index,
+            substrate_index=QUARTZ.refractive_index,
+            theta_deg=theta_deg,
+            polarization="tm",
+        )
+        return (
+            0.5 * (reflectance_te + reflectance_tm),
+            0.5 * (transmittance_te + transmittance_tm),
+        )
+
+    return _stack_response(
+        layers,
+        incident_index=AIR.refractive_index,
+        substrate_index=QUARTZ.refractive_index,
+        theta_deg=theta_deg,
+        polarization=polarization,
+    )
+
+
 def reflectance_spectrum_ag_sio2_ag(
     d_ag_bottom_nm: float,
     d_sio2_nm: float,
     d_ag_top_nm: float,
+    *,
+    theta_deg: float = 0.0,
+    polarization: Polarization = "unpolarized",
 ) -> np.ndarray:
     reflectance, _ = fabry_perot_response_ag_sio2_ag(
         d_ag_bottom_nm,
         d_sio2_nm,
         d_ag_top_nm,
+        theta_deg=theta_deg,
+        polarization=polarization,
     )
     return reflectance
 
@@ -100,11 +194,16 @@ def transmittance_spectrum_ag_sio2_ag(
     d_ag_bottom_nm: float,
     d_sio2_nm: float,
     d_ag_top_nm: float,
+    *,
+    theta_deg: float = 0.0,
+    polarization: Polarization = "unpolarized",
 ) -> np.ndarray:
     _, transmittance = fabry_perot_response_ag_sio2_ag(
         d_ag_bottom_nm,
         d_sio2_nm,
         d_ag_top_nm,
+        theta_deg=theta_deg,
+        polarization=polarization,
     )
     return transmittance
 

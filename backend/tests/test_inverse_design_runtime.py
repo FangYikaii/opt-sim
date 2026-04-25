@@ -25,6 +25,30 @@ def test_inverse_design_returns_refined_or_gan_backed_candidates_with_composite_
     )
 
 
+def test_inverse_design_changes_with_theta_and_reports_angle_constraint() -> None:
+    normal_result = inverse_design.run_inverse_design("#bf6f4f", top_k=3, theta_deg=0.0)
+    oblique_result = inverse_design.run_inverse_design("#bf6f4f", top_k=3, theta_deg=45.0)
+
+    assert normal_result.candidates[0].simulatedColorHex != oblique_result.candidates[0].simulatedColorHex
+    angle_constraint = next(
+        constraint for constraint in oblique_result.constraints if constraint.label == "Incidence angle"
+    )
+    assert angle_constraint.detail == "Candidates were simulated at an incident angle of 45.0 degrees."
+
+
+def test_inverse_design_reports_polarization_condition_in_metrics_and_constraints() -> None:
+    result = inverse_design.run_inverse_design("#bf6f4f", top_k=3, theta_deg=45.0, polarization="te")
+
+    first_metrics = {metric.label: metric.value for metric in result.candidates[0].metrics}
+    polarization_constraint = next(
+        constraint for constraint in result.constraints if constraint.label == "Polarization"
+    )
+
+    assert first_metrics["Incidence angle"] == "45.0 deg"
+    assert first_metrics["Polarization"] == "TE"
+    assert polarization_constraint.detail == "Candidates were ranked using TE light response."
+
+
 def test_load_saved_cgan_bundle_uses_best_experiment_checkpoint(monkeypatch, tmp_path) -> None:
     checkpoint_path = tmp_path / "exp-best" / "generator_checkpoint.pt"
     checkpoint_path.parent.mkdir(parents=True)
@@ -149,6 +173,8 @@ def test_design_run_api_exposes_refined_candidate_metrics() -> None:
             "requirementText": "Reproduce a warm copper structural color with the Ag-SiO2-Ag paper route.",
             "targetHex": "#bf6f4f",
             "topK": 3,
+            "thetaDeg": 45.0,
+            "polarization": "tm",
         },
     )
 
@@ -157,3 +183,44 @@ def test_design_run_api_exposes_refined_candidate_metrics() -> None:
     assert len(payload["candidates"]) == 3
     metric_labels = {metric["label"] for metric in payload["candidates"][0]["metrics"]}
     assert "Composite score" in metric_labels
+    assert "Polarization" in metric_labels
+    assert payload["draft"]["incidenceAngleValue"] == "45.0 deg"
+    assert payload["draft"]["polarizationValue"] == "TM"
+
+
+def test_artifact_detail_records_ranking_condition_and_export_metadata() -> None:
+    response = client.post(
+        "/api/agent/design-run",
+        json={
+            "requirementText": "Reproduce a warm copper structural color with the Ag-SiO2-Ag paper route.",
+            "targetHex": "#bf6f4f",
+            "topK": 3,
+            "thetaDeg": 45.0,
+            "polarization": "tm",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    run_id = payload["activeRun"]["id"]
+
+    report = client.get(f"/api/artifacts/{run_id}-report")
+    export_plan = client.get(f"/api/artifacts/{run_id}-export-plan")
+
+    assert report.status_code == 200
+    assert export_plan.status_code == 200
+
+    report_payload = report.json()
+    export_payload = export_plan.json()
+    report_metadata = {item["label"]: item["value"] for item in report_payload["metadata"]}
+    export_metadata = {item["label"]: item["value"] for item in export_payload["metadata"]}
+
+    assert "ranked under 45.0 deg, TM" in report_payload["description"]
+    assert report_metadata["ranked_under"] == "45.0 deg, TM"
+    assert report_metadata["polarization"] == "TM"
+    assert report_metadata["target_hex"] == "#BF6F4F"
+
+    assert "ranked under 45.0 deg, TM" in export_payload["description"]
+    assert export_metadata["ranked_under"] == "45.0 deg, TM"
+    assert export_metadata["polarization"] == "TM"
+    assert export_metadata["delivery_format"] == payload["exportEstimate"]["format"]

@@ -3,6 +3,8 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from '../i18n'
 import type {
   AlgorithmOverview,
+  ArtifactDetail,
+  ArtifactSummary,
   CandidateSolution,
   ConstraintCheck,
   ExportEstimate,
@@ -23,6 +25,7 @@ import AgentTimeline from './AgentTimeline.vue'
 import InspectorPanel from './InspectorPanel.vue'
 import BottomDrawer from './BottomDrawer.vue'
 import ExperimentGuide from './ExperimentGuide.vue'
+import ArtifactDetailPanel from './ArtifactDetailPanel.vue'
 
 const props = defineProps<{
   algorithmOverview: AlgorithmOverview | null
@@ -31,10 +34,18 @@ const props = defineProps<{
   activeRun: RunSummary
   runs: RunSummary[]
   targets: TargetAsset[]
+  artifacts: ArtifactSummary[]
+  activeArtifactId: string | null
+  activeArtifactDetail: ArtifactDetail | null
+  isArtifactLoading: boolean
   timeline: TimelineEvent[]
   candidates: CandidateSolution[]
   constraints: ConstraintCheck[]
   exportEstimate: ExportEstimate
+}>()
+
+const emit = defineEmits<{
+  selectArtifact: [artifactId: string]
 }>()
 
 const { t } = useI18n()
@@ -114,7 +125,13 @@ const isExportStep = computed(() => activeStep.value === 'export')
       @review-export="focusCurrentStep"
     />
     <div class="workspace-grid">
-      <LeftRail :runs="runs" :targets="targets" />
+      <LeftRail
+        :runs="runs"
+        :targets="targets"
+        :artifacts="artifacts"
+        :active-artifact-id="activeArtifactId"
+        @select-artifact="emit('selectArtifact', $event)"
+      />
       <main class="workspace-main" :aria-label="t('shell.workspaceAria')">
         <ExperimentGuide
           class="workspace-guide"
@@ -139,6 +156,13 @@ const isExportStep = computed(() => activeStep.value === 'export')
           @focus-selection="scrollToCandidates"
           @approve-export="focusCurrentStep"
         />
+        <ArtifactDetailPanel
+          :artifacts="artifacts"
+          :active-artifact-id="activeArtifactId"
+          :active-artifact-detail="activeArtifactDetail"
+          :is-loading="isArtifactLoading"
+          @select-artifact="emit('selectArtifact', $event)"
+        />
       </main>
       <InspectorPanel
         :active-step="activeStep"
@@ -152,6 +176,7 @@ const isExportStep = computed(() => activeStep.value === 'export')
     <BottomDrawer
       v-if="isGenerateStep || isExportStep"
       :active-run="activeRun"
+      :draft="draft"
       :export-estimate="exportEstimate"
     />
   </div>

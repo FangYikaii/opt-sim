@@ -163,6 +163,19 @@ def get_torch_runtime_info(preferred: str | None = None) -> dict[str, object]:
     return info
 
 
+def _resolve_sampling_batch_size(
+    total_sample_count: int,
+    runtime_device: torch.device,
+    max_forward_batch_size: int | None,
+) -> int:
+    if total_sample_count <= 0:
+        return 1
+    if max_forward_batch_size is not None:
+        return max(1, min(int(max_forward_batch_size), total_sample_count))
+    default_batch_size = 16384 if runtime_device.type == "cuda" else 65536
+    return min(default_batch_size, total_sample_count)
+
+
 def _train_lab_regressor(
     *,
     design_norm: torch.Tensor,
@@ -170,24 +183,69 @@ def _train_lab_regressor(
     epochs: int,
     batch_size: int,
     runtime_device: torch.device,
+    progress_callback: Callable[[dict[str, object]], None] | None = None,
+    progress_interval: int | None = None,
 ) -> LabRegressor:
     regressor = LabRegressor().to(runtime_device)
     optimizer = torch.optim.Adam(regressor.parameters(), lr=0.005)
     loss_fn = nn.MSELoss()
     effective_batch_size = min(batch_size, len(design_norm))
+    update_interval = max(progress_interval or 0, 0)
+
+    if progress_callback is not None:
+        progress_callback(
+            {
+                "stage": "regressor",
+                "event": "start",
+                "epoch": 0,
+                "total_epochs": epochs,
+                "batch_size": effective_batch_size,
+                "sample_count": int(len(design_norm)),
+            }
+        )
 
     regressor.train()
-    for _ in range(epochs):
+    for epoch in range(1, epochs + 1):
+        epoch_loss_total = 0.0
+        batch_counter = 0
         for batch_indices in _iter_batch_indices(len(design_norm), effective_batch_size, runtime_device):
             predicted_lab = regressor(design_norm[batch_indices])
             loss = loss_fn(predicted_lab, lab_norm[batch_indices])
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            epoch_loss_total += float(loss.detach().cpu().item())
+            batch_counter += 1
+
+        if (
+            progress_callback is not None
+            and (
+                epoch == epochs
+                or (update_interval > 0 and epoch % update_interval == 0)
+            )
+        ):
+            progress_callback(
+                {
+                    "stage": "regressor",
+                    "event": "progress",
+                    "epoch": epoch,
+                    "total_epochs": epochs,
+                    "loss": epoch_loss_total / max(batch_counter, 1),
+                }
+            )
 
     regressor.eval()
     for parameter in regressor.parameters():
         parameter.requires_grad_(False)
+    if progress_callback is not None:
+        progress_callback(
+            {
+                "stage": "regressor",
+                "event": "complete",
+                "epoch": epochs,
+                "total_epochs": epochs,
+            }
+        )
     return regressor
 
 
@@ -207,6 +265,10 @@ def fit_lightweight_cgan(
     checkpoint_metric_name: str | None = None,
     checkpoint_metric_mode: str = "min",
     checkpoint_metric_interval: int | None = None,
+    checkpoint_patience: int | None = None,
+    progress_callback: Callable[[dict[str, object]], None] | None = None,
+    progress_interval: int | None = None,
+    regressor_progress_interval: int | None = None,
 ) -> CganBundle:
     runtime_device = get_torch_device(device)
     torch.manual_seed(seed)
@@ -237,6 +299,8 @@ def fit_lightweight_cgan(
         epochs=regressor_epochs or max(10, min(epochs, 100)),
         batch_size=effective_batch_size,
         runtime_device=runtime_device,
+        progress_callback=progress_callback,
+        progress_interval=regressor_progress_interval,
     )
 
     generator = Generator(noise_dim=noise_dim).to(runtime_device)
@@ -249,10 +313,27 @@ def fit_lightweight_cgan(
     best_generator_state_dict: dict[str, torch.Tensor] | None = None
     selected_checkpoint_epoch: int | None = None
     selected_checkpoint_metric_value: float | None = None
+    checkpoint_evals_without_improvement = 0
+    completed_epochs = 0
     generator.train()
     evaluator.train()
+    update_interval = max(progress_interval or 0, 0)
+
+    if progress_callback is not None:
+        progress_callback(
+            {
+                "stage": "training",
+                "event": "start",
+                "epoch": 0,
+                "total_epochs": epochs,
+                "batch_size": effective_batch_size,
+                "sample_count": int(len(lab_samples)),
+                "device": str(runtime_device),
+            }
+        )
 
     for epoch in range(1, epochs + 1):
+        completed_epochs = epoch
         alpha = min(1.0, epoch / 20000.0)
         epoch_evaluator_loss = 0.0
         epoch_generator_loss = 0.0
@@ -309,6 +390,29 @@ def fit_lightweight_cgan(
                 }
             )
 
+        normalizer = max(batch_counter, 1)
+        if (
+            progress_callback is not None
+            and (
+                epoch == epochs
+                or (update_interval > 0 and epoch % update_interval == 0)
+            )
+        ):
+            progress_callback(
+                {
+                    "stage": "training",
+                    "event": "progress",
+                    "epoch": epoch,
+                    "total_epochs": epochs,
+                    "evaluator_loss": epoch_evaluator_loss / normalizer,
+                    "generator_loss": epoch_generator_loss / normalizer,
+                    "real_score": epoch_real_score / normalizer,
+                    "fake_score": epoch_fake_score / normalizer,
+                    "lab_mse": epoch_lab_mse / normalizer,
+                    "alpha": float(alpha),
+                }
+            )
+
         should_run_checkpoint_eval = (
             checkpoint_metric_fn is not None
             and (
@@ -321,6 +425,15 @@ def fit_lightweight_cgan(
             )
         )
         if should_run_checkpoint_eval:
+            if progress_callback is not None:
+                progress_callback(
+                    {
+                        "stage": "checkpoint",
+                        "event": "start",
+                        "epoch": epoch,
+                        "metric_name": checkpoint_metric_name,
+                    }
+                )
             generator.eval()
             evaluator.eval()
             metric_bundle = CganBundle(
@@ -336,6 +449,7 @@ def fit_lightweight_cgan(
                 losses=losses,
             )
             metric_value = checkpoint_metric_fn(metric_bundle, epoch)
+            is_better = False
             if metric_value is not None and np.isfinite(metric_value):
                 is_better = (
                     selected_checkpoint_metric_value is None
@@ -352,13 +466,61 @@ def fit_lightweight_cgan(
                     best_generator_state_dict = _snapshot_state_dict(generator)
                     selected_checkpoint_epoch = epoch
                     selected_checkpoint_metric_value = float(metric_value)
+                    checkpoint_evals_without_improvement = 0
+                else:
+                    checkpoint_evals_without_improvement += 1
+            if progress_callback is not None:
+                progress_callback(
+                    {
+                        "stage": "checkpoint",
+                        "event": "complete",
+                        "epoch": epoch,
+                        "metric_name": checkpoint_metric_name,
+                        "metric_value": float(metric_value) if metric_value is not None else None,
+                        "is_best": is_better,
+                        "checkpoint_evals_without_improvement": checkpoint_evals_without_improvement,
+                    }
+                )
             generator.train()
             evaluator.train()
+            if (
+                checkpoint_patience is not None
+                and checkpoint_patience > 0
+                and checkpoint_evals_without_improvement >= checkpoint_patience
+            ):
+                if progress_callback is not None:
+                    progress_callback(
+                        {
+                            "stage": "training",
+                            "event": "early_stop",
+                            "epoch": epoch,
+                            "total_epochs": epochs,
+                            "checkpoint_patience": checkpoint_patience,
+                            "checkpoint_evals_without_improvement": checkpoint_evals_without_improvement,
+                            "selected_checkpoint_epoch": selected_checkpoint_epoch,
+                            "selected_checkpoint_metric_name": checkpoint_metric_name,
+                            "selected_checkpoint_metric_value": selected_checkpoint_metric_value,
+                        }
+                    )
+                break
 
     if best_generator_state_dict is None:
         best_generator_state_dict = _snapshot_state_dict(generator)
         if checkpoint_metric_fn is None:
-            selected_checkpoint_epoch = epochs
+            selected_checkpoint_epoch = completed_epochs or epochs
+
+    if progress_callback is not None:
+        progress_callback(
+            {
+                "stage": "training",
+                "event": "complete",
+                "epoch": completed_epochs or epochs,
+                "total_epochs": epochs,
+                "selected_checkpoint_epoch": selected_checkpoint_epoch,
+                "selected_checkpoint_metric_name": checkpoint_metric_name,
+                "selected_checkpoint_metric_value": selected_checkpoint_metric_value,
+            }
+        )
 
     return CganBundle(
         generator=generator,
@@ -471,6 +633,7 @@ def sample_designs_from_bundle(
     noise_dim: int | None = None,
     seed: int | None = None,
     device: str | None = None,
+    max_forward_batch_size: int | None = None,
 ) -> np.ndarray:
     runtime_device = get_torch_device(device or bundle.device)
     active_noise_dim = noise_dim or bundle.noise_dim
@@ -481,14 +644,26 @@ def sample_designs_from_bundle(
     bundle.generator = bundle.generator.to(runtime_device)
     bundle.generator.eval()
     target_norm = _normalize(target_lab.reshape(1, -1), bundle.lab_min, bundle.lab_max)
-    lab_tensor = torch.tensor(
-        np.repeat(target_norm, sample_count, axis=0),
-        dtype=torch.float32,
-        device=runtime_device,
+    if sample_count <= 0:
+        return np.empty((0, len(bundle.design_min)), dtype=np.float32)
+    effective_batch_size = _resolve_sampling_batch_size(
+        sample_count,
+        runtime_device,
+        max_forward_batch_size,
     )
     noise = torch.randn(sample_count, active_noise_dim, device=runtime_device)
+    generated_norm = np.empty((sample_count, len(bundle.design_min)), dtype=np.float32)
     with torch.no_grad():
-        generated_norm = bundle.generator(lab_tensor, noise).detach().cpu().numpy()
+        for start in range(0, sample_count, effective_batch_size):
+            end = min(start + effective_batch_size, sample_count)
+            lab_tensor = torch.tensor(
+                np.repeat(target_norm, end - start, axis=0),
+                dtype=torch.float32,
+                device=runtime_device,
+            )
+            generated_norm[start:end] = (
+                bundle.generator(lab_tensor, noise[start:end]).detach().cpu().numpy()
+            )
     generated = _denormalize(generated_norm, bundle.design_min, bundle.design_max)
     return _clip_design_bounds(generated, bundle.design_min, bundle.design_max)
 
@@ -501,6 +676,7 @@ def sample_designs_for_labs_from_bundle(
     noise_dim: int | None = None,
     seed: int | None = None,
     device: str | None = None,
+    max_forward_batch_size: int | None = None,
 ) -> np.ndarray:
     runtime_device = get_torch_device(device or bundle.device)
     active_noise_dim = noise_dim or bundle.noise_dim
@@ -513,12 +689,32 @@ def sample_designs_for_labs_from_bundle(
     bundle.generator.eval()
 
     target_norm = _normalize(target_labs, bundle.lab_min, bundle.lab_max)
-    lab_tensor = torch.tensor(target_norm, dtype=torch.float32, device=runtime_device)
-    repeated_lab_tensor = torch.repeat_interleave(lab_tensor, repeats=sample_count, dim=0)
-    noise = torch.randn(len(repeated_lab_tensor), active_noise_dim, device=runtime_device)
+    if sample_count <= 0:
+        return np.empty((len(target_labs), 0, len(bundle.design_min)), dtype=np.float32)
+    total_sample_count = len(target_labs) * sample_count
+    effective_batch_size = _resolve_sampling_batch_size(
+        total_sample_count,
+        runtime_device,
+        max_forward_batch_size,
+    )
+    noise = torch.randn(total_sample_count, active_noise_dim, device=runtime_device)
+    generated_norm = np.empty((total_sample_count, len(bundle.design_min)), dtype=np.float32)
 
     with torch.no_grad():
-        generated_norm = bundle.generator(repeated_lab_tensor, noise).detach().cpu().numpy()
+        for chunk_start in range(0, total_sample_count, effective_batch_size):
+            chunk_end = min(chunk_start + effective_batch_size, total_sample_count)
+            lab_indices = np.arange(chunk_start, chunk_end) // sample_count
+            repeated_lab_tensor = torch.tensor(
+                target_norm[lab_indices],
+                dtype=torch.float32,
+                device=runtime_device,
+            )
+            generated_norm[chunk_start:chunk_end] = (
+                bundle.generator(repeated_lab_tensor, noise[chunk_start:chunk_end])
+                .detach()
+                .cpu()
+                .numpy()
+            )
 
     generated = _denormalize(generated_norm, bundle.design_min, bundle.design_max)
     clipped = _clip_design_bounds(generated, bundle.design_min, bundle.design_max)
