@@ -23,6 +23,7 @@ const errorMessage = ref('')
 const {
   labelCandidateStatus,
   labelConstraintState,
+  labelMetricValue,
   labelRunStatus,
   localizeCopy,
   locale,
@@ -44,6 +45,78 @@ const alternativeCandidates = computed(() =>
 
 const prioritizedConstraints = computed(() => workspace.value?.constraints.slice(0, 4) ?? [])
 const visibleTimeline = computed(() => workspace.value?.timeline.slice(0, 4) ?? [])
+const decisionModeLabel = computed(() => {
+  const mode = workspace.value?.decisionSupport.mode
+  if (!mode) {
+    return ''
+  }
+  return t.value(`decision.mode.${mode}`)
+})
+const decisionConfidenceLabel = computed(() => {
+  const confidence = workspace.value?.decisionSupport.confidence
+  if (!confidence) {
+    return ''
+  }
+  return t.value(`decision.confidence.${confidence}`)
+})
+const llmInputCandidateCount = computed(() => Math.min(workspace.value?.candidates.length ?? 0, 3))
+const llmInputConstraintCount = computed(() => Math.min(workspace.value?.constraints.length ?? 0, 5))
+const decisionRoleItems = computed(() => {
+  if (!workspace.value) {
+    return []
+  }
+
+  const items = [
+    t.value('decision.role.recommend', {
+      candidateId: workspace.value.decisionSupport.recommendedCandidateId ?? t.value('common.notAvailable'),
+    }),
+    t.value('decision.role.scope'),
+    t.value('decision.role.limit'),
+  ]
+
+  if (workspace.value.decisionSupport.mode === 'llm') {
+    items.push(
+      t.value('decision.role.llm', {
+        model: workspace.value.agentConfiguration.model,
+      }),
+    )
+  } else {
+    items.push(t.value('decision.role.fallback'))
+  }
+
+  return items
+})
+const decisionInputItems = computed(() => [
+  t.value('decision.input.request'),
+  t.value('decision.input.candidates', {
+    count: llmInputCandidateCount.value,
+  }),
+  t.value('decision.input.constraints', {
+    count: llmInputConstraintCount.value,
+  }),
+  workspace.value?.decisionSupport.mode === 'llm'
+    ? t.value('decision.input.llmPrompt')
+    : t.value('decision.input.heuristicRules'),
+])
+const decisionFlowItems = computed(() => {
+  if (!workspace.value) {
+    return []
+  }
+
+  const items = [
+    t.value('decision.flow.base'),
+  ]
+
+  if (workspace.value.decisionSupport.mode === 'llm') {
+    items.push(t.value('decision.flow.llm.context'))
+    items.push(t.value('decision.flow.llm.output'))
+  } else {
+    items.push(t.value('decision.flow.fallback.trigger'))
+    items.push(t.value('decision.flow.fallback.rules'))
+  }
+
+  return items
+})
 
 async function loadArtifactDetail(artifactId: string): Promise<void> {
   if (artifactDetails.value[artifactId]) {
@@ -185,11 +258,39 @@ watch(
             <div>
               <p class="eyebrow">Step 2</p>
               <h2>AI 决策建议</h2>
-              <p class="section-subtitle">这一步只保留推荐结论、判断理由和需要你留意的风险。</p>
+              <p class="section-subtitle">这一步会先说明 AI 决策层的作用，再给出推荐结论、判断理由和风险。</p>
             </div>
             <span class="status-pill" :data-state="workspace.decisionSupport.confidence === 'high' ? 'pass' : workspace.decisionSupport.confidence === 'medium' ? 'warning' : 'fail'">
-              {{ workspace.decisionSupport.confidence }}
+              {{ decisionConfidenceLabel }}
             </span>
+          </div>
+
+          <div class="decision-grid decision-grid--stacked">
+            <article class="chart-card">
+              <div class="chart-card__header">
+                <h3>{{ t('decision.explainer.title') }}</h3>
+                <span class="ghost-pill ghost-pill--small">{{ decisionModeLabel }}</span>
+              </div>
+              <p class="chart-note">{{ t('decision.explainer.body') }}</p>
+              <ul class="list-reset checklist checklist--compact">
+                <li v-for="item in decisionRoleItems" :key="item" class="checklist-item">
+                  <p>{{ item }}</p>
+                </li>
+              </ul>
+            </article>
+            <article class="chart-card">
+              <div class="chart-card__header">
+                <h3>{{ t('decision.inputs.title') }}</h3>
+                <span class="ghost-pill ghost-pill--small">
+                  {{ llmInputCandidateCount }} / {{ llmInputConstraintCount }}
+                </span>
+              </div>
+              <ul class="list-reset checklist checklist--compact">
+                <li v-for="item in decisionInputItems" :key="item" class="checklist-item">
+                  <p>{{ item }}</p>
+                </li>
+              </ul>
+            </article>
           </div>
 
           <article class="decision-hero">
@@ -199,8 +300,11 @@ watch(
               <p class="chart-note">{{ localizeCopy(workspace.decisionSupport.summary) }}</p>
             </div>
             <div class="decision-hero__meta">
-              <span class="ghost-pill">{{ workspace.decisionSupport.mode }}</span>
-              <span class="ghost-pill">{{ workspace.decisionSupport.recommendedCandidateId ?? 'n/a' }}</span>
+              <span class="ghost-pill">{{ decisionModeLabel }}</span>
+              <span class="ghost-pill">{{ decisionConfidenceLabel }}</span>
+              <span class="ghost-pill">
+                {{ t('decision.selected') }} {{ workspace.decisionSupport.recommendedCandidateId ?? 'n/a' }}
+              </span>
             </div>
           </article>
 
@@ -228,6 +332,20 @@ watch(
               </ul>
             </article>
           </div>
+
+          <article class="chart-card">
+            <div class="chart-card__header">
+              <h3>{{ t('decision.flow.title') }}</h3>
+              <span class="ghost-pill ghost-pill--small">
+                {{ labelMetricValue('Source', workspace.candidates[0]?.metrics.find((metric) => metric.label === 'Source')?.value ?? 'n/a') }}
+              </span>
+            </div>
+            <ul class="list-reset checklist checklist--compact">
+              <li v-for="item in decisionFlowItems" :key="item" class="checklist-item">
+                <p>{{ item }}</p>
+              </li>
+            </ul>
+          </article>
 
           <article class="chart-card">
             <span class="field__label">下一步</span>
@@ -492,7 +610,8 @@ watch(
 
   <section v-else class="route-page loading-page panel">
     <p class="eyebrow">{{ t('common.loading') }}</p>
-    <h1>{{ isLoading ? t('shell.workspaceLabel') : t('common.unavailable') }}</h1>
+    <h1>{{ isLoading ? t('workspace.loadingTitle') : t('common.unavailable') }}</h1>
+    <p v-if="isLoading" class="chart-note">{{ t('workspace.loadingNote') }}</p>
     <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
   </section>
 </template>

@@ -1272,3 +1272,4 @@ INFO:     127.0.0.1:47108 - "POST /api/agent/design-run HTTP/1.1" 200 OK
 INFO:     127.0.0.1:47108 - "GET /api/runs/run-20260425-163212-038329/workspace HTTP/1.1" 200 OK
 INFO:     127.0.0.1:47108 - "GET /api/artifacts/run-20260425-163212-038329-report HTTP/1.1" 200 OK
 INFO:     127.0.0.1:39278 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36282 - "GET /api/runs HTTP/1.1" 200 OK

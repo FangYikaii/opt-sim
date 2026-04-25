@@ -1377,3 +1377,360 @@ connect@http://127.0.0.1:5173/@vite/client:362:45
   VITE v8.0.9  ready in 127 ms
 
   ➜  Local:   http://127.0.0.1:5173/
+4:44:28 PM [vite] (client) hmr update /src/App.vue, /src/pages/HomePage.vue, /src/pages/NotFoundPage.vue, /src/pages/WorkspacePage.vue
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: injection "Symbol(opt-sim-i18n)" not found. 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of setup function 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.error] Error: I18n provider is missing
+    at useI18n (http://127.0.0.1:5173/src/i18n.ts:760:9)
+    at setup (http://127.0.0.1:5173/src/pages/WorkspacePage.vue:23:113)
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:17)
+    at setupStatefulComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6722:23)
+    at setupComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6698:35)
+    at mountComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5498:3)
+    at processComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5488:8)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5283:28)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5556:6)
+    at ReactiveEffect.run (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:419:16)
+4:44:28 PM [vite] (client) [console.warn] [HMR] Something went wrong during Vue component hot-reload. Full reload required.
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: injection "Symbol(opt-sim-i18n)" not found. 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of setup function 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.error] useI18n@http://127.0.0.1:5173/src/i18n.ts:760:9
+setup@http://127.0.0.1:5173/src/pages/WorkspacePage.vue:23:113
+callWithErrorHandling@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:17
+setupStatefulComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6722:44
+setupComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6698:35
+mountComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5498:17
+processComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5488:22
+patch@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5283:44
+componentUpdateFn@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5556:11
+run@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:419:16
+setupRenderEffect@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5624:3
+mountComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5508:27
+processComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5488:22
+patch@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5283:44
+componentUpdateFn@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5556:11
+run@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:419:16
+setupRenderEffect@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5624:3
+mountComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5508:27
+processComponent@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5488:22
+patch@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5283:44
+render@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5911:15
+createAppAPI/createApp/mount/context.reload@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:4513:13
+reload@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2142:60
+tryWrap/<@http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:2158:11
+@http://127.0.0.1:5173/src/App.vue:34:23
+accept/<@http://127.0.0.1:5173/@vite/client:61:95
+fetchUpdate/<@http://127.0.0.1:5173/@vite/client:213:54
+queueUpdate/<@http://127.0.0.1:5173/@vite/client:191:55
+queueUpdate@http://127.0.0.1:5173/@vite/client:191:33
+async*handleMessage/<@http://127.0.0.1:5173/@vite/client:943:55
+handleMessage@http://127.0.0.1:5173/@vite/client:942:38
+async*createHMRHandler/</<@http://127.0.0.1:5173/@vite/client:446:49
+dequeue@http://127.0.0.1:5173/@vite/client:468:8
+enqueue/<@http://127.0.0.1:5173/@vite/client:460:9
+enqueue@http://127.0.0.1:5173/@vite/client:454:10
+createHMRHandler/<@http://127.0.0.1:5173/@vite/client:446:28
+onMessage@http://127.0.0.1:5173/@vite/client:294:15
+createWebSocketModuleRunnerTransport/connect/<@http://127.0.0.1:5173/@vite/client:402:14
+EventListener.handleEvent*connect@http://127.0.0.1:5173/@vite/client:401:11
+connect@http://127.0.0.1:5173/@vite/client:847:23
+connect@http://127.0.0.1:5173/@vite/client:278:21
+connect@http://127.0.0.1:5173/@vite/client:362:45
+@http://127.0.0.1:5173/@vite/client:926:11
+
+4:44:28 PM [vite] (client) [console.warn] [HMR] Something went wrong during Vue component hot-reload. Full reload required.
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [Unhandled rejection] TypeError: can't access property "flags", instance.job is null
+ > reload/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:12
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:409:10
+ > promise callback*queueFlush node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:322:42
+ > queuePostFlushCb node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:336:2
+ > queueEffectWithSuspense node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:7543:21
+ > unmountComponent node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:6772:4
+ > unmount node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:6658:23
+ > unmountComponent node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:6767:14
+ > unmount node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:6658:23
+ > unmountComponent node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:6767:14
+ > unmount node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:6658:23
+ > patch node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:5434:14
+ > render node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:6805:8
+ > createAppAPI/createApp/mount/context.reload node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:4241:21
+ > reload node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:545:26
+ > tryWrap/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:572:13
+ > src/App.vue:34:23
+    
+ > accept/< ../../../../../@vite/client:61:95
+ > fetchUpdate/< ../../../../../@vite/client:213:54
+ > queueUpdate/< ../../../../../@vite/client:191:55
+ > queueUpdate ../../../../../@vite/client:191:33
+ > async*handleMessage/< ../../../../../@vite/client:943:55
+ > handleMessage ../../../../../@vite/client:942:38
+ > async*createHMRHandler/</< ../../../../../@vite/client:446:49
+ > dequeue ../../../../../@vite/client:468:8
+ > enqueue/< ../../../../../@vite/client:460:9
+ > enqueue ../../../../../@vite/client:454:10
+ > createHMRHandler/< ../../../../../@vite/client:446:28
+ > onMessage ../../../../../@vite/client:294:15
+ > createWebSocketModuleRunnerTransport/connect/< ../../../../../@vite/client:402:14
+ > EventListener.handleEvent*connect ../../../../../@vite/client:401:11
+ > connect ../../../../../@vite/client:847:23
+ > connect ../../../../../@vite/client:278:21
+ > connect ../../../../../@vite/client:362:45
+ > ../../../../../@vite/client:926:11
+
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: injection "Symbol(opt-sim-i18n)" not found. 
+  at <WorkspacePage runId="run-20260425-163205-629786" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of setup function 
+  at <WorkspacePage runId="run-20260425-163205-629786" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.error] Error: I18n provider is missing
+    at useI18n (http://127.0.0.1:5173/src/i18n.ts:760:9)
+    at setup (http://127.0.0.1:5173/src/pages/WorkspacePage.vue:23:113)
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:17)
+    at setupStatefulComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6722:23)
+    at setupComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6698:35)
+    at mountComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5498:3)
+    at processComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5488:8)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5283:28)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5556:6)
+    at ReactiveEffect.run (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:419:16)
+4:44:28 PM [vite] (client) [console.warn] [HMR] Something went wrong during Vue component hot-reload. Full reload required.
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-20260425-163205-629786" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: injection "Symbol(opt-sim-i18n)" not found. 
+  at <HomePage onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of setup function 
+  at <HomePage onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [console.error] Error: I18n provider is missing
+    at useI18n (http://localhost:5173/src/i18n.ts:760:9)
+    at setup (http://localhost:5173/src/pages/HomePage.vue:16:102)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:1883:17)
+    at setupStatefulComponent (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6722:23)
+    at setupComponent (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:6698:35)
+    at mountComponent (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5498:3)
+    at processComponent (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5488:8)
+    at patch (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5283:28)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:5556:6)
+    at ReactiveEffect.run (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BvoXUmaf.js?v=1a44554a:419:16)
+4:44:28 PM [vite] (client) [console.warn] [HMR] Something went wrong during Vue component hot-reload. Full reload required.
+4:44:28 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <HomePage onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:28 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:44:43 PM [vite] (client) hmr update /src/pages/HomePage.vue
+4:44:43 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <HomePage onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:44:43 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:45:21 PM [vite] (client) hmr update /src/pages/WorkspacePage.vue
+4:45:21 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:45:21 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:45:21 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-20260425-163205-629786" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:45:21 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:45:21 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:45:21 PM [vite] (client) [Unhandled rejection] TypeError: can't access property "flags", instance.job is null
+ > reload/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:12
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:409:10
+ > promise callback*queueFlush node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:322:42
+ > queueJob node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:317:4
+ > reload node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:536:6
+ > tryWrap/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:572:13
+ > src/pages/WorkspacePage.vue?t=1777106668871:1214:23
+ > accept/< ../../../../../@vite/client:61:95
+ > fetchUpdate/< ../../../../../@vite/client:213:54
+ > queueUpdate/< ../../../../../@vite/client:191:55
+ > queueUpdate ../../../../../@vite/client:191:33
+ > async*handleMessage/< ../../../../../@vite/client:943:55
+ > handleMessage ../../../../../@vite/client:942:38
+ > async*createHMRHandler/</< ../../../../../@vite/client:446:49
+ > dequeue ../../../../../@vite/client:468:8
+ > enqueue/< ../../../../../@vite/client:460:9
+ > enqueue ../../../../../@vite/client:454:10
+ > createHMRHandler/< ../../../../../@vite/client:446:28
+ > onMessage ../../../../../@vite/client:294:15
+ > createWebSocketModuleRunnerTransport/connect/< ../../../../../@vite/client:402:14
+ > EventListener.handleEvent*connect ../../../../../@vite/client:401:11
+ > connect ../../../../../@vite/client:847:23
+ > connect ../../../../../@vite/client:278:21
+ > connect ../../../../../@vite/client:362:45
+ > ../../../../../@vite/client:926:11
+
+4:46:14 PM [vite] (client) hmr update /src/App.vue, /src/pages/HomePage.vue, /src/pages/NotFoundPage.vue, /src/pages/WorkspacePage.vue
+4:46:14 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:46:14 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:46:14 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:46:14 PM [vite] (client) [Unhandled rejection] TypeError: can't access property "flags", instance.job is null
+ > reload/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:12
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:409:10
+ > promise callback*queueFlush node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:322:42
+ > queuePostFlushCb node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:336:2
+ > reload node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:557:2
+ > tryWrap/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:572:13
+ > src/App.vue?t=1777106668871:34:23
+ > accept/< ../../../../../@vite/client:61:95
+ > fetchUpdate/< ../../../../../@vite/client:213:54
+ > queueUpdate/< ../../../../../@vite/client:191:55
+ > queueUpdate ../../../../../@vite/client:191:33
+ > async*handleMessage/< ../../../../../@vite/client:943:55
+ > handleMessage ../../../../../@vite/client:942:38
+ > async*createHMRHandler/</< ../../../../../@vite/client:446:49
+ > dequeue ../../../../../@vite/client:468:8
+ > enqueue/< ../../../../../@vite/client:460:9
+ > enqueue ../../../../../@vite/client:454:10
+ > createHMRHandler/< ../../../../../@vite/client:446:28
+ > onMessage ../../../../../@vite/client:294:15
+ > createWebSocketModuleRunnerTransport/connect/< ../../../../../@vite/client:402:14
+ > EventListener.handleEvent*connect ../../../../../@vite/client:401:11
+ > connect ../../../../../@vite/client:847:23
+ > connect ../../../../../@vite/client:278:21
+ > connect ../../../../../@vite/client:362:45
+ > ../../../../../@vite/client:926:11
+
+4:46:14 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-20260425-163205-629786" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:46:14 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:46:14 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <HomePage onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:46:14 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:46:22 PM [vite] (client) hmr update /src/pages/WorkspacePage.vue
+4:46:22 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:46:22 PM [vite] (client) [Unhandled rejection] TypeError: can't access property "flags", instance.job is null
+ > reload/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:12
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:409:10
+ > promise callback*queueFlush node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:322:42
+ > queueJob node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:317:4
+ > reload node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:536:6
+ > tryWrap/< node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:572:13
+ > src/pages/WorkspacePage.vue?t=1777106774647:1408:23
+ > accept/< ../../../../../@vite/client:61:95
+ > fetchUpdate/< ../../../../../@vite/client:213:54
+ > queueUpdate/< ../../../../../@vite/client:191:55
+ > queueUpdate ../../../../../@vite/client:191:33
+ > async*handleMessage/< ../../../../../@vite/client:943:55
+ > handleMessage ../../../../../@vite/client:942:38
+ > async*createHMRHandler/</< ../../../../../@vite/client:446:49
+ > dequeue ../../../../../@vite/client:468:8
+ > enqueue/< ../../../../../@vite/client:460:9
+ > enqueue ../../../../../@vite/client:454:10
+ > createHMRHandler/< ../../../../../@vite/client:446:28
+ > onMessage ../../../../../@vite/client:294:15
+ > createWebSocketModuleRunnerTransport/connect/< ../../../../../@vite/client:402:14
+ > EventListener.handleEvent*connect ../../../../../@vite/client:401:11
+ > connect ../../../../../@vite/client:847:23
+ > connect ../../../../../@vite/client:278:21
+ > connect ../../../../../@vite/client:362:45
+ > ../../../../../@vite/client:926:11
+
+4:46:22 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-demo-live" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:46:22 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:46:22 PM [vite] (client) [console.warn] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <WorkspacePage runId="run-20260425-163205-629786" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App>
+4:46:22 PM [vite] (client) [Unhandled rejection] TypeError: Cannot read properties of null (reading 'flags')
+ > node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:537:27
+ > callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:199:32
+ > flushJobs node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js:408:8
+
+4:46:54 PM [vite] (client) hmr update /src/style.css

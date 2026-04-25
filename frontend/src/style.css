@@ -1241,6 +1241,73 @@ h3 {
   gap: 12px;
 }
 
+.submission-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(17, 15, 12, 0.78);
+  backdrop-filter: blur(12px);
+}
+
+.submission-card {
+  width: min(560px, 100%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-color: rgba(217, 119, 87, 0.3);
+  background:
+    linear-gradient(135deg, rgba(217, 119, 87, 0.12), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, rgba(38, 35, 30, 0.98), rgba(29, 26, 22, 0.99));
+}
+
+.submission-card__header,
+.submission-step {
+  display: flex;
+  align-items: center;
+}
+
+.submission-card__header {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.submission-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.submission-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--color-accent-soft);
+  animation: opt-sim-spin 900ms linear infinite;
+}
+
+.submission-checklist .checklist-item {
+  padding: 12px;
+}
+
+.submission-step {
+  gap: 10px;
+}
+
+.submission-step__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: var(--color-warning);
+  box-shadow: 0 0 0 6px rgba(214, 168, 79, 0.12);
+}
+
 .flow-hero,
 .workspace-flow__header {
   display: flex;
@@ -1307,6 +1374,10 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.decision-grid--stacked {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .overview-card__value,
 .decision-hero__title {
   font-size: 18px;
@@ -1328,6 +1399,12 @@ h3 {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.decision-grid--stacked .chart-card,
+.decision-grid--stacked .checklist-item,
+.decision-grid > .chart-card .checklist-item {
+  padding: 12px;
 }
 
 .candidate-focus {
@@ -1375,6 +1452,7 @@ h3 {
   .flow-form__grid,
   .flow-meta-grid,
   .decision-grid,
+  .decision-grid--stacked,
   .candidate-detail-grid,
   .alternative-grid,
   .estimate-grid {
@@ -1391,5 +1469,23 @@ h3 {
 
   .decision-hero {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .submission-card {
+    padding: 16px;
+  }
+
+  .submission-card__header {
+    align-items: flex-start;
+  }
+}
+
+@keyframes opt-sim-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }

@@ -20,6 +20,11 @@ const form = ref<DesignRequest>({
   polarization: 'unpolarized',
 })
 const requirementTouched = ref(false)
+const submittingSteps = computed(() => [
+  t.value('home.form.submittingStep.generate'),
+  t.value('home.form.submittingStep.simulate'),
+  t.value('home.form.submittingStep.decision'),
+])
 
 const overviewCards = computed(() => {
   const overview = algorithmOverview.value
@@ -203,5 +208,33 @@ async function submitDemoRun(): Promise<void> {
         </form>
       </article>
     </section>
+
+    <div
+      v-if="isSubmitting"
+      class="submission-overlay"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <article class="submission-card panel">
+        <div class="submission-card__header">
+          <span class="status-pill" data-state="Simulating">{{ t('home.form.submitting') }}</span>
+          <div class="submission-spinner" aria-hidden="true" />
+        </div>
+        <div class="submission-card__body">
+          <h2>{{ t('home.form.submittingTitle') }}</h2>
+          <p class="chart-note">{{ t('home.form.submittingBody') }}</p>
+        </div>
+        <ul class="list-reset checklist submission-checklist">
+          <li v-for="step in submittingSteps" :key="step" class="checklist-item">
+            <div class="submission-step">
+              <span class="submission-step__dot" aria-hidden="true" />
+              <p>{{ step }}</p>
+            </div>
+          </li>
+        </ul>
+        <p class="section-subtitle">{{ t('home.form.submittingHint') }}</p>
+      </article>
+    </div>
   </section>
 </template>
