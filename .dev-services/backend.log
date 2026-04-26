@@ -1273,3 +1273,474 @@ INFO:     127.0.0.1:47108 - "GET /api/runs/run-20260425-163212-038329/workspace 
 INFO:     127.0.0.1:47108 - "GET /api/artifacts/run-20260425-163212-038329-report HTTP/1.1" 200 OK
 INFO:     127.0.0.1:39278 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
 INFO:     127.0.0.1:36282 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50466 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50478 - "OPTIONS /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50478 - "POST /api/agent/design-run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50478 - "GET /api/runs/run-20260425-174408-820290/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50478 - "GET /api/artifacts/run-20260425-174408-820290-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48878 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52330 - "GET /api/runs/run-20260425-174408-820290/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52330 - "GET /api/artifacts/run-20260425-174408-820290-report HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend/app/algorithms/optics.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2054790]
+INFO:     Started server process [2126441]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_optics_colorimetry.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2126441]
+INFO:     Started server process [2129115]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/optics.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2129115]
+INFO:     Started server process [2130063]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_optics_colorimetry.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2130063]
+INFO:     Started server process [2130645]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2130645]
+INFO:     Started server process [2132814]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2132814]
+INFO:     Started server process [2133601]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2133601]
+INFO:     Started server process [2134337]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2134337]
+INFO:     Started server process [2140300]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2140300]
+INFO:     Started server process [2140440]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2140440]
+INFO:     Started server process [2141329]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2141329]
+INFO:     Started server process [2141652]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/inverse_design.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2141652]
+INFO:     Started server process [2141877]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2141877]
+INFO:     Started server process [2142762]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2142762]
+INFO:     Started server process [2142985]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_inverse_design_runtime.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2142985]
+INFO:     Started server process [2143145]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/inverse_design.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2143145]
+INFO:     Started server process [2146187]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2146187]
+INFO:     Started server process [2152433]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2152433]
+INFO:     Started server process [2152766]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2152766]
+INFO:     Started server process [2153009]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithm_overview.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2153009]
+INFO:     Started server process [2158832]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:39136 - "GET /api/runs/run-20260425-174408-820290/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39136 - "GET /api/artifacts/run-20260425-174408-820290-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-195406-924873/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-195406-924873-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-195357-415661/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-195357-415661-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-194201-704326/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-194201-704326-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-190951-420383/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-190951-420383-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-162748-030048/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-162748-030048-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-162646-494064/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-162646-494064-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-162532-083538/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-162532-083538-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-163205-629786/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-163205-629786-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-190213-610263/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-190213-610263-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-190951-420383/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-190951-420383-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/runs/run-20260425-191507-188634/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39150 - "GET /api/artifacts/run-20260425-191507-188634-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59412 - "GET /api/runs/run-20260425-162508-550898/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59412 - "GET /api/artifacts/run-20260425-162508-550898-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59412 - "GET /api/runs/run-20260425-162532-083538/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59412 - "GET /api/artifacts/run-20260425-162532-083538-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59412 - "GET /api/runs/run-20260425-162812-335740/workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59412 - "GET /api/artifacts/run-20260425-162812-335740-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56338 - "GET /api/algorithm-overview HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2158832]
+INFO:     Started server process [2249181]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2249181]
+INFO:     Started server process [2249751]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2249751]
+INFO:     Started server process [2252003]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2252003]
+INFO:     Started server process [2555636]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2555636]
+INFO:     Started server process [2555990]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2555990]
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Started server process [2618948]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/analyze_cgan_run.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2618948]
+INFO:     Started server process [2620217]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2620217]
+INFO:     Started server process [2620385]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/analyze_cgan_run.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2620385]
+INFO:     Started server process [2620868]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2620868]
+INFO:     Started server process [2743181]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2743181]
+INFO:     Started server process [2743605]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2743605]
+INFO:     Started server process [2743822]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2743822]
+INFO:     Started server process [2743946]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2743946]
+INFO:     Started server process [2792599]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2792599]
+INFO:     Started server process [2794686]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2794686]
+INFO:     Started server process [2795872]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2795872]
+INFO:     Started server process [2796826]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2796826]
+INFO:     Started server process [2802796]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2802796]
+INFO:     Started server process [2803128]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2803128]
+INFO:     Started server process [2803357]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2803357]
+INFO:     Started server process [2812047]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2812047]
+INFO:     Started server process [2812212]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2812212]
+INFO:     Started server process [2812853]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2812853]
+INFO:     Started server process [2813469]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2813469]
+INFO:     Started server process [2820628]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2820628]
+INFO:     Started server process [2820825]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2820825]
+INFO:     Started server process [2822158]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/app/algorithms/cgan.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2822158]
+INFO:     Started server process [2822362]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2822362]
+INFO:     Started server process [2822567]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2822567]
+INFO:     Started server process [2822888]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2822888]
+INFO:     Started server process [2831595]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2831595]
+INFO:     Started server process [2832003]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/scripts/train_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2832003]
+INFO:     Started server process [2832140]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend/tests/test_cgan_reproduction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2832140]
+INFO:     Started server process [2832432]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.

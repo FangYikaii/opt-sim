@@ -1,0 +1,22 @@
+{
+  "metrics": {
+    "euclidean_lab": {
+      "targets_compared": 3,
+      "mean_retrieval_best_delta_e": 21.19730670909166,
+      "mean_cgan_best_delta_e": 19.994532121438468,
+      "retrieval_wins_vs_cgan": 2,
+      "cgan_wins_vs_retrieval": 1,
+      "ties": 0,
+      "elapsed_seconds": 0.5548260879586451
+    },
+    "delta_e_2000": {
+      "targets_compared": 3,
+      "mean_retrieval_best_delta_e": 19.3525046406585,
+      "mean_cgan_best_delta_e": 19.994532121438468,
+      "retrieval_wins_vs_cgan": 2,
+      "cgan_wins_vs_retrieval": 1,
+      "ties": 0,
+      "elapsed_seconds": 9.158477184013464
+    }
+  }
+}

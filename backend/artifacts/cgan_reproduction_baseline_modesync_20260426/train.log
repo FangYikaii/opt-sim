@@ -1,0 +1,11 @@
+[2026-04-26 20:11:23] Streaming training logs to backend/artifacts/cgan_reproduction_baseline_modesync_20260426/train.log
+[2026-04-26 20:11:25] Loaded dataset (source=paper, train_samples=45000, test_samples=5000, output_dir=backend/artifacts/cgan_reproduction_baseline_modesync_20260426)
+[2026-04-26 20:11:25] Runtime (device=cuda, cuda_available=True, torch=2.11.0+cu128)
+[2026-04-26 20:11:25] Progress logging (regressor_every=500 epochs, train_every=2000 epochs, paper_eval_every=250 targets, checkpoint_eval_interval=500, checkpoint_budget_mode=match_final, checkpoint_samples_per_lab=256, checkpoint_recheck_samples_per_lab=256, final_samples_per_lab=256)
+[2026-04-26 20:11:25] Training config (g_lr=0.001, d_lr=0.0002, steps_per_batch=1, g_hidden=160, g_depth=5, d_hidden=128, d_depth=4, d_conditioning=target_lab, alpha_start=0.0, alpha_ramp_epochs=2000, max_alpha=1.0, lab_delta_e_weight=0.0, mode_seeking_weight=0.1, retrieval_metric=delta_e_2000)
+[2026-04-26 20:11:25] Checkpoint score weights (mean_best_delta_e=1.0, median_best_delta_e=0.02, d2_within_5nm=8.0, mean_jsd=0.5, d3_jsd=2.0)
+[2026-04-26 20:11:26] Regressor pretraining started (epochs=10000, batch_size=2048, samples=45000)
+[2026-04-26 20:11:51] Regressor 500/10000 | loss=0.041983 | elapsed=26s | eta=8m09s
+[2026-04-26 20:12:16] Regressor 1000/10000 | loss=0.046135 | elapsed=50s | eta=7m30s
+[2026-04-26 20:12:40] Regressor 1500/10000 | loss=0.018127 | elapsed=1m14s | eta=7m00s
+[2026-04-26 20:13:05] Regressor 2000/10000 | loss=0.013073 | elapsed=1m39s | eta=6m36s

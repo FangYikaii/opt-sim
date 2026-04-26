@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 import os
 from pathlib import Path
+from typing import Literal
 
 import numpy as np
 
@@ -18,7 +19,10 @@ def _spectral_linear(in_features: int, out_features: int) -> nn.Linear:
     return nn.utils.spectral_norm(nn.Linear(in_features, out_features))
 
 
-class LinearBlock(nn.Module):
+DiscriminatorConditioning = Literal["none", "target_lab"]
+
+
+class GeneratorBlock(nn.Module):
     def __init__(self, in_features: int, out_features: int) -> None:
         super().__init__()
         self.net = nn.Sequential(
@@ -31,11 +35,23 @@ class LinearBlock(nn.Module):
         return self.net(inputs)
 
 
+class DiscriminatorBlock(nn.Module):
+    def __init__(self, in_features: int, out_features: int) -> None:
+        super().__init__()
+        self.net = nn.Sequential(
+            _spectral_linear(in_features, out_features),
+            nn.LeakyReLU(0.2),
+        )
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        return self.net(inputs)
+
+
 class LabRegressor(nn.Module):
     def __init__(self) -> None:
         super().__init__()
-        blocks: list[nn.Module] = [LinearBlock(3, 256)]
-        blocks.extend(LinearBlock(256, 256) for _ in range(6))
+        blocks: list[nn.Module] = [GeneratorBlock(3, 256)]
+        blocks.extend(GeneratorBlock(256, 256) for _ in range(6))
         self.features = nn.Sequential(*blocks)
         self.output = _spectral_linear(256, 3)
 
@@ -44,16 +60,46 @@ class LabRegressor(nn.Module):
 
 
 class Generator(nn.Module):
-    def __init__(self, noise_dim: int = 2) -> None:
+    def __init__(
+        self,
+        noise_dim: int = 8,
+        *,
+        hidden_dim: int = 160,
+        trunk_depth: int = 5,
+        noise_hidden_dim: int | None = None,
+        lab_hidden_dim: int | None = None,
+        regressor_hidden_dims: tuple[int, ...] | list[int] | None = None,
+    ) -> None:
         super().__init__()
-        self.noise_up = LinearBlock(noise_dim, 128)
-        self.lab_up = LinearBlock(3, 128)
+        if regressor_hidden_dims is None:
+            if trunk_depth < 1:
+                raise ValueError("Generator trunk_depth must be at least 1.")
+            resolved_regressor_hidden_dims = [hidden_dim] * trunk_depth
+        else:
+            resolved_regressor_hidden_dims = [int(value) for value in regressor_hidden_dims]
+            if not resolved_regressor_hidden_dims:
+                raise ValueError("Generator regressor_hidden_dims must not be empty.")
+            trunk_depth = len(resolved_regressor_hidden_dims)
+
+        resolved_noise_hidden_dim = int(noise_hidden_dim or hidden_dim)
+        resolved_lab_hidden_dim = int(lab_hidden_dim or hidden_dim)
+
+        self.hidden_dim = hidden_dim
+        self.trunk_depth = trunk_depth
+        self.noise_hidden_dim = resolved_noise_hidden_dim
+        self.lab_hidden_dim = resolved_lab_hidden_dim
+        self.regressor_hidden_dims = tuple(resolved_regressor_hidden_dims)
+        self.noise_up = GeneratorBlock(noise_dim, resolved_noise_hidden_dim)
+        self.lab_up = GeneratorBlock(3, resolved_lab_hidden_dim)
+
         regressor_layers: list[nn.Module] = []
-        regressor_layers.extend(LinearBlock(256 if index == 0 else 256, 256) for index in range(8))
-        regressor_layers.append(LinearBlock(256, 128))
+        regressor_in_features = resolved_noise_hidden_dim + resolved_lab_hidden_dim
+        for regressor_out_features in resolved_regressor_hidden_dims:
+            regressor_layers.append(GeneratorBlock(regressor_in_features, regressor_out_features))
+            regressor_in_features = regressor_out_features
         self.regressor = nn.Sequential(*regressor_layers)
         self.output = nn.Sequential(
-            _spectral_linear(128, 3),
+            _spectral_linear(regressor_in_features, 3),
             nn.Sigmoid(),
         )
 
@@ -65,18 +111,40 @@ class Generator(nn.Module):
 
 
 class Evaluator(nn.Module):
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        hidden_dim: int = 128,
+        trunk_depth: int = 4,
+        conditioning: DiscriminatorConditioning = "target_lab",
+    ) -> None:
         super().__init__()
-        blocks: list[nn.Module] = [LinearBlock(3, 256)]
-        blocks.extend(LinearBlock(256, 256) for _ in range(3))
-        blocks.append(LinearBlock(256, 128))
+        if trunk_depth < 1:
+            raise ValueError("Discriminator trunk_depth must be at least 1.")
+        if conditioning not in {"none", "target_lab"}:
+            raise ValueError("Discriminator conditioning must be 'none' or 'target_lab'.")
+        self.hidden_dim = hidden_dim
+        self.trunk_depth = trunk_depth
+        self.conditioning = conditioning
+        input_dim = 3 if conditioning == "none" else 6
+        blocks: list[nn.Module] = [DiscriminatorBlock(input_dim, hidden_dim)]
+        blocks.extend(DiscriminatorBlock(hidden_dim, hidden_dim) for _ in range(trunk_depth - 1))
         self.features = nn.Sequential(*blocks)
-        self.dropout = nn.Dropout(p=0.9)
-        self.output = _spectral_linear(128, 1)
+        self.output = _spectral_linear(hidden_dim, 1)
 
-    def forward(self, design_norm: torch.Tensor) -> torch.Tensor:
-        hidden = self.features(design_norm)
-        return self.output(self.dropout(hidden))
+    def forward(
+        self,
+        design_norm: torch.Tensor,
+        lab_norm: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        if self.conditioning == "target_lab":
+            if lab_norm is None:
+                raise ValueError("Conditional discriminator requires target Lab inputs.")
+            features = torch.cat([design_norm, lab_norm], dim=1)
+        else:
+            features = design_norm
+        hidden = self.features(features)
+        return self.output(hidden)
 
 
 Discriminator = Evaluator
@@ -86,18 +154,48 @@ Discriminator = Evaluator
 class CganBundle:
     generator: Generator
     lab_regressor: LabRegressor
-    lab_min: np.ndarray
-    lab_max: np.ndarray
+    lab_mean: np.ndarray
+    lab_std: np.ndarray
     design_min: np.ndarray
     design_max: np.ndarray
     device: str
     noise_dim: int
     seed: int
+    generator_learning_rate: float = 1e-3
+    discriminator_learning_rate: float = 2e-4
+    steps_per_batch: int = 1
+    generator_hidden_dim: int = 160
+    generator_depth: int = 5
+    discriminator_hidden_dim: int = 128
+    discriminator_depth: int = 4
+    discriminator_conditioning: DiscriminatorConditioning = "target_lab"
+    alpha_start: float = 0.0
+    alpha_ramp_epochs: int = 2000
+    max_alpha: float = 1.0
+    lab_delta_e_weight: float = 0.0
+    mode_seeking_weight: float = 0.0
+    checkpoint_format_version: int = 3
+    lab_scaling_type: str = "standardization"
+    design_scaling_type: str = "normalization"
+    legacy_lab_min: np.ndarray | None = None
+    legacy_lab_max: np.ndarray | None = None
     losses: list[dict[str, float]] = field(default_factory=list)
     best_generator_state_dict: dict[str, torch.Tensor] | None = None
     selected_checkpoint_epoch: int | None = None
     selected_checkpoint_metric_name: str | None = None
     selected_checkpoint_metric_value: float | None = None
+
+    @property
+    def lab_min(self) -> np.ndarray:
+        if self.legacy_lab_min is not None:
+            return self.legacy_lab_min
+        return self.lab_mean - self.lab_std
+
+    @property
+    def lab_max(self) -> np.ndarray:
+        if self.legacy_lab_max is not None:
+            return self.legacy_lab_max
+        return self.lab_mean + self.lab_std
 
 
 def _normalize(values: np.ndarray, min_values: np.ndarray, max_values: np.ndarray) -> np.ndarray:
@@ -106,6 +204,22 @@ def _normalize(values: np.ndarray, min_values: np.ndarray, max_values: np.ndarra
 
 def _denormalize(values: np.ndarray, min_values: np.ndarray, max_values: np.ndarray) -> np.ndarray:
     return values * (max_values - min_values) + min_values
+
+
+def _standardize(values: np.ndarray, mean_values: np.ndarray, std_values: np.ndarray) -> np.ndarray:
+    return (values - mean_values) / np.maximum(std_values, 1e-8)
+
+
+def _destandardize(values: np.ndarray, mean_values: np.ndarray, std_values: np.ndarray) -> np.ndarray:
+    return values * np.maximum(std_values, 1e-8) + mean_values
+
+
+def _destandardize_tensor(
+    values: torch.Tensor,
+    mean_values: torch.Tensor,
+    std_values: torch.Tensor,
+) -> torch.Tensor:
+    return values * torch.clamp(std_values, min=1e-8) + mean_values
 
 
 def _clip_design_bounds(
@@ -130,6 +244,31 @@ def _snapshot_state_dict(module: nn.Module) -> dict[str, torch.Tensor]:
         key: value.detach().cpu().clone()
         for key, value in module.state_dict().items()
     }
+
+
+def _compute_alpha(
+    epoch: int,
+    *,
+    alpha_start: float,
+    max_alpha: float,
+    alpha_ramp_epochs: int,
+) -> float:
+    if alpha_ramp_epochs <= 1:
+        return float(max_alpha)
+    progress = min(max(epoch, 0) / float(alpha_ramp_epochs), 1.0)
+    return float(alpha_start + (max_alpha - alpha_start) * progress)
+
+
+def _mode_seeking_regularization(
+    design_a: torch.Tensor,
+    design_b: torch.Tensor,
+    noise_a: torch.Tensor,
+    noise_b: torch.Tensor,
+) -> torch.Tensor:
+    design_distance = torch.linalg.vector_norm(design_a - design_b, dim=1)
+    noise_distance = torch.linalg.vector_norm(noise_a - noise_b, dim=1)
+    ratio = design_distance / torch.clamp(noise_distance, min=1e-6)
+    return 1.0 / torch.clamp(ratio.mean(), min=1e-6)
 
 
 def get_torch_device(preferred: str | None = None) -> torch.device:
@@ -254,9 +393,21 @@ def fit_lightweight_cgan(
     design_samples: np.ndarray,
     *,
     epochs: int = 80,
-    batch_size: int = 64,
-    noise_dim: int = 2,
-    learning_rate: float = 0.002,
+    batch_size: int = 2048,
+    noise_dim: int = 8,
+    generator_learning_rate: float = 1e-3,
+    discriminator_learning_rate: float = 2e-4,
+    steps_per_batch: int = 1,
+    generator_hidden_dim: int = 160,
+    generator_depth: int = 5,
+    discriminator_hidden_dim: int = 128,
+    discriminator_depth: int = 4,
+    discriminator_conditioning: DiscriminatorConditioning = "target_lab",
+    alpha_start: float = 0.0,
+    alpha_ramp_epochs: int = 2000,
+    max_alpha: float = 1.0,
+    lab_delta_e_weight: float = 0.0,
+    mode_seeking_weight: float = 0.0,
     seed: int = 7,
     record_losses: bool = False,
     device: str | None = None,
@@ -270,19 +421,40 @@ def fit_lightweight_cgan(
     progress_interval: int | None = None,
     regressor_progress_interval: int | None = None,
 ) -> CganBundle:
+    if steps_per_batch < 1:
+        raise ValueError("steps_per_batch must be at least 1.")
+    if generator_hidden_dim < 1 or discriminator_hidden_dim < 1:
+        raise ValueError("Generator and discriminator hidden dims must be at least 1.")
+    if generator_depth < 1 or discriminator_depth < 1:
+        raise ValueError("Generator and discriminator depths must be at least 1.")
+    if discriminator_conditioning not in {"none", "target_lab"}:
+        raise ValueError("discriminator_conditioning must be 'none' or 'target_lab'.")
+    if alpha_start < 0:
+        raise ValueError("alpha_start must be non-negative.")
+    if alpha_ramp_epochs < 1:
+        raise ValueError("alpha_ramp_epochs must be at least 1.")
+    if max_alpha < 0:
+        raise ValueError("max_alpha must be non-negative.")
+    if max_alpha < alpha_start:
+        raise ValueError("max_alpha must be greater than or equal to alpha_start.")
+    if lab_delta_e_weight < 0:
+        raise ValueError("lab_delta_e_weight must be non-negative.")
+    if mode_seeking_weight < 0:
+        raise ValueError("mode_seeking_weight must be non-negative.")
+
     runtime_device = get_torch_device(device)
     torch.manual_seed(seed)
     if runtime_device.type == "cuda":
         torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
 
-    lab_min = lab_samples.min(axis=0)
-    lab_max = lab_samples.max(axis=0)
+    lab_mean = lab_samples.mean(axis=0)
+    lab_std = lab_samples.std(axis=0)
     design_min = design_samples.min(axis=0)
     design_max = design_samples.max(axis=0)
 
     lab_norm = torch.tensor(
-        _normalize(lab_samples, lab_min, lab_max),
+        _standardize(lab_samples, lab_mean, lab_std),
         dtype=torch.float32,
         device=runtime_device,
     )
@@ -293,6 +465,16 @@ def fit_lightweight_cgan(
     )
 
     effective_batch_size = min(batch_size, len(lab_samples))
+    lab_mean_tensor = torch.tensor(
+        lab_mean,
+        dtype=torch.float32,
+        device=runtime_device,
+    )
+    lab_std_tensor = torch.tensor(
+        np.maximum(lab_std, 1e-8),
+        dtype=torch.float32,
+        device=runtime_device,
+    )
     lab_regressor = _train_lab_regressor(
         design_norm=design_norm,
         lab_norm=lab_norm,
@@ -303,10 +485,26 @@ def fit_lightweight_cgan(
         progress_interval=regressor_progress_interval,
     )
 
-    generator = Generator(noise_dim=noise_dim).to(runtime_device)
-    evaluator = Evaluator().to(runtime_device)
-    g_optimizer = torch.optim.Adam(generator.parameters(), lr=learning_rate, betas=(0.5, 0.999))
-    e_optimizer = torch.optim.Adam(evaluator.parameters(), lr=learning_rate / 5.0, betas=(0.5, 0.999))
+    generator = Generator(
+        noise_dim=noise_dim,
+        hidden_dim=generator_hidden_dim,
+        trunk_depth=generator_depth,
+    ).to(runtime_device)
+    evaluator = Evaluator(
+        hidden_dim=discriminator_hidden_dim,
+        trunk_depth=discriminator_depth,
+        conditioning=discriminator_conditioning,
+    ).to(runtime_device)
+    g_optimizer = torch.optim.Adam(
+        generator.parameters(),
+        lr=generator_learning_rate,
+        betas=(0.5, 0.999),
+    )
+    e_optimizer = torch.optim.Adam(
+        evaluator.parameters(),
+        lr=discriminator_learning_rate,
+        betas=(0.5, 0.999),
+    )
     mse_loss = nn.MSELoss()
 
     losses: list[dict[str, float]] = []
@@ -329,50 +527,105 @@ def fit_lightweight_cgan(
                 "batch_size": effective_batch_size,
                 "sample_count": int(len(lab_samples)),
                 "device": str(runtime_device),
+                "generator_learning_rate": float(generator_learning_rate),
+                "discriminator_learning_rate": float(discriminator_learning_rate),
+                "steps_per_batch": int(steps_per_batch),
+                "discriminator_conditioning": discriminator_conditioning,
+                "alpha_start": float(alpha_start),
+                "alpha_ramp_epochs": int(alpha_ramp_epochs),
+                "max_alpha": float(max_alpha),
+                "lab_delta_e_weight": float(lab_delta_e_weight),
+                "mode_seeking_weight": float(mode_seeking_weight),
             }
         )
 
     for epoch in range(1, epochs + 1):
         completed_epochs = epoch
-        alpha = min(1.0, epoch / 20000.0)
+        alpha = _compute_alpha(
+            epoch,
+            alpha_start=alpha_start,
+            max_alpha=max_alpha,
+            alpha_ramp_epochs=alpha_ramp_epochs,
+        )
         epoch_evaluator_loss = 0.0
         epoch_generator_loss = 0.0
         epoch_real_score = 0.0
         epoch_fake_score = 0.0
         epoch_lab_mse = 0.0
+        epoch_lab_delta_e76 = 0.0
+        epoch_color_loss = 0.0
+        epoch_mode_seeking_loss = 0.0
         batch_counter = 0
 
         for batch_indices in _iter_batch_indices(len(lab_norm), effective_batch_size, runtime_device):
             lab_batch = lab_norm[batch_indices]
             real_design = design_norm[batch_indices]
             batch_size_now = len(batch_indices)
+            batch_evaluator_loss = 0.0
+            batch_generator_loss = 0.0
+            batch_real_score = 0.0
+            batch_fake_score = 0.0
+            batch_lab_mse = 0.0
+            batch_lab_delta_e76 = 0.0
+            batch_color_loss = 0.0
+            batch_mode_seeking_loss = 0.0
 
-            noise_eval = torch.randn(batch_size_now, noise_dim, device=runtime_device)
-            fake_design_eval = generator(lab_batch, noise_eval).detach()
-            real_scores = evaluator(real_design)
-            fake_scores_eval = evaluator(fake_design_eval)
-            evaluator_real_loss = torch.relu(1.0 - real_scores).mean()
-            evaluator_fake_loss = torch.relu(1.0 + fake_scores_eval).mean()
-            evaluator_loss = evaluator_real_loss + evaluator_fake_loss
-            e_optimizer.zero_grad()
-            evaluator_loss.backward()
-            e_optimizer.step()
+            for _ in range(steps_per_batch):
+                noise_eval = torch.randn(batch_size_now, noise_dim, device=runtime_device)
+                fake_design_eval = generator(lab_batch, noise_eval).detach()
+                real_scores = evaluator(real_design, lab_batch)
+                fake_scores_eval = evaluator(fake_design_eval, lab_batch)
+                evaluator_real_loss = torch.relu(1.0 - real_scores).mean()
+                evaluator_fake_loss = torch.relu(1.0 + fake_scores_eval).mean()
+                evaluator_loss = 0.5 * (evaluator_real_loss + evaluator_fake_loss)
+                e_optimizer.zero_grad()
+                evaluator_loss.backward()
+                e_optimizer.step()
 
-            noise_gen = torch.randn(batch_size_now, noise_dim, device=runtime_device)
-            fake_design_gen = generator(lab_batch, noise_gen)
-            fake_scores_gen = evaluator(fake_design_gen)
-            predicted_lab = lab_regressor(fake_design_gen)
-            lab_mse = mse_loss(predicted_lab, lab_batch)
-            generator_loss = -fake_scores_gen.mean() + alpha * lab_mse
-            g_optimizer.zero_grad()
-            generator_loss.backward()
-            g_optimizer.step()
+                noise_gen_a = torch.randn(batch_size_now, noise_dim, device=runtime_device)
+                noise_gen_b = torch.randn(batch_size_now, noise_dim, device=runtime_device)
+                fake_design_gen = generator(lab_batch, noise_gen_a)
+                fake_design_gen_b = generator(lab_batch, noise_gen_b)
+                fake_scores_gen = evaluator(fake_design_gen, lab_batch)
+                predicted_lab = lab_regressor(fake_design_gen)
+                lab_mse = mse_loss(predicted_lab, lab_batch)
+                predicted_lab_real = _destandardize_tensor(predicted_lab, lab_mean_tensor, lab_std_tensor)
+                target_lab_real = _destandardize_tensor(lab_batch, lab_mean_tensor, lab_std_tensor)
+                lab_delta_e76 = torch.linalg.vector_norm(predicted_lab_real - target_lab_real, dim=1).mean()
+                color_loss = lab_mse + (lab_delta_e_weight * lab_delta_e76)
+                mode_seeking_loss = _mode_seeking_regularization(
+                    fake_design_gen,
+                    fake_design_gen_b,
+                    noise_gen_a,
+                    noise_gen_b,
+                )
+                generator_loss = (
+                    -fake_scores_gen.mean()
+                    + alpha * color_loss
+                    + (mode_seeking_weight * mode_seeking_loss)
+                )
+                g_optimizer.zero_grad()
+                generator_loss.backward()
+                g_optimizer.step()
 
-            epoch_evaluator_loss += float(evaluator_loss.detach().cpu().item())
-            epoch_generator_loss += float(generator_loss.detach().cpu().item())
-            epoch_real_score += float(real_scores.detach().mean().cpu().item())
-            epoch_fake_score += float(fake_scores_gen.detach().mean().cpu().item())
-            epoch_lab_mse += float(lab_mse.detach().cpu().item())
+                batch_evaluator_loss += float(evaluator_loss.detach().cpu().item())
+                batch_generator_loss += float(generator_loss.detach().cpu().item())
+                batch_real_score += float(real_scores.detach().mean().cpu().item())
+                batch_fake_score += float(fake_scores_gen.detach().mean().cpu().item())
+                batch_lab_mse += float(lab_mse.detach().cpu().item())
+                batch_lab_delta_e76 += float(lab_delta_e76.detach().cpu().item())
+                batch_color_loss += float(color_loss.detach().cpu().item())
+                batch_mode_seeking_loss += float(mode_seeking_loss.detach().cpu().item())
+
+            normalizer = float(steps_per_batch)
+            epoch_evaluator_loss += batch_evaluator_loss / normalizer
+            epoch_generator_loss += batch_generator_loss / normalizer
+            epoch_real_score += batch_real_score / normalizer
+            epoch_fake_score += batch_fake_score / normalizer
+            epoch_lab_mse += batch_lab_mse / normalizer
+            epoch_lab_delta_e76 += batch_lab_delta_e76 / normalizer
+            epoch_color_loss += batch_color_loss / normalizer
+            epoch_mode_seeking_loss += batch_mode_seeking_loss / normalizer
             batch_counter += 1
 
         if record_losses:
@@ -386,6 +639,9 @@ def fit_lightweight_cgan(
                     "real_score": epoch_real_score / normalizer,
                     "fake_score": epoch_fake_score / normalizer,
                     "lab_mse": epoch_lab_mse / normalizer,
+                    "lab_delta_e76": epoch_lab_delta_e76 / normalizer,
+                    "color_loss": epoch_color_loss / normalizer,
+                    "mode_seeking_loss": epoch_mode_seeking_loss / normalizer,
                     "alpha": float(alpha),
                 }
             )
@@ -409,6 +665,9 @@ def fit_lightweight_cgan(
                     "real_score": epoch_real_score / normalizer,
                     "fake_score": epoch_fake_score / normalizer,
                     "lab_mse": epoch_lab_mse / normalizer,
+                    "lab_delta_e76": epoch_lab_delta_e76 / normalizer,
+                    "color_loss": epoch_color_loss / normalizer,
+                    "mode_seeking_loss": epoch_mode_seeking_loss / normalizer,
                     "alpha": float(alpha),
                 }
             )
@@ -439,13 +698,26 @@ def fit_lightweight_cgan(
             metric_bundle = CganBundle(
                 generator=generator,
                 lab_regressor=lab_regressor,
-                lab_min=lab_min,
-                lab_max=lab_max,
+                lab_mean=lab_mean,
+                lab_std=lab_std,
                 design_min=design_min,
                 design_max=design_max,
                 device=str(runtime_device),
                 noise_dim=noise_dim,
                 seed=seed,
+                generator_learning_rate=float(generator_learning_rate),
+                discriminator_learning_rate=float(discriminator_learning_rate),
+                steps_per_batch=int(steps_per_batch),
+                generator_hidden_dim=int(generator_hidden_dim),
+                generator_depth=int(generator_depth),
+                discriminator_hidden_dim=int(discriminator_hidden_dim),
+                discriminator_depth=int(discriminator_depth),
+                discriminator_conditioning=discriminator_conditioning,
+                alpha_start=float(alpha_start),
+                alpha_ramp_epochs=int(alpha_ramp_epochs),
+                max_alpha=float(max_alpha),
+                lab_delta_e_weight=float(lab_delta_e_weight),
+                mode_seeking_weight=float(mode_seeking_weight),
                 losses=losses,
             )
             metric_value = checkpoint_metric_fn(metric_bundle, epoch)
@@ -525,13 +797,26 @@ def fit_lightweight_cgan(
     return CganBundle(
         generator=generator,
         lab_regressor=lab_regressor,
-        lab_min=lab_min,
-        lab_max=lab_max,
+        lab_mean=lab_mean,
+        lab_std=lab_std,
         design_min=design_min,
         design_max=design_max,
         device=str(runtime_device),
         noise_dim=noise_dim,
         seed=seed,
+        generator_learning_rate=float(generator_learning_rate),
+        discriminator_learning_rate=float(discriminator_learning_rate),
+        steps_per_batch=int(steps_per_batch),
+        generator_hidden_dim=int(generator_hidden_dim),
+        generator_depth=int(generator_depth),
+        discriminator_hidden_dim=int(discriminator_hidden_dim),
+        discriminator_depth=int(discriminator_depth),
+        discriminator_conditioning=discriminator_conditioning,
+        alpha_start=float(alpha_start),
+        alpha_ramp_epochs=int(alpha_ramp_epochs),
+        max_alpha=float(max_alpha),
+        lab_delta_e_weight=float(lab_delta_e_weight),
+        mode_seeking_weight=float(mode_seeking_weight),
         losses=losses,
         best_generator_state_dict=best_generator_state_dict,
         selected_checkpoint_epoch=selected_checkpoint_epoch,
@@ -548,9 +833,52 @@ def _load_model_bundle_from_disk(
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
     runtime_device = get_torch_device(device)
     noise_dim = int(checkpoint.get("noise_dim", 2))
+    checkpoint_format_version = int(checkpoint.get("checkpoint_format_version", 1))
+    generator_state_dict = checkpoint["generator_state_dict"]
 
-    generator = Generator(noise_dim=noise_dim).to(runtime_device)
-    generator.load_state_dict(checkpoint["generator_state_dict"])
+    inferred_generator_hidden_dim: int | None = None
+    inferred_generator_depth: int | None = None
+    inferred_noise_hidden_dim: int | None = None
+    inferred_lab_hidden_dim: int | None = None
+    inferred_regressor_hidden_dims: list[int] | None = None
+    if "generator_hidden_dim" not in checkpoint:
+        inferred_generator_hidden_dim = int(generator_state_dict["output.0.weight_orig"].shape[1])
+    if "generator_depth" not in checkpoint:
+        regressor_blocks = {
+            int(key.split(".")[1])
+            for key in generator_state_dict
+            if key.startswith("regressor.") and key.endswith("weight_orig")
+        }
+        inferred_generator_depth = len(regressor_blocks)
+    if "noise_hidden_dim" not in checkpoint:
+        inferred_noise_hidden_dim = int(generator_state_dict["noise_up.net.0.weight_orig"].shape[0])
+    if "lab_hidden_dim" not in checkpoint:
+        inferred_lab_hidden_dim = int(generator_state_dict["lab_up.net.0.weight_orig"].shape[0])
+    if "regressor_hidden_dims" not in checkpoint:
+        regressor_block_shapes = {
+            int(key.split(".")[1]): int(value.shape[0])
+            for key, value in generator_state_dict.items()
+            if key.startswith("regressor.") and key.endswith("weight_orig")
+        }
+        inferred_regressor_hidden_dims = [
+            regressor_block_shapes[index]
+            for index in sorted(regressor_block_shapes)
+        ]
+
+    generator_hidden_dim = int(checkpoint.get("generator_hidden_dim", inferred_generator_hidden_dim or 160))
+    generator_depth = int(checkpoint.get("generator_depth", inferred_generator_depth or 5))
+    discriminator_hidden_dim = int(checkpoint.get("discriminator_hidden_dim", 128))
+    discriminator_depth = int(checkpoint.get("discriminator_depth", 4))
+
+    generator = Generator(
+        noise_dim=noise_dim,
+        hidden_dim=generator_hidden_dim,
+        trunk_depth=generator_depth,
+        noise_hidden_dim=checkpoint.get("noise_hidden_dim", inferred_noise_hidden_dim),
+        lab_hidden_dim=checkpoint.get("lab_hidden_dim", inferred_lab_hidden_dim),
+        regressor_hidden_dims=checkpoint.get("regressor_hidden_dims", inferred_regressor_hidden_dims),
+    ).to(runtime_device)
+    generator.load_state_dict(generator_state_dict)
     generator.eval()
 
     lab_regressor = LabRegressor().to(runtime_device)
@@ -561,16 +889,56 @@ def _load_model_bundle_from_disk(
     for parameter in lab_regressor.parameters():
         parameter.requires_grad_(False)
 
+    if checkpoint_format_version >= 2:
+        lab_mean = np.array(checkpoint["lab_mean"], dtype=np.float64)
+        lab_std = np.array(checkpoint["lab_std"], dtype=np.float64)
+        lab_scaling_type = str(checkpoint.get("lab_scaling_type", "standardization"))
+        design_scaling_type = str(checkpoint.get("design_scaling_type", "normalization"))
+    elif "lab_min" in checkpoint and "lab_max" in checkpoint:
+        lab_min = np.array(checkpoint["lab_min"], dtype=np.float64)
+        lab_max = np.array(checkpoint["lab_max"], dtype=np.float64)
+        lab_mean = 0.5 * (lab_min + lab_max)
+        lab_std = np.maximum(lab_max - lab_min, 1e-8)
+        lab_scaling_type = "min_max"
+        design_scaling_type = "normalization"
+    else:
+        raise ValueError(
+            f"Unsupported cGAN checkpoint format in {checkpoint_path}: missing Lab scaling metadata."
+        )
+
     return CganBundle(
         generator=generator,
         lab_regressor=lab_regressor,
-        lab_min=np.array(checkpoint["lab_min"], dtype=np.float64),
-        lab_max=np.array(checkpoint["lab_max"], dtype=np.float64),
+        lab_mean=lab_mean,
+        lab_std=lab_std,
         design_min=np.array(checkpoint["design_min"], dtype=np.float64),
         design_max=np.array(checkpoint["design_max"], dtype=np.float64),
         device=str(runtime_device),
         noise_dim=noise_dim,
         seed=int(checkpoint.get("seed", 0)),
+        generator_learning_rate=float(checkpoint.get("generator_learning_rate", 1e-3)),
+        discriminator_learning_rate=float(checkpoint.get("discriminator_learning_rate", 2e-4)),
+        steps_per_batch=int(checkpoint.get("steps_per_batch", 1)),
+        generator_hidden_dim=generator_hidden_dim,
+        generator_depth=generator_depth,
+        discriminator_hidden_dim=discriminator_hidden_dim,
+        discriminator_depth=discriminator_depth,
+        discriminator_conditioning=str(
+            checkpoint.get(
+                "discriminator_conditioning",
+                "target_lab" if checkpoint_format_version >= 3 else "none",
+            )
+        ),
+        alpha_start=float(checkpoint.get("alpha_start", 0.0)),
+        alpha_ramp_epochs=int(checkpoint.get("alpha_ramp_epochs", 20000)),
+        max_alpha=float(checkpoint.get("max_alpha", 1.0)),
+        lab_delta_e_weight=float(checkpoint.get("lab_delta_e_weight", 0.0)),
+        mode_seeking_weight=float(checkpoint.get("mode_seeking_weight", 0.0)),
+        checkpoint_format_version=checkpoint_format_version,
+        lab_scaling_type=lab_scaling_type,
+        design_scaling_type=design_scaling_type,
+        legacy_lab_min=lab_min if checkpoint_format_version == 1 else None,
+        legacy_lab_max=lab_max if checkpoint_format_version == 1 else None,
         selected_checkpoint_epoch=(
             int(checkpoint["selected_checkpoint_epoch"])
             if checkpoint.get("selected_checkpoint_epoch") is not None
@@ -643,7 +1011,10 @@ def sample_designs_from_bundle(
             torch.cuda.manual_seed_all(seed)
     bundle.generator = bundle.generator.to(runtime_device)
     bundle.generator.eval()
-    target_norm = _normalize(target_lab.reshape(1, -1), bundle.lab_min, bundle.lab_max)
+    if bundle.lab_scaling_type == "standardization":
+        target_norm = _standardize(target_lab.reshape(1, -1), bundle.lab_mean, bundle.lab_std)
+    else:
+        target_norm = _normalize(target_lab.reshape(1, -1), bundle.lab_min, bundle.lab_max)
     if sample_count <= 0:
         return np.empty((0, len(bundle.design_min)), dtype=np.float32)
     effective_batch_size = _resolve_sampling_batch_size(
@@ -688,7 +1059,10 @@ def sample_designs_for_labs_from_bundle(
     bundle.generator = bundle.generator.to(runtime_device)
     bundle.generator.eval()
 
-    target_norm = _normalize(target_labs, bundle.lab_min, bundle.lab_max)
+    if bundle.lab_scaling_type == "standardization":
+        target_norm = _standardize(target_labs, bundle.lab_mean, bundle.lab_std)
+    else:
+        target_norm = _normalize(target_labs, bundle.lab_min, bundle.lab_max)
     if sample_count <= 0:
         return np.empty((len(target_labs), 0, len(bundle.design_min)), dtype=np.float32)
     total_sample_count = len(target_labs) * sample_count

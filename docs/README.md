@@ -7,11 +7,14 @@ This folder is the single entry point for project documentation. Use it to find 
 1. [Project README](../README.md): quick project overview and current next step.
 2. [Technical proposal](architecture/technical-proposal.md): full system plan and engineering direction.
 3. [Requirements breakdown](planning/requirements-breakdown.md): phased tasks, acceptance criteria, and verification plan.
-4. [ADR-001](decisions/ADR-001-architecture-and-model-choices.md): why the current architecture and model choices were accepted.
-5. [UI design guide](../DESIGN.md): Claude Code inspired visual and interaction direction.
-6. [Workspace UX spec](design/workspace-ux-spec.md): implementable information architecture, flows, states, and responsive behavior.
-7. [Component spec](design/component-spec.md): core workspace module definitions and interaction details.
-8. [Algorithm operations guide](planning/algorithm-operations-guide.md): how to interpret current algorithm quality, run the stack, and use the new overview UI.
+4. [cGAN / optics alignment PRD](planning/cgan-optics-data-alignment-prd.md): planned alignment for real D65 / tristimulus data, scaling, colour-science integration, and retrieval metrics.
+5. [Colorimetry and cGAN alignment design](architecture/colorimetry-and-cgan-alignment-design.md): module boundaries, interfaces, checkpoint migration, and retrieval-metric design.
+6. [ADR-001](decisions/ADR-001-architecture-and-model-choices.md): why the current architecture and model choices were accepted.
+7. [ADR-002](decisions/ADR-002-use-real-colorimetry-data-and-versioned-cgan-scaling.md): why real colorimetry data, `colour-science`, and versioned scaling metadata are the new baseline.
+8. [UI design guide](../DESIGN.md): Claude Code inspired visual and interaction direction.
+9. [Workspace UX spec](design/workspace-ux-spec.md): implementable information architecture, flows, states, and responsive behavior.
+10. [Component spec](design/component-spec.md): core workspace module definitions and interaction details.
+11. [Algorithm operations guide](planning/algorithm-operations-guide.md): how to interpret current algorithm quality, run the stack, and use the new overview UI.
 
 ## Directory Structure
 

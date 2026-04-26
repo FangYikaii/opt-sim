@@ -114,6 +114,10 @@ python3 backend/scripts/train_cgan_reproduction.py \
   --epochs 5 \
   --regressor-epochs 5 \
   --batch-size 512 \
+  --generator-learning-rate 1e-3 \
+  --discriminator-learning-rate 2e-4 \
+  --steps-per-batch 1 \
+  --retrieval-metric euclidean_lab \
   --paper-samples-per-lab 16 \
   --device auto
 ```
@@ -122,6 +126,7 @@ Expected outputs:
 
 - `loss_history.csv`
 - `candidate_samples.csv`
+- `retrieval_metric_comparison.json`
 - `metrics.json`
 - `generator_checkpoint.pt`
 
@@ -137,6 +142,10 @@ python3 backend/scripts/train_cgan_reproduction.py \
   --paper-samples-per-lab 1000 \
   --epochs 100000 \
   --regressor-epochs 10000 \
+  --generator-learning-rate 1e-3 \
+  --discriminator-learning-rate 2e-4 \
+  --steps-per-batch 1 \
+  --retrieval-metric delta_e_2000 \
   --device cuda
 ```
 
@@ -145,8 +154,74 @@ After completion, compare:
 - `paper_reproduction.mean_best_delta_e`
 - `paper_reproduction.d2_ground_truth_within_5nm_ratio`
 - `paper_reproduction.jsd`
+- `retrieval_metric_comparison.json`
 
 against the reference values in `paper_targets`.
+
+The current artifact metadata now records:
+
+- colorimetry data sources (`refer_data/D65.csv`, `refer_data/tristimulus.csv`)
+- scaling strategy (`Lab=standardization`, `design=normalization`)
+- explicit training hyperparameters
+- active retrieval metric
+
+## 8.1 Run legacy-baseline ablations one by one
+
+When the goal is to isolate which change hurts `DeltaE` or `d2`, prefer the legacy `tune4 alpha` structure and add only one variable at a time.
+
+Step 0, old baseline:
+
+```bash
+cd /home/fangyikai/code/opt-sim
+conda activate opt_sim
+python3 -u backend/scripts/train_cgan_reproduction.py \
+  --dataset-source paper \
+  --experiment-preset legacy_tune4_alpha \
+  --retrieval-metric delta_e_2000 \
+  --output-dir backend/artifacts/cgan_reproduction_ablate_legacy_tune4_alpha
+```
+
+Step 1, only add conditional discriminator:
+
+```bash
+cd /home/fangyikai/code/opt-sim
+conda activate opt_sim
+python3 -u backend/scripts/train_cgan_reproduction.py \
+  --dataset-source paper \
+  --experiment-preset legacy_tune4_alpha_conditional_d \
+  --retrieval-metric delta_e_2000 \
+  --output-dir backend/artifacts/cgan_reproduction_ablate_conditional_d
+```
+
+Step 2, then only add `noise_dim=8`:
+
+```bash
+cd /home/fangyikai/code/opt-sim
+conda activate opt_sim
+python3 -u backend/scripts/train_cgan_reproduction.py \
+  --dataset-source paper \
+  --experiment-preset legacy_tune4_alpha_conditional_d_noise8 \
+  --retrieval-metric delta_e_2000 \
+  --output-dir backend/artifacts/cgan_reproduction_ablate_conditional_d_noise8
+```
+
+Step 3, finally try low-weight mode seeking:
+
+```bash
+cd /home/fangyikai/code/opt-sim
+conda activate opt_sim
+python3 -u backend/scripts/train_cgan_reproduction.py \
+  --dataset-source paper \
+  --experiment-preset legacy_tune4_alpha_conditional_d_noise8_mode_seeking_low \
+  --retrieval-metric delta_e_2000 \
+  --output-dir backend/artifacts/cgan_reproduction_ablate_conditional_d_noise8_mode_low
+```
+
+Notes:
+
+- These presets keep the old `tune4 alpha` schedule (`noise_dim=2`, `alpha_ramp_epochs=40000`, `max_alpha=0.3`, no mode seeking) as the base, then add exactly one change per step.
+- Explicit CLI flags still override preset values. For example, you can keep the preset but change only `--paper-samples-per-lab 256` or `--output-dir`.
+- The low mode-seeking preset currently uses `--mode-seeking-weight 0.02` so that we probe diversity pressure conservatively before trying larger weights.
 
 ## 9. Where the integration now lives
 

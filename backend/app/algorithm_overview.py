@@ -443,11 +443,14 @@ def _operation_steps() -> list[AlgorithmOperationStep]:
                 f"cd {repo_root}\nconda activate opt_sim\n"
                 "python3 -u backend/scripts/train_cgan_reproduction.py "
                 "--dataset-source paper --output-dir backend/artifacts/cgan_reproduction_smoke "
-                "--epochs 5 --regressor-epochs 5 --batch-size 512 --paper-samples-per-lab 16 --device auto"
+                "--epochs 5 --regressor-epochs 5 --batch-size 512 "
+                "--generator-learning-rate 1e-3 --discriminator-learning-rate 2e-4 "
+                "--steps-per-batch 1 --retrieval-metric euclidean_lab "
+                "--paper-samples-per-lab 16 --device auto"
             ),
             expectedResult=(
-                "`metrics.json`, `loss_history.csv`, `candidate_samples.csv`, `generator_checkpoint.pt`, "
-                "and the selected-checkpoint metadata are refreshed."
+                "`metrics.json`, `loss_history.csv`, `candidate_samples.csv`, "
+                "`retrieval_metric_comparison.json`, and generator checkpoints are refreshed."
             ),
         ),
         AlgorithmOperationStep(
@@ -457,7 +460,10 @@ def _operation_steps() -> list[AlgorithmOperationStep]:
             command=(
                 f"cd {repo_root}\nconda activate opt_sim\n"
                 "python3 -u backend/scripts/train_cgan_reproduction.py "
-                "--dataset-source paper --paper-samples-per-lab 1000 --epochs 100000 --regressor-epochs 10000 --device cuda"
+                "--dataset-source paper --paper-samples-per-lab 1000 "
+                "--epochs 100000 --regressor-epochs 10000 "
+                "--generator-learning-rate 1e-3 --discriminator-learning-rate 2e-4 "
+                "--steps-per-batch 1 --retrieval-metric delta_e_2000 --device cuda"
             ),
             expectedResult="Compare the new `paper_reproduction` metrics against `paper_targets` after the run completes.",
         ),

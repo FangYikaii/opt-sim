@@ -21,6 +21,8 @@ from .optics import (
     xyz_to_srgb_hex,
 )
 
+RetrievalMetric = Literal["euclidean_lab", "delta_e_2000"]
+
 
 @dataclass
 class InverseDesignResult:
@@ -282,6 +284,33 @@ def _retrieval_grid(
     return grid, np.vstack(labs)
 
 
+def _retrieve_candidate_indices(
+    *,
+    lab_array: np.ndarray,
+    target_lab: np.ndarray,
+    top_k: int,
+    retrieval_metric: RetrievalMetric,
+) -> list[int]:
+    if retrieval_metric == "euclidean_lab":
+        neighbors = NearestNeighbors(n_neighbors=top_k)
+        neighbors.fit(lab_array)
+        _, indices = neighbors.kneighbors(target_lab.reshape(1, -1))
+        return [int(index) for index in indices[0]]
+
+    delta_es = np.array(
+        [delta_e_2000(candidate_lab, target_lab) for candidate_lab in lab_array],
+        dtype=np.float64,
+    )
+    ranked = np.argsort(delta_es, kind="stable")
+    return [int(index) for index in ranked[:top_k]]
+
+
+def _format_retrieval_metric_label(retrieval_metric: RetrievalMetric) -> str:
+    if retrieval_metric == "delta_e_2000":
+        return "DeltaE 2000"
+    return "Lab Euclidean"
+
+
 def _format_polarization_label(polarization: Polarization) -> str:
     if polarization == "te":
         return "TE"
@@ -295,14 +324,18 @@ def run_inverse_design(
     top_k: int = 3,
     theta_deg: float = 0.0,
     polarization: Polarization = "unpolarized",
+    retrieval_metric: RetrievalMetric = "euclidean_lab",
 ) -> InverseDesignResult:
     target_lab = hex_to_lab(target_hex)
 
     grid, lab_array = _retrieval_grid(theta_deg, polarization)
     design_array = np.array(grid, dtype=np.float64)
-    neighbors = NearestNeighbors(n_neighbors=top_k)
-    neighbors.fit(lab_array)
-    distances, indices = neighbors.kneighbors(target_lab.reshape(1, -1))
+    indices = _retrieve_candidate_indices(
+        lab_array=lab_array,
+        target_lab=target_lab,
+        top_k=top_k,
+        retrieval_metric=retrieval_metric,
+    )
 
     gan_designs = _sample_gan_designs(
         target_lab=target_lab,
@@ -313,7 +346,7 @@ def run_inverse_design(
 
     evaluated_candidates: dict[tuple[float, float, float], EvaluatedDesign] = {}
 
-    for distance, idx in zip(distances[0], indices[0]):
+    for idx in indices:
         retrieval_design = tuple(float(value) for value in grid[int(idx)])
         retrieval_candidate = _evaluate_candidate(
             *retrieval_design,
@@ -380,6 +413,10 @@ def run_inverse_design(
                     CandidateMetric(label="Composite score", value=f"{candidate.composite_score:.2f}"),
                     CandidateMetric(label="Incidence angle", value=f"{theta_deg:.1f} deg"),
                     CandidateMetric(label="Polarization", value=_format_polarization_label(polarization)),
+                    CandidateMetric(
+                        label="Retrieval metric",
+                        value=_format_retrieval_metric_label(retrieval_metric),
+                    ),
                     CandidateMetric(label="Process drift", value=f"{plus_drift:+.2f} / {minus_drift:+.2f}"),
                     CandidateMetric(
                         label="Manufacturability",
@@ -424,6 +461,12 @@ def run_inverse_design(
             id="constraint-polarization",
             label="Polarization",
             detail=f"Candidates were ranked using {_format_polarization_label(polarization)} light response.",
+            state="pass",
+        ),
+        ConstraintCheck(
+            id="constraint-retrieval-metric",
+            label="Retrieval metric",
+            detail=f"Retrieval seeds were selected using {_format_retrieval_metric_label(retrieval_metric)}.",
             state="pass",
         ),
     ]

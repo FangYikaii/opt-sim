@@ -49,6 +49,22 @@ def test_inverse_design_reports_polarization_condition_in_metrics_and_constraint
     assert polarization_constraint.detail == "Candidates were ranked using TE light response."
 
 
+def test_inverse_design_reports_selected_retrieval_metric() -> None:
+    result = inverse_design.run_inverse_design(
+        "#bf6f4f",
+        top_k=3,
+        retrieval_metric="delta_e_2000",
+    )
+
+    first_metrics = {metric.label: metric.value for metric in result.candidates[0].metrics}
+    retrieval_constraint = next(
+        constraint for constraint in result.constraints if constraint.label == "Retrieval metric"
+    )
+
+    assert first_metrics["Retrieval metric"] == "DeltaE 2000"
+    assert retrieval_constraint.detail == "Retrieval seeds were selected using DeltaE 2000."
+
+
 def test_load_saved_cgan_bundle_uses_best_experiment_checkpoint(monkeypatch, tmp_path) -> None:
     checkpoint_path = tmp_path / "exp-best" / "generator_checkpoint.pt"
     checkpoint_path.parent.mkdir(parents=True)

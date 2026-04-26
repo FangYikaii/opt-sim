@@ -1,0 +1,238 @@
+{
+  "colorimetry": {
+    "illuminant_source": "refer_data/D65.csv",
+    "tristimulus_source": "refer_data/tristimulus.csv",
+    "wavelength_grid_nm": [
+      380,
+      385,
+      390,
+      395,
+      400,
+      405,
+      410,
+      415,
+      420,
+      425,
+      430,
+      435,
+      440,
+      445,
+      450,
+      455,
+      460,
+      465,
+      470,
+      475,
+      480,
+      485,
+      490,
+      495,
+      500,
+      505,
+      510,
+      515,
+      520,
+      525,
+      530,
+      535,
+      540,
+      545,
+      550,
+      555,
+      560,
+      565,
+      570,
+      575,
+      580,
+      585,
+      590,
+      595,
+      600,
+      605,
+      610,
+      615,
+      620,
+      625,
+      630,
+      635,
+      640,
+      645,
+      650,
+      655,
+      660,
+      665,
+      670,
+      675,
+      680,
+      685,
+      690,
+      695,
+      700,
+      705,
+      710,
+      715,
+      720,
+      725,
+      730,
+      735,
+      740,
+      745,
+      750,
+      755,
+      760,
+      765,
+      770,
+      775,
+      780
+    ],
+    "conversion_backend": "colour-science"
+  },
+  "dataset": {
+    "samples": 45000,
+    "stack": "Ag-SiO2-Ag",
+    "physics_mode": "transmittance",
+    "design_bounds_nm": {
+      "ag_bottom": [
+        0.0,
+        50.0
+      ],
+      "sio2": [
+        0.0,
+        1000.0
+      ],
+      "ag_top": [
+        0.0,
+        50.0
+      ]
+    }
+  },
+  "scaling": {
+    "lab": "standardization",
+    "design": "normalization"
+  },
+  "runtime": {
+    "device": "cuda",
+    "cuda_available": true,
+    "torch_version": "2.11.0+cu128",
+    "torch_cuda_version": "12.8",
+    "device_name": "NVIDIA GeForce RTX 5060 Ti",
+    "device_count": 1
+  },
+  "training": {
+    "epochs": 2000,
+    "batch_size": 2048,
+    "noise_dim": 8,
+    "generator_learning_rate": 0.001,
+    "discriminator_learning_rate": 0.0002,
+    "steps_per_batch": 1,
+    "generator_hidden_dim": 160,
+    "generator_depth": 5,
+    "discriminator_hidden_dim": 128,
+    "discriminator_depth": 4,
+    "discriminator_conditioning": "target_lab",
+    "alpha_start": 0.0,
+    "alpha_ramp_epochs": 2000,
+    "max_alpha": 1.0,
+    "lab_delta_e_weight": 0.0,
+    "mode_seeking_weight": 0.1,
+    "seed": 42,
+    "device": "cuda",
+    "regressor_epochs": 1000,
+    "best_checkpoint_epoch": 500,
+    "best_checkpoint_metric_name": "paper_reproduction.checkpoint_score",
+    "best_checkpoint_metric_value": 26.31092110042446,
+    "checkpoint_eval_interval": 500,
+    "checkpoint_budget_mode": "recheck_best",
+    "checkpoint_samples_per_lab": 64,
+    "checkpoint_recheck_samples_per_lab": 128,
+    "final_samples_per_lab": 128,
+    "checkpoint_score_weights": {
+      "mean_best_delta_e": 1.0,
+      "median_best_delta_e": 0.02,
+      "d2_within_5nm": 8.0,
+      "mean_jsd": 0.5,
+      "d3_jsd": 2.0
+    }
+  },
+  "retrieval_metric": "delta_e_2000",
+  "targets": [
+    {
+      "target_hex": "#4f86c6",
+      "retrieval_best_delta_e": 27.10193534869802,
+      "cgan_best_delta_e": 34.67154483463937,
+      "cgan_unique_rounded_0p1nm": 16,
+      "cgan_mean_pairwise_distance_nm": 232.75987545721674,
+      "cgan_parameter_span_nm": {
+        "ag_bottom": 26.51352432680618,
+        "sio2": 957.8635878057107,
+        "ag_top": 31.923443903821124
+      }
+    },
+    {
+      "target_hex": "#d15f3f",
+      "retrieval_best_delta_e": 17.45535745519266,
+      "cgan_best_delta_e": 19.033844905570888,
+      "cgan_unique_rounded_0p1nm": 16,
+      "cgan_mean_pairwise_distance_nm": 384.2725778654641,
+      "cgan_parameter_span_nm": {
+        "ag_bottom": 44.00873286312943,
+        "sio2": 775.4077260901965,
+        "ag_top": 27.463474651498963
+      }
+    },
+    {
+      "target_hex": "#66aa55",
+      "retrieval_best_delta_e": 13.500221118084808,
+      "cgan_best_delta_e": 6.278206624105144,
+      "cgan_unique_rounded_0p1nm": 16,
+      "cgan_mean_pairwise_distance_nm": 21.110311807096455,
+      "cgan_parameter_span_nm": {
+        "ag_bottom": 21.215488122204064,
+        "sio2": 55.62284211323407,
+        "ag_top": 12.521505942207927
+      }
+    }
+  ],
+  "artifacts": {
+    "selected_checkpoint": "generator_checkpoint_best.pt",
+    "final_checkpoint": "generator_checkpoint.pt",
+    "best_available_checkpoint": "generator_checkpoint_best.pt",
+    "available_checkpoints": [
+      "generator_checkpoint_best.pt",
+      "generator_checkpoint.pt"
+    ]
+  },
+  "paper_reproduction": {
+    "samples_per_lab": 128,
+    "mean_best_delta_e": 19.808269837231716,
+    "median_best_delta_e": 21.49187336214662,
+    "mean_solution_groups": 3.278,
+    "max_solution_groups": 7,
+    "d2_ground_truth_within_5nm_ratio": 0.388,
+    "jsd": {
+      "d1": 0.48232745395519516,
+      "d2": 0.5845672653538566,
+      "d3": 0.46107600433767665
+    },
+    "generated_designs_shape": [
+      500,
+      128,
+      3
+    ],
+    "details_file": "paper_reproduction_details.npz",
+    "best_delta_e_count": 500,
+    "solution_group_count": 500,
+    "abs_d2_error_count": 500
+  },
+  "paper_targets": {
+    "lab_regressor_mean_delta_e": 0.19,
+    "generator_mean_best_delta_e_with_1000_z": 0.44,
+    "mean_solution_groups_with_1000_z": 3.58,
+    "d2_ground_truth_within_5nm_ratio": 0.939,
+    "jsd": {
+      "d1": 0.069,
+      "d2": 0.067,
+      "d3": 0.066
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "training_complete": {
+    "duration": "1h47m10s",
+    "best_epoch": 1500,
+    "best_score": 16.716167
+  },
+  "checkpoint_metrics": [
+    {
+      "epoch": 500,
+      "score": 17.640356,
+      "is_best": true,
+      "mean_best_delta_e": 12.418426,
+      "median_best_delta_e": 11.336943,
+      "d2_within_5nm": 0.4022
+    },
+    {
+      "epoch": 1000,
+      "score": 18.29403,
+      "is_best": false
+    },
+    {
+      "epoch": 1500,
+      "score": 16.716167,
+      "is_best": true,
+      "mean_best_delta_e": 11.965445,
+      "median_best_delta_e": 11.643469,
+      "d2_within_5nm": 0.4626
+    },
+    {
+      "epoch": 2000,
+      "score": 18.032618,
+      "is_best": false
+    },
+    {
+      "epoch": 2500,
+      "score": 19.55893,
+      "is_best": false
+    },
+    {
+      "epoch": 3000,
+      "score": 20.26658,
+      "is_best": false
+    },
+    {
+      "epoch": 3500,
+      "score": 23.460387,
+      "is_best": false
+    }
+  ],
+  "loss_history_summary": {
+    "epochs": 43,
+    "min_lab_mse": 0.413026,
+    "max_alpha": 0.0086
+  }
+}

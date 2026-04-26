@@ -3,7 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+import colour
 import numpy as np
+
+from .colorimetry_data import get_colorimetry_reference
 
 
 WAVELENGTHS_NM = np.arange(380.0, 781.0, 5.0)
@@ -208,35 +211,24 @@ def transmittance_spectrum_ag_sio2_ag(
     return transmittance
 
 
-def _gaussian(center_nm: float, width_nm: float) -> np.ndarray:
-    return np.exp(-0.5 * ((WAVELENGTHS_NM - center_nm) / width_nm) ** 2)
-
-
-_X_BAR = _gaussian(600.0, 55.0) + 0.35 * _gaussian(450.0, 30.0)
-_Y_BAR = _gaussian(550.0, 40.0)
-_Z_BAR = 1.8 * _gaussian(445.0, 25.0)
-_ILLUMINANT_D65 = (
-    0.9 * _gaussian(460.0, 60.0)
-    + 1.0 * _gaussian(560.0, 90.0)
-    + 0.75 * _gaussian(610.0, 120.0)
-)
-
-_XYZ_NORMALIZER = float(np.sum(_ILLUMINANT_D65 * _Y_BAR))
+_COLORIMETRY_REFERENCE = get_colorimetry_reference(WAVELENGTHS_NM)
+_XYZ_NORMALIZER = float(np.sum(_COLORIMETRY_REFERENCE.d65 * _COLORIMETRY_REFERENCE.y_bar))
 _REF_WHITE = np.array(
     [
-        float(np.sum(_ILLUMINANT_D65 * _X_BAR)) / _XYZ_NORMALIZER,
+        float(np.sum(_COLORIMETRY_REFERENCE.d65 * _COLORIMETRY_REFERENCE.x_bar)) / _XYZ_NORMALIZER,
         1.0,
-        float(np.sum(_ILLUMINANT_D65 * _Z_BAR)) / _XYZ_NORMALIZER,
+        float(np.sum(_COLORIMETRY_REFERENCE.d65 * _COLORIMETRY_REFERENCE.z_bar)) / _XYZ_NORMALIZER,
     ],
     dtype=np.float64,
 )
+_REF_WHITE_XY = _REF_WHITE[:2] / float(np.sum(_REF_WHITE))
 
 
 def spectrum_to_xyz(spectrum: np.ndarray) -> np.ndarray:
-    weighted = spectrum * _ILLUMINANT_D65
-    x = float(np.sum(weighted * _X_BAR)) / _XYZ_NORMALIZER
-    y = float(np.sum(weighted * _Y_BAR)) / _XYZ_NORMALIZER
-    z = float(np.sum(weighted * _Z_BAR)) / _XYZ_NORMALIZER
+    weighted = spectrum * _COLORIMETRY_REFERENCE.d65
+    x = float(np.sum(weighted * _COLORIMETRY_REFERENCE.x_bar)) / _XYZ_NORMALIZER
+    y = float(np.sum(weighted * _COLORIMETRY_REFERENCE.y_bar)) / _XYZ_NORMALIZER
+    z = float(np.sum(weighted * _COLORIMETRY_REFERENCE.z_bar)) / _XYZ_NORMALIZER
     return np.array([x, y, z], dtype=np.float64)
 
 
@@ -248,33 +240,27 @@ def _lab_f(value: float) -> float:
 
 
 def xyz_to_lab(xyz: np.ndarray) -> np.ndarray:
-    ratios = xyz / _REF_WHITE
-    fx, fy, fz = (_lab_f(float(r)) for r in ratios)
-    l = 116.0 * fy - 16.0
-    a = 500.0 * (fx - fy)
-    b = 200.0 * (fy - fz)
-    return np.array([l, a, b], dtype=np.float64)
+    # colour.XYZ_to_Lab expects XYZ scaled to [0, 1] under the provided illuminant xy.
+    return np.array(
+        colour.XYZ_to_Lab(
+            np.asarray(xyz, dtype=np.float64),
+            illuminant=_REF_WHITE_XY,
+        ),
+        dtype=np.float64,
+    )
 
 
 def xyz_to_srgb_hex(xyz: np.ndarray) -> str:
-    matrix = np.array(
-        [
-            [3.2406, -1.5372, -0.4986],
-            [-0.9689, 1.8758, 0.0415],
-            [0.0557, -0.2040, 1.0570],
-        ],
-        dtype=np.float64,
+    rgb = np.clip(
+        colour.XYZ_to_sRGB(
+            np.asarray(xyz, dtype=np.float64),
+            illuminant=_REF_WHITE_XY,
+            apply_cctf_encoding=True,
+        ),
+        0.0,
+        1.0,
     )
-    rgb_linear = matrix @ xyz
-    rgb_linear = np.clip(rgb_linear, 0.0, 1.0)
-
-    def gamma_correct(channel: float) -> float:
-        if channel <= 0.0031308:
-            return 12.92 * channel
-        return 1.055 * (channel ** (1.0 / 2.4)) - 0.055
-
-    rgb = np.clip([gamma_correct(float(v)) for v in rgb_linear], 0.0, 1.0)
-    rgb_int = [int(round(v * 255)) for v in rgb]
+    rgb_int = [int(round(float(v) * 255.0)) for v in rgb]
     return "#{:02x}{:02x}{:02x}".format(*rgb_int)
 
 
@@ -308,77 +294,10 @@ def delta_e_76(lab_a: np.ndarray, lab_b: np.ndarray) -> float:
 
 
 def delta_e_2000(lab_a: np.ndarray, lab_b: np.ndarray) -> float:
-    l1, a1, b1 = (float(value) for value in lab_a)
-    l2, a2, b2 = (float(value) for value in lab_b)
-
-    c1 = np.hypot(a1, b1)
-    c2 = np.hypot(a2, b2)
-    c_bar = 0.5 * (c1 + c2)
-    c_bar7 = c_bar**7
-    g = 0.5 * (1.0 - np.sqrt(c_bar7 / (c_bar7 + 25.0**7))) if c_bar > 0 else 0.0
-
-    a1_prime = (1.0 + g) * a1
-    a2_prime = (1.0 + g) * a2
-    c1_prime = np.hypot(a1_prime, b1)
-    c2_prime = np.hypot(a2_prime, b2)
-
-    def _hue_angle_degrees(a_prime: float, b_value: float) -> float:
-        if a_prime == 0.0 and b_value == 0.0:
-            return 0.0
-        angle = np.degrees(np.arctan2(b_value, a_prime))
-        return angle + 360.0 if angle < 0 else angle
-
-    h1_prime = _hue_angle_degrees(a1_prime, b1)
-    h2_prime = _hue_angle_degrees(a2_prime, b2)
-
-    delta_l_prime = l2 - l1
-    delta_c_prime = c2_prime - c1_prime
-
-    if c1_prime == 0.0 or c2_prime == 0.0:
-        delta_h_prime = 0.0
-    else:
-        hue_difference = h2_prime - h1_prime
-        if abs(hue_difference) <= 180.0:
-            delta_h_prime = hue_difference
-        elif hue_difference > 180.0:
-            delta_h_prime = hue_difference - 360.0
-        else:
-            delta_h_prime = hue_difference + 360.0
-
-    delta_h_term = 2.0 * np.sqrt(c1_prime * c2_prime) * np.sin(np.radians(delta_h_prime / 2.0))
-    l_bar_prime = 0.5 * (l1 + l2)
-    c_bar_prime = 0.5 * (c1_prime + c2_prime)
-
-    if c1_prime == 0.0 or c2_prime == 0.0:
-        h_bar_prime = h1_prime + h2_prime
-    else:
-        hue_sum = h1_prime + h2_prime
-        if abs(h1_prime - h2_prime) <= 180.0:
-            h_bar_prime = 0.5 * hue_sum
-        elif hue_sum < 360.0:
-            h_bar_prime = 0.5 * (hue_sum + 360.0)
-        else:
-            h_bar_prime = 0.5 * (hue_sum - 360.0)
-
-    t = (
-        1.0
-        - 0.17 * np.cos(np.radians(h_bar_prime - 30.0))
-        + 0.24 * np.cos(np.radians(2.0 * h_bar_prime))
-        + 0.32 * np.cos(np.radians(3.0 * h_bar_prime + 6.0))
-        - 0.20 * np.cos(np.radians(4.0 * h_bar_prime - 63.0))
+    return float(
+        colour.delta_E(
+            np.asarray(lab_a, dtype=np.float64),
+            np.asarray(lab_b, dtype=np.float64),
+            method="CIE 2000",
+        )
     )
-    delta_theta = 30.0 * np.exp(-(((h_bar_prime - 275.0) / 25.0) ** 2))
-    c_bar_prime7 = c_bar_prime**7
-    r_c = 2.0 * np.sqrt(c_bar_prime7 / (c_bar_prime7 + 25.0**7)) if c_bar_prime > 0 else 0.0
-    s_l = 1.0 + (0.015 * ((l_bar_prime - 50.0) ** 2)) / np.sqrt(20.0 + ((l_bar_prime - 50.0) ** 2))
-    s_c = 1.0 + 0.045 * c_bar_prime
-    s_h = 1.0 + 0.015 * c_bar_prime * t
-    r_t = -np.sin(np.radians(2.0 * delta_theta)) * r_c
-
-    delta_e = np.sqrt(
-        (delta_l_prime / s_l) ** 2
-        + (delta_c_prime / s_c) ** 2
-        + (delta_h_term / s_h) ** 2
-        + r_t * (delta_c_prime / s_c) * (delta_h_term / s_h)
-    )
-    return float(delta_e)

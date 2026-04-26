@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Callable
+from contextlib import contextmanager
 import csv
 import json
 from dataclasses import asdict, dataclass
@@ -10,7 +11,7 @@ from pathlib import Path
 import sys
 import time
 import zipfile
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal, TextIO
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -28,6 +29,7 @@ fit_lightweight_cgan: Any = None
 get_torch_runtime_info: Any = None
 sample_designs_from_bundle: Any = None
 sample_designs_for_labs_from_bundle: Any = None
+load_model_bundle: Any = None
 DBSCAN: Any = None
 delta_e_76: Any = None
 delta_e_2000: Any = None
@@ -44,6 +46,124 @@ DEFAULT_TARGETS = ["#4f86c6", "#d15f3f", "#66aa55"]
 DEFAULT_PAPER_DATASET_ZIP = ROOT / "backend" / "data" / "paper-reproduction" / "dataset.zip"
 DEFAULT_PAPER_TRAINING_CSV = ROOT / "backend" / "data" / "paper-reproduction" / "training set.csv"
 DEFAULT_PAPER_TESTING_CSV = ROOT / "backend" / "data" / "paper-reproduction" / "testing set.csv"
+RetrievalMetric = Literal["euclidean_lab", "delta_e_2000"]
+ExperimentPresetName = Literal[
+    "legacy_tune4_alpha",
+    "legacy_tune4_alpha_conditional_d",
+    "legacy_tune4_alpha_conditional_d_noise8",
+    "legacy_tune4_alpha_conditional_d_noise8_mode_seeking_low",
+]
+
+DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEAN_BEST_DELTA_E = 1.0
+DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEDIAN_BEST_DELTA_E = 0.02
+DEFAULT_CHECKPOINT_SCORE_WEIGHT_D2_WITHIN_5NM = 8.0
+DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEAN_JSD = 0.5
+DEFAULT_CHECKPOINT_SCORE_WEIGHT_D3_JSD = 2.0
+DEFAULT_CHECKPOINT_BUDGET_MODE = "match_final"
+DEFAULT_LOW_MODE_SEEKING_WEIGHT = 0.02
+
+
+@dataclass(frozen=True)
+class ExperimentPreset:
+    description: str
+    overrides: dict[str, object]
+
+
+EXPERIMENT_PRESETS: dict[str, ExperimentPreset] = {
+    "legacy_tune4_alpha": ExperimentPreset(
+        description="旧 tune4 alpha 基线，不带 conditional discriminator / noise_dim=8 / mode seeking。",
+        overrides={
+            "batch_size": 16384,
+            "noise_dim": 2,
+            "generator_hidden_dim": 128,
+            "generator_depth": 9,
+            "discriminator_hidden_dim": 128,
+            "discriminator_depth": 4,
+            "discriminator_conditioning": "none",
+            "alpha_start": 0.0,
+            "alpha_ramp_epochs": 40000,
+            "max_alpha": 0.3,
+            "lab_delta_e_weight": 0.0,
+            "mode_seeking_weight": 0.0,
+            "regressor_epochs": 10000,
+            "generator_learning_rate": 1e-3,
+            "discriminator_learning_rate": 2e-4,
+            "steps_per_batch": 1,
+        },
+    ),
+    "legacy_tune4_alpha_conditional_d": ExperimentPreset(
+        description="只在旧 tune4 alpha 基线上打开 conditional discriminator。",
+        overrides={
+            "batch_size": 16384,
+            "noise_dim": 2,
+            "generator_hidden_dim": 128,
+            "generator_depth": 9,
+            "discriminator_hidden_dim": 128,
+            "discriminator_depth": 4,
+            "discriminator_conditioning": "target_lab",
+            "alpha_start": 0.0,
+            "alpha_ramp_epochs": 40000,
+            "max_alpha": 0.3,
+            "lab_delta_e_weight": 0.0,
+            "mode_seeking_weight": 0.0,
+            "regressor_epochs": 10000,
+            "generator_learning_rate": 1e-3,
+            "discriminator_learning_rate": 2e-4,
+            "steps_per_batch": 1,
+        },
+    ),
+    "legacy_tune4_alpha_conditional_d_noise8": ExperimentPreset(
+        description="在 conditional discriminator + 旧 tune4 alpha 基线上单独把 noise_dim 提到 8。",
+        overrides={
+            "batch_size": 16384,
+            "noise_dim": 8,
+            "generator_hidden_dim": 128,
+            "generator_depth": 9,
+            "discriminator_hidden_dim": 128,
+            "discriminator_depth": 4,
+            "discriminator_conditioning": "target_lab",
+            "alpha_start": 0.0,
+            "alpha_ramp_epochs": 40000,
+            "max_alpha": 0.3,
+            "lab_delta_e_weight": 0.0,
+            "mode_seeking_weight": 0.0,
+            "regressor_epochs": 10000,
+            "generator_learning_rate": 1e-3,
+            "discriminator_learning_rate": 2e-4,
+            "steps_per_batch": 1,
+        },
+    ),
+    "legacy_tune4_alpha_conditional_d_noise8_mode_seeking_low": ExperimentPreset(
+        description=(
+            "在 conditional discriminator + 旧 tune4 alpha + noise_dim=8 基线上，"
+            f"再低权重加入 mode seeking（默认 {DEFAULT_LOW_MODE_SEEKING_WEIGHT}）。"
+        ),
+        overrides={
+            "batch_size": 16384,
+            "noise_dim": 8,
+            "generator_hidden_dim": 128,
+            "generator_depth": 9,
+            "discriminator_hidden_dim": 128,
+            "discriminator_depth": 4,
+            "discriminator_conditioning": "target_lab",
+            "alpha_start": 0.0,
+            "alpha_ramp_epochs": 40000,
+            "max_alpha": 0.3,
+            "lab_delta_e_weight": 0.0,
+            "mode_seeking_weight": DEFAULT_LOW_MODE_SEEKING_WEIGHT,
+            "regressor_epochs": 10000,
+            "generator_learning_rate": 1e-3,
+            "discriminator_learning_rate": 2e-4,
+            "steps_per_batch": 1,
+        },
+    ),
+}
+
+
+def get_experiment_preset(name: str | None) -> ExperimentPreset | None:
+    if name is None:
+        return None
+    return EXPERIMENT_PRESETS[name]
 
 
 @dataclass(frozen=True)
@@ -56,6 +176,7 @@ class CandidateRecord:
     d_ag_top_nm: float
     delta_e: float
     simulated_hex: str
+    retrieval_metric: str
 
 
 def load_runtime_dependencies() -> None:
@@ -66,6 +187,7 @@ def load_runtime_dependencies() -> None:
     global get_torch_runtime_info
     global sample_designs_from_bundle
     global sample_designs_for_labs_from_bundle
+    global load_model_bundle
     global DBSCAN
     global delta_e_76
     global delta_e_2000
@@ -85,6 +207,7 @@ def load_runtime_dependencies() -> None:
             CganBundle as ImportedCganBundle,
             fit_lightweight_cgan as imported_fit_lightweight_cgan,
             get_torch_runtime_info as imported_get_torch_runtime_info,
+            load_model_bundle as imported_load_model_bundle,
             sample_designs_for_labs_from_bundle as imported_sample_designs_for_labs_from_bundle,
             sample_designs_from_bundle as imported_sample_designs_from_bundle,
         )
@@ -112,6 +235,7 @@ def load_runtime_dependencies() -> None:
     get_torch_runtime_info = imported_get_torch_runtime_info
     sample_designs_for_labs_from_bundle = imported_sample_designs_for_labs_from_bundle
     sample_designs_from_bundle = imported_sample_designs_from_bundle
+    load_model_bundle = imported_load_model_bundle
     DBSCAN = ImportedDBSCAN
     delta_e_76 = imported_delta_e_76
     delta_e_2000 = imported_delta_e_2000
@@ -263,16 +387,46 @@ def evaluate_design(design: np.ndarray, target_lab: np.ndarray) -> tuple[float, 
 def nearest_retrieval(
     lab_samples: np.ndarray,
     design_samples: np.ndarray,
-    hex_samples: list[str] | None,
     target_lab: np.ndarray,
-) -> tuple[float, str, np.ndarray]:
+) -> tuple[float, np.ndarray]:
     distances = np.linalg.norm(lab_samples - target_lab.reshape(1, -1), axis=1)
     index = int(np.argmin(distances))
-    if hex_samples is not None:
-        simulated_hex = hex_samples[index]
+    return float(distances[index]), design_samples[index]
+
+
+def nearest_retrieval_delta_e_2000(
+    lab_samples: np.ndarray,
+    design_samples: np.ndarray,
+    target_lab: np.ndarray,
+) -> tuple[float, np.ndarray]:
+    distances = np.array(
+        [delta_e_2000(candidate_lab, target_lab) for candidate_lab in lab_samples],
+        dtype=np.float64,
+    )
+    index = int(np.argmin(distances))
+    return float(distances[index]), design_samples[index]
+
+
+def nearest_retrieval_with_metric(
+    lab_samples: np.ndarray,
+    design_samples: np.ndarray,
+    hex_samples: list[str] | None,
+    target_lab: np.ndarray,
+    *,
+    retrieval_metric: RetrievalMetric,
+) -> tuple[float, str, np.ndarray]:
+    if retrieval_metric == "euclidean_lab":
+        _, retrieved_design = nearest_retrieval(lab_samples, design_samples, target_lab)
     else:
-        _, simulated_hex = evaluate_design(design_samples[index], target_lab)
-    return float(distances[index]), simulated_hex, design_samples[index]
+        _, retrieved_design = nearest_retrieval_delta_e_2000(lab_samples, design_samples, target_lab)
+
+    retrieval_delta_e, simulated_hex = evaluate_design(retrieved_design, target_lab)
+    if hex_samples is not None:
+        design_matches = np.all(np.isclose(design_samples, retrieved_design.reshape(1, -1)), axis=1)
+        matching_indices = np.flatnonzero(design_matches)
+        if matching_indices.size > 0:
+            simulated_hex = hex_samples[int(matching_indices[0])]
+    return float(retrieval_delta_e), simulated_hex, retrieved_design
 
 
 def collect_candidate_records(
@@ -285,16 +439,18 @@ def collect_candidate_records(
     sample_count: int,
     top_generated: int,
     seed: int,
+    retrieval_metric: RetrievalMetric = "euclidean_lab",
 ) -> list[CandidateRecord]:
     records: list[CandidateRecord] = []
 
     for target_index, target_hex in enumerate(targets):
         target_lab = hex_to_lab(target_hex)
-        retrieval_delta_e, retrieval_hex, retrieval_design = nearest_retrieval(
+        retrieval_delta_e, retrieval_hex, retrieval_design = nearest_retrieval_with_metric(
             lab_samples,
             design_samples,
             hex_samples,
             target_lab,
+            retrieval_metric=retrieval_metric,
         )
         records.append(
             CandidateRecord(
@@ -306,6 +462,7 @@ def collect_candidate_records(
                 d_ag_top_nm=float(retrieval_design[2]),
                 delta_e=retrieval_delta_e,
                 simulated_hex=retrieval_hex,
+                retrieval_metric=retrieval_metric,
             )
         )
 
@@ -335,6 +492,7 @@ def collect_candidate_records(
                     d_ag_top_nm=float(design[2]),
                     delta_e=float(delta_e),
                     simulated_hex=simulated_hex,
+                    retrieval_metric=retrieval_metric,
                 )
             )
 
@@ -456,23 +614,63 @@ def evaluate_testing_set_distribution(
     return metrics
 
 
-def compute_checkpoint_score(metrics: dict[str, object]) -> float:
+def evaluate_saved_checkpoint(
+    *,
+    checkpoint_path: Path,
+    paper_test_csv: Path,
+    samples_per_lab: int,
+    seed: int,
+    device: str = "auto",
+    progress_callback: Callable[[dict[str, object]], None] | None = None,
+    progress_interval: int | None = None,
+    progress_phase: str = "final",
+) -> tuple[CganBundle, dict[str, object]]:
+    if load_model_bundle is None or np is None:
+        load_runtime_dependencies()
+
+    bundle = load_model_bundle(checkpoint_path, device=device)
+    test_designs, test_labs = load_paper_dataset_csv(paper_test_csv)
+    metrics = evaluate_testing_set_distribution(
+        bundle=bundle,
+        test_designs=test_designs,
+        test_labs=test_labs,
+        samples_per_lab=samples_per_lab,
+        seed=seed,
+        progress_callback=progress_callback,
+        progress_interval=progress_interval,
+        progress_phase=progress_phase,
+    )
+    return bundle, metrics
+
+
+def compute_checkpoint_score(
+    metrics: dict[str, object],
+    *,
+    weight_mean_best_delta_e: float = DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEAN_BEST_DELTA_E,
+    weight_median_best_delta_e: float = DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEDIAN_BEST_DELTA_E,
+    weight_d2_within_5nm: float = DEFAULT_CHECKPOINT_SCORE_WEIGHT_D2_WITHIN_5NM,
+    weight_mean_jsd: float = DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEAN_JSD,
+    weight_d3_jsd: float = DEFAULT_CHECKPOINT_SCORE_WEIGHT_D3_JSD,
+) -> float:
     mean_best_delta_e = float(metrics.get("mean_best_delta_e", float("inf")))
     median_best_delta_e = float(metrics.get("median_best_delta_e", float("inf")))
     d2_within_5nm_ratio = float(metrics.get("d2_ground_truth_within_5nm_ratio", 0.0))
     jsd_metrics = metrics.get("jsd", {}) or {}
+    d3_jsd = float(jsd_metrics.get("d3", 1.0))
     mean_jsd = (
         float(jsd_metrics.get("d1", 1.0))
         + float(jsd_metrics.get("d2", 1.0))
-        + float(jsd_metrics.get("d3", 1.0))
+        + d3_jsd
     ) / 3.0
 
-    # Lower is better. DeltaE dominates, then distribution alignment and d2 recovery stabilize ranking.
+    # Lower is better. Rank primarily by retrieval quality and d2 recovery, then use
+    # whole-distribution alignment and d3 drift as lighter tie-breakers.
     return (
-        (0.6 * mean_best_delta_e)
-        + (0.3 * median_best_delta_e)
-        + (4.0 * mean_jsd)
-        + (2.0 * (1.0 - d2_within_5nm_ratio))
+        (weight_mean_best_delta_e * mean_best_delta_e)
+        + (weight_median_best_delta_e * median_best_delta_e)
+        + (weight_d2_within_5nm * (1.0 - d2_within_5nm_ratio))
+        + (weight_mean_jsd * mean_jsd)
+        + (weight_d3_jsd * d3_jsd)
     )
 
 
@@ -481,6 +679,64 @@ def _configure_streams_for_realtime_logs() -> None:
         reconfigure = getattr(stream, "reconfigure", None)
         if callable(reconfigure):
             reconfigure(line_buffering=True, write_through=True)
+
+
+class _TeeStream:
+    def __init__(self, primary: TextIO, secondary: TextIO) -> None:
+        self._primary = primary
+        self._secondary = secondary
+
+    def write(self, data: str) -> int:
+        written = self._primary.write(data)
+        self._secondary.write(data)
+        return written
+
+    def flush(self) -> None:
+        self._primary.flush()
+        self._secondary.flush()
+
+    def reconfigure(self, **kwargs: object) -> None:
+        for stream in (self._primary, self._secondary):
+            reconfigure = getattr(stream, "reconfigure", None)
+            if callable(reconfigure):
+                reconfigure(**kwargs)
+
+    def isatty(self) -> bool:
+        isatty = getattr(self._primary, "isatty", None)
+        return bool(isatty()) if callable(isatty) else False
+
+    def fileno(self) -> int:
+        fileno = getattr(self._primary, "fileno", None)
+        if callable(fileno):
+            return int(fileno())
+        raise OSError("stream does not use a file descriptor")
+
+    @property
+    def encoding(self) -> str:
+        return getattr(self._primary, "encoding", "utf-8")
+
+    def __getattr__(self, name: str) -> object:
+        return getattr(self._primary, name)
+
+
+@contextmanager
+def _stream_logs_to_file(log_path: Path):
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    original_stdout = sys.stdout
+    original_stderr = sys.stderr
+    with log_path.open("w", encoding="utf-8") as log_file:
+        sys.stdout = _TeeStream(original_stdout, log_file)
+        sys.stderr = _TeeStream(original_stderr, log_file)
+        _configure_streams_for_realtime_logs()
+        try:
+            yield log_path
+        finally:
+            try:
+                sys.stdout.flush()
+                sys.stderr.flush()
+            finally:
+                sys.stdout = original_stdout
+                sys.stderr = original_stderr
 
 
 def _log(message: str) -> None:
@@ -655,6 +911,34 @@ def _write_checkpoint_state(
     )
 
 
+def resolve_checkpoint_evaluation_budgets(args: argparse.Namespace) -> dict[str, int]:
+    final_samples_per_lab = int(max(1, args.paper_samples_per_lab))
+    checkpoint_samples_per_lab = int(max(1, args.checkpoint_samples_per_lab))
+    checkpoint_recheck_samples_per_lab = int(
+        max(
+            checkpoint_samples_per_lab,
+            getattr(args, "checkpoint_recheck_samples_per_lab", checkpoint_samples_per_lab),
+        )
+    )
+    mode = str(getattr(args, "checkpoint_budget_mode", DEFAULT_CHECKPOINT_BUDGET_MODE))
+
+    if mode == "match_final":
+        checkpoint_samples_per_lab = final_samples_per_lab
+        checkpoint_recheck_samples_per_lab = final_samples_per_lab
+    elif mode == "recheck_best":
+        checkpoint_samples_per_lab = min(checkpoint_samples_per_lab, final_samples_per_lab)
+        checkpoint_recheck_samples_per_lab = min(checkpoint_recheck_samples_per_lab, final_samples_per_lab)
+    else:
+        checkpoint_samples_per_lab = min(checkpoint_samples_per_lab, final_samples_per_lab)
+        checkpoint_recheck_samples_per_lab = checkpoint_samples_per_lab
+
+    return {
+        "checkpoint_samples_per_lab": checkpoint_samples_per_lab,
+        "checkpoint_recheck_samples_per_lab": checkpoint_recheck_samples_per_lab,
+        "final_samples_per_lab": final_samples_per_lab,
+    }
+
+
 def compact_reproduction_metrics_for_json(reproduction_metrics: dict[str, object] | None) -> dict[str, object] | None:
     if reproduction_metrics is None:
         return None
@@ -709,6 +993,9 @@ def write_loss_csv(bundle: CganBundle, output_path: Path) -> None:
         "real_score",
         "fake_score",
         "lab_mse",
+        "lab_delta_e76",
+        "color_loss",
+        "mode_seeking_loss",
         "alpha",
     ]
     with output_path.open("w", newline="", encoding="utf-8") as csv_file:
@@ -720,28 +1007,156 @@ def write_loss_csv(bundle: CganBundle, output_path: Path) -> None:
 
 def write_candidate_csv(records: list[CandidateRecord], output_path: Path) -> None:
     with output_path.open("w", newline="", encoding="utf-8") as csv_file:
-        fieldnames = list(asdict(records[0]).keys()) if records else []
+        first_row = records[0] if records else None
+        if first_row is None:
+            fieldnames: list[str] = []
+        elif hasattr(first_row, "__dataclass_fields__"):
+            fieldnames = list(asdict(first_row).keys())
+        else:
+            fieldnames = list(vars(first_row).keys())
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         for record in records:
-            writer.writerow(asdict(record))
+            if hasattr(record, "__dataclass_fields__"):
+                writer.writerow(asdict(record))
+            else:
+                writer.writerow(dict(vars(record)))
+
+
+def _mean_or_none(values: list[float]) -> float | None:
+    if not values:
+        return None
+    return float(np.mean(np.array(values, dtype=np.float64)))
+
+
+def write_retrieval_comparison_json(
+    *,
+    comparison_records_by_metric: dict[str, list[CandidateRecord]],
+    output_path: Path,
+    elapsed_seconds_by_metric: dict[str, float] | None = None,
+) -> None:
+    metrics: dict[str, object] = {}
+    for retrieval_metric, records in comparison_records_by_metric.items():
+        target_hexes = sorted({record.target_hex for record in records})
+        retrieval_best_values: list[float] = []
+        cgan_best_values: list[float] = []
+        retrieval_wins_vs_cgan = 0
+        cgan_wins_vs_retrieval = 0
+        ties = 0
+
+        for target_hex in target_hexes:
+            target_records = [record for record in records if record.target_hex == target_hex]
+            retrieval = _best_record(target_records, target_hex, "retrieval")
+            cgan = _best_record(target_records, target_hex, "cgan")
+            retrieval_best_values.append(float(retrieval.delta_e))
+            cgan_best_values.append(float(cgan.delta_e))
+            if retrieval.delta_e < cgan.delta_e:
+                retrieval_wins_vs_cgan += 1
+            elif retrieval.delta_e > cgan.delta_e:
+                cgan_wins_vs_retrieval += 1
+            else:
+                ties += 1
+
+        metrics[retrieval_metric] = {
+            "targets_compared": len(target_hexes),
+            "mean_retrieval_best_delta_e": _mean_or_none(retrieval_best_values),
+            "mean_cgan_best_delta_e": _mean_or_none(cgan_best_values),
+            "retrieval_wins_vs_cgan": retrieval_wins_vs_cgan,
+            "cgan_wins_vs_retrieval": cgan_wins_vs_retrieval,
+            "ties": ties,
+            "elapsed_seconds": (
+                float(elapsed_seconds_by_metric[retrieval_metric])
+                if elapsed_seconds_by_metric and retrieval_metric in elapsed_seconds_by_metric
+                else None
+            ),
+        }
+
+    output_path.write_text(
+        json.dumps({"metrics": metrics}, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
 
 def save_model_bundle(bundle: CganBundle, output_path: Path) -> None:
     generator_state_dict = bundle.generator.state_dict()
-    if output_path.name == "generator_checkpoint_best.pt" and bundle.best_generator_state_dict is not None:
-        generator_state_dict = bundle.best_generator_state_dict
     torch.save(
         {
+            "checkpoint_format_version": bundle.checkpoint_format_version,
             "generator_state_dict": generator_state_dict,
             "lab_regressor_state_dict": bundle.lab_regressor.state_dict(),
-            "lab_min": bundle.lab_min.tolist(),
-            "lab_max": bundle.lab_max.tolist(),
+            "lab_scaling_type": bundle.lab_scaling_type,
+            "lab_mean": bundle.lab_mean.tolist(),
+            "lab_std": bundle.lab_std.tolist(),
+            "design_scaling_type": bundle.design_scaling_type,
             "design_min": bundle.design_min.tolist(),
             "design_max": bundle.design_max.tolist(),
             "device": bundle.device,
             "noise_dim": bundle.noise_dim,
             "seed": bundle.seed,
+            "generator_learning_rate": bundle.generator_learning_rate,
+            "discriminator_learning_rate": bundle.discriminator_learning_rate,
+            "steps_per_batch": bundle.steps_per_batch,
+            "generator_hidden_dim": bundle.generator_hidden_dim,
+            "generator_depth": bundle.generator_depth,
+            "noise_hidden_dim": getattr(bundle.generator, "noise_hidden_dim", bundle.generator_hidden_dim),
+            "lab_hidden_dim": getattr(bundle.generator, "lab_hidden_dim", bundle.generator_hidden_dim),
+            "regressor_hidden_dims": list(
+                getattr(bundle.generator, "regressor_hidden_dims", [bundle.generator_hidden_dim] * bundle.generator_depth)
+            ),
+            "discriminator_hidden_dim": bundle.discriminator_hidden_dim,
+            "discriminator_depth": bundle.discriminator_depth,
+            "discriminator_conditioning": bundle.discriminator_conditioning,
+            "alpha_start": bundle.alpha_start,
+            "alpha_ramp_epochs": bundle.alpha_ramp_epochs,
+            "max_alpha": bundle.max_alpha,
+            "lab_delta_e_weight": bundle.lab_delta_e_weight,
+            "mode_seeking_weight": bundle.mode_seeking_weight,
+            "selected_checkpoint_epoch": bundle.selected_checkpoint_epoch,
+            "selected_checkpoint_metric_name": bundle.selected_checkpoint_metric_name,
+            "selected_checkpoint_metric_value": bundle.selected_checkpoint_metric_value,
+        },
+        output_path,
+    )
+
+
+def save_best_model_bundle(bundle: CganBundle, output_path: Path) -> None:
+    generator_state_dict = (
+        bundle.best_generator_state_dict
+        if bundle.best_generator_state_dict is not None
+        else bundle.generator.state_dict()
+    )
+    torch.save(
+        {
+            "checkpoint_format_version": bundle.checkpoint_format_version,
+            "generator_state_dict": generator_state_dict,
+            "lab_regressor_state_dict": bundle.lab_regressor.state_dict(),
+            "lab_scaling_type": bundle.lab_scaling_type,
+            "lab_mean": bundle.lab_mean.tolist(),
+            "lab_std": bundle.lab_std.tolist(),
+            "design_scaling_type": bundle.design_scaling_type,
+            "design_min": bundle.design_min.tolist(),
+            "design_max": bundle.design_max.tolist(),
+            "device": bundle.device,
+            "noise_dim": bundle.noise_dim,
+            "seed": bundle.seed,
+            "generator_learning_rate": bundle.generator_learning_rate,
+            "discriminator_learning_rate": bundle.discriminator_learning_rate,
+            "steps_per_batch": bundle.steps_per_batch,
+            "generator_hidden_dim": bundle.generator_hidden_dim,
+            "generator_depth": bundle.generator_depth,
+            "noise_hidden_dim": getattr(bundle.generator, "noise_hidden_dim", bundle.generator_hidden_dim),
+            "lab_hidden_dim": getattr(bundle.generator, "lab_hidden_dim", bundle.generator_hidden_dim),
+            "regressor_hidden_dims": list(
+                getattr(bundle.generator, "regressor_hidden_dims", [bundle.generator_hidden_dim] * bundle.generator_depth)
+            ),
+            "discriminator_hidden_dim": bundle.discriminator_hidden_dim,
+            "discriminator_depth": bundle.discriminator_depth,
+            "discriminator_conditioning": bundle.discriminator_conditioning,
+            "alpha_start": bundle.alpha_start,
+            "alpha_ramp_epochs": bundle.alpha_ramp_epochs,
+            "max_alpha": bundle.max_alpha,
+            "lab_delta_e_weight": bundle.lab_delta_e_weight,
+            "mode_seeking_weight": bundle.mode_seeking_weight,
             "selected_checkpoint_epoch": bundle.selected_checkpoint_epoch,
             "selected_checkpoint_metric_name": bundle.selected_checkpoint_metric_name,
             "selected_checkpoint_metric_value": bundle.selected_checkpoint_metric_value,
@@ -789,7 +1204,7 @@ def plot_loss_curve(bundle: CganBundle, output_path: Path) -> None:
     ax.plot(epochs, g_losses, label="Generator", color="#f26419", linewidth=2.0)
     ax.set_title("Lightweight cGAN Training Loss")
     ax.set_xlabel("Epoch")
-    ax.set_ylabel("Binary cross-entropy")
+    ax.set_ylabel("Hinge objective")
     ax.grid(True, alpha=0.25)
     ax.legend()
     fig.tight_layout()
@@ -1033,6 +1448,12 @@ def write_metrics(
     artifact_manifest: dict[str, object] | None = None,
 ) -> None:
     metrics = {
+        "colorimetry": {
+            "illuminant_source": "refer_data/D65.csv",
+            "tristimulus_source": "refer_data/tristimulus.csv",
+            "wavelength_grid_nm": [int(value) for value in range(380, 781, 5)],
+            "conversion_backend": "colour-science",
+        },
         "dataset": {
             "samples": dataset_size,
             "stack": "Ag-SiO2-Ag",
@@ -1044,13 +1465,29 @@ def write_metrics(
                 "ag_top": [10.0, 30.0],
             },
         },
+        "scaling": {
+            "lab": bundle.lab_scaling_type,
+            "design": bundle.design_scaling_type,
+        },
         "runtime": get_torch_runtime_info(args.device),
         "training": {
+            "experiment_preset": args.experiment_preset,
             "epochs": args.epochs,
             "batch_size": args.batch_size,
             "noise_dim": args.noise_dim,
-            "learning_rate": args.learning_rate,
-            "evaluator_learning_rate": args.learning_rate / 5.0,
+            "generator_learning_rate": args.generator_learning_rate,
+            "discriminator_learning_rate": args.discriminator_learning_rate,
+            "steps_per_batch": args.steps_per_batch,
+            "generator_hidden_dim": args.generator_hidden_dim,
+            "generator_depth": args.generator_depth,
+            "discriminator_hidden_dim": args.discriminator_hidden_dim,
+            "discriminator_depth": args.discriminator_depth,
+            "discriminator_conditioning": args.discriminator_conditioning,
+            "alpha_start": args.alpha_start,
+            "alpha_ramp_epochs": args.alpha_ramp_epochs,
+            "max_alpha": args.max_alpha,
+            "lab_delta_e_weight": args.lab_delta_e_weight,
+            "mode_seeking_weight": args.mode_seeking_weight,
             "seed": args.seed,
             "device": bundle.device,
             "regressor_epochs": args.regressor_epochs,
@@ -1058,7 +1495,19 @@ def write_metrics(
             "best_checkpoint_metric_name": bundle.selected_checkpoint_metric_name,
             "best_checkpoint_metric_value": bundle.selected_checkpoint_metric_value,
             "checkpoint_eval_interval": args.checkpoint_eval_interval,
+            "checkpoint_budget_mode": args.checkpoint_budget_mode,
+            "checkpoint_samples_per_lab": args.checkpoint_samples_per_lab,
+            "checkpoint_recheck_samples_per_lab": args.checkpoint_recheck_samples_per_lab,
+            "final_samples_per_lab": args.paper_samples_per_lab,
+            "checkpoint_score_weights": {
+                "mean_best_delta_e": args.checkpoint_score_weight_mean_best_delta_e,
+                "median_best_delta_e": args.checkpoint_score_weight_median_best_delta_e,
+                "d2_within_5nm": args.checkpoint_score_weight_d2_within_5nm,
+                "mean_jsd": args.checkpoint_score_weight_mean_jsd,
+                "d3_jsd": args.checkpoint_score_weight_d3_jsd,
+            },
         },
+        "retrieval_metric": args.retrieval_metric,
         "targets": [summarize_target(records, target_hex) for target_hex in targets],
         "artifacts": artifact_manifest or {},
         "paper_reproduction": compact_reproduction_metrics_for_json(reproduction_metrics),
@@ -1076,19 +1525,56 @@ def write_metrics(
     )
 
 
-def parse_args() -> argparse.Namespace:
+def resolve_artifact_bundle(
+    training_bundle: CganBundle,
+    *,
+    best_checkpoint_path: Path,
+    device: str,
+) -> CganBundle:
+    if not best_checkpoint_path.exists():
+        return training_bundle
+    return load_model_bundle(best_checkpoint_path, device=device)
+
+
+def _build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Train the lightweight cGAN and export paper-reproduction figures.",
+    )
+    parser.add_argument(
+        "--experiment-preset",
+        choices=sorted(EXPERIMENT_PRESETS.keys()),
+        default=None,
+        help=(
+            "Apply a reproducible cGAN experiment preset before parsing the rest of the CLI. "
+            "Later explicit flags still override preset values."
+        ),
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=ROOT / "backend" / "artifacts" / "cgan_reproduction",
     )
+    parser.add_argument("--log-file", type=Path, default=None)
     parser.add_argument("--epochs", type=int, default=100000)
-    parser.add_argument("--batch-size", type=int, default=40000)
-    parser.add_argument("--noise-dim", type=int, default=2)
-    parser.add_argument("--learning-rate", type=float, default=0.002)
+    parser.add_argument("--batch-size", type=int, default=2048)
+    parser.add_argument("--noise-dim", type=int, default=8)
+    parser.add_argument("--generator-learning-rate", type=float, default=1e-3)
+    parser.add_argument("--discriminator-learning-rate", type=float, default=2e-4)
+    parser.add_argument("--steps-per-batch", type=int, default=1)
+    parser.add_argument("--generator-hidden-dim", type=int, default=160)
+    parser.add_argument("--generator-depth", type=int, default=5)
+    parser.add_argument("--discriminator-hidden-dim", type=int, default=128)
+    parser.add_argument("--discriminator-depth", type=int, default=4)
+    parser.add_argument(
+        "--discriminator-conditioning",
+        choices=["none", "target_lab"],
+        default="target_lab",
+    )
+    parser.add_argument("--alpha-start", type=float, default=0.0)
+    parser.add_argument("--alpha-ramp-epochs", type=int, default=2000)
+    parser.add_argument("--max-alpha", type=float, default=1.0)
+    parser.add_argument("--lab-delta-e-weight", type=float, default=0.0)
+    parser.add_argument("--mode-seeking-weight", type=float, default=0.1)
     parser.add_argument("--sample-count", type=int, default=64)
     parser.add_argument("--top-generated", type=int, default=16)
     parser.add_argument("--bottom-points", type=int, default=9)
@@ -1109,229 +1595,394 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--checkpoint-eval-interval", type=int, default=500)
     parser.add_argument("--checkpoint-patience", type=int, default=None)
     parser.add_argument("--checkpoint-samples-per-lab", type=int, default=64)
+    parser.add_argument(
+        "--checkpoint-budget-mode",
+        choices=["match_final", "small_budget", "recheck_best"],
+        default=DEFAULT_CHECKPOINT_BUDGET_MODE,
+    )
+    parser.add_argument("--checkpoint-recheck-samples-per-lab", type=int, default=256)
+    parser.add_argument(
+        "--checkpoint-score-weight-mean-best-delta-e",
+        type=float,
+        default=DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEAN_BEST_DELTA_E,
+    )
+    parser.add_argument(
+        "--checkpoint-score-weight-median-best-delta-e",
+        type=float,
+        default=DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEDIAN_BEST_DELTA_E,
+    )
+    parser.add_argument(
+        "--checkpoint-score-weight-d2-within-5nm",
+        type=float,
+        default=DEFAULT_CHECKPOINT_SCORE_WEIGHT_D2_WITHIN_5NM,
+    )
+    parser.add_argument(
+        "--checkpoint-score-weight-mean-jsd",
+        type=float,
+        default=DEFAULT_CHECKPOINT_SCORE_WEIGHT_MEAN_JSD,
+    )
+    parser.add_argument(
+        "--checkpoint-score-weight-d3-jsd",
+        type=float,
+        default=DEFAULT_CHECKPOINT_SCORE_WEIGHT_D3_JSD,
+    )
+    parser.add_argument(
+        "--retrieval-metric",
+        choices=["euclidean_lab", "delta_e_2000"],
+        default="euclidean_lab",
+    )
+    return parser
+
+
+def parse_args() -> argparse.Namespace:
+    parser = _build_arg_parser()
+    initial_args, _ = parser.parse_known_args()
+    preset = get_experiment_preset(initial_args.experiment_preset)
+    if preset is not None:
+        parser.set_defaults(**preset.overrides)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    _configure_streams_for_realtime_logs()
-    load_runtime_dependencies()
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    overall_start_time = time.monotonic()
-    progress_logger = _build_progress_logger()
+    log_path = args.log_file or (args.output_dir / "train.log")
 
-    reproduction_metrics: dict[str, object] | None = None
-    if args.dataset_source == "paper":
-        if not args.paper_train_csv.exists() or not args.paper_test_csv.exists():
-            args.paper_train_csv, args.paper_test_csv = ensure_paper_dataset_files()
-        design_samples, lab_samples = load_paper_dataset_csv(args.paper_train_csv)
-        hex_samples = None
-        test_designs, test_labs = load_paper_dataset_csv(args.paper_test_csv)
-        design_bounds_nm = {
-            "ag_bottom": [0.0, 50.0],
-            "sio2": [0.0, 1000.0],
-            "ag_top": [0.0, 50.0],
-        }
-    else:
-        design_samples, lab_samples, hex_samples = build_ag_sio2_ag_dataset(
-            bottom_points=args.bottom_points,
-            sio2_points=args.sio2_points,
-            top_points=args.top_points,
+    with _stream_logs_to_file(log_path):
+        _log(f"Streaming training logs to {log_path}")
+        load_runtime_dependencies()
+        overall_start_time = time.monotonic()
+        progress_logger = _build_progress_logger()
+
+        reproduction_metrics: dict[str, object] | None = None
+        if args.dataset_source == "paper":
+            if not args.paper_train_csv.exists() or not args.paper_test_csv.exists():
+                args.paper_train_csv, args.paper_test_csv = ensure_paper_dataset_files()
+            design_samples, lab_samples = load_paper_dataset_csv(args.paper_train_csv)
+            hex_samples = None
+            test_designs, test_labs = load_paper_dataset_csv(args.paper_test_csv)
+            design_bounds_nm = {
+                "ag_bottom": [0.0, 50.0],
+                "sio2": [0.0, 1000.0],
+                "ag_top": [0.0, 50.0],
+            }
+        else:
+            design_samples, lab_samples, hex_samples = build_ag_sio2_ag_dataset(
+                bottom_points=args.bottom_points,
+                sio2_points=args.sio2_points,
+                top_points=args.top_points,
+            )
+            test_designs, test_labs = design_samples, lab_samples
+            design_bounds_nm = {
+                "ag_bottom": [10.0, 30.0],
+                "sio2": [60.0, 180.0],
+                "ag_top": [10.0, 30.0],
+            }
+
+        runtime_info = get_torch_runtime_info(args.device)
+        _log(
+            "Loaded dataset "
+            f"(source={args.dataset_source}, train_samples={len(design_samples)}, "
+            f"test_samples={len(test_designs)}, output_dir={args.output_dir})"
         )
-        test_designs, test_labs = design_samples, lab_samples
-        design_bounds_nm = {
-            "ag_bottom": [10.0, 30.0],
-            "sio2": [60.0, 180.0],
-            "ag_top": [10.0, 30.0],
+        _log(
+            "Runtime "
+            f"(device={runtime_info['device']}, cuda_available={runtime_info['cuda_available']}, "
+            f"torch={runtime_info['torch_version']})"
+        )
+
+        regressor_progress_interval = _default_progress_interval(
+            total_steps=args.regressor_epochs,
+            target_updates=20,
+            max_interval=1000,
+        )
+        training_progress_interval = _default_progress_interval(
+            total_steps=args.epochs,
+            target_updates=50,
+            max_interval=5000,
+        )
+        paper_eval_progress_interval = _default_progress_interval(
+            total_steps=len(test_labs),
+            target_updates=20,
+            max_interval=500,
+        )
+        checkpoint_budgets = resolve_checkpoint_evaluation_budgets(args)
+        args.checkpoint_samples_per_lab = checkpoint_budgets["checkpoint_samples_per_lab"]
+        args.checkpoint_recheck_samples_per_lab = checkpoint_budgets["checkpoint_recheck_samples_per_lab"]
+        args.paper_samples_per_lab = checkpoint_budgets["final_samples_per_lab"]
+        _log(
+            "Progress logging "
+            f"(regressor_every={regressor_progress_interval} epochs, "
+            f"train_every={training_progress_interval} epochs, "
+            f"paper_eval_every={paper_eval_progress_interval} targets, "
+            f"checkpoint_eval_interval={args.checkpoint_eval_interval}, "
+            f"checkpoint_budget_mode={args.checkpoint_budget_mode}, "
+            f"checkpoint_samples_per_lab={args.checkpoint_samples_per_lab}, "
+            f"checkpoint_recheck_samples_per_lab={args.checkpoint_recheck_samples_per_lab}, "
+            f"final_samples_per_lab={args.paper_samples_per_lab})"
+        )
+        _log(
+            "Training config "
+            f"(preset={args.experiment_preset or 'custom'}, "
+            f"g_lr={args.generator_learning_rate}, d_lr={args.discriminator_learning_rate}, "
+            f"steps_per_batch={args.steps_per_batch}, "
+            f"g_hidden={args.generator_hidden_dim}, g_depth={args.generator_depth}, "
+            f"d_hidden={args.discriminator_hidden_dim}, d_depth={args.discriminator_depth}, "
+            f"d_conditioning={args.discriminator_conditioning}, "
+            f"alpha_start={args.alpha_start}, alpha_ramp_epochs={args.alpha_ramp_epochs}, "
+            f"max_alpha={args.max_alpha}, lab_delta_e_weight={args.lab_delta_e_weight}, "
+            f"mode_seeking_weight={args.mode_seeking_weight}, "
+            f"retrieval_metric={args.retrieval_metric})"
+        )
+        _log(
+            "Checkpoint score weights "
+            f"(mean_best_delta_e={args.checkpoint_score_weight_mean_best_delta_e}, "
+            f"median_best_delta_e={args.checkpoint_score_weight_median_best_delta_e}, "
+            f"d2_within_5nm={args.checkpoint_score_weight_d2_within_5nm}, "
+            f"mean_jsd={args.checkpoint_score_weight_mean_jsd}, "
+            f"d3_jsd={args.checkpoint_score_weight_d3_jsd})"
+        )
+
+        checkpoint_metric_fn = None
+        checkpoint_metric_name = None
+        checkpoint_metric_mode = "min"
+        best_checkpoint_tracker = {
+            "epoch": None,
+            "metric_value": None,
         }
+        if args.dataset_source == "paper":
 
-    runtime_info = get_torch_runtime_info(args.device)
-    _log(
-        "Loaded dataset "
-        f"(source={args.dataset_source}, train_samples={len(design_samples)}, "
-        f"test_samples={len(test_designs)}, output_dir={args.output_dir})"
-    )
-    _log(
-        "Runtime "
-        f"(device={runtime_info['device']}, cuda_available={runtime_info['cuda_available']}, "
-        f"torch={runtime_info['torch_version']})"
-    )
+            def checkpoint_metric_fn(bundle: CganBundle, epoch: int) -> float | None:
+                metrics = evaluate_testing_set_distribution(
+                    bundle=bundle,
+                    test_designs=test_designs,
+                    test_labs=test_labs,
+                    samples_per_lab=args.checkpoint_samples_per_lab,
+                    seed=args.seed,
+                    progress_callback=progress_logger,
+                    progress_interval=paper_eval_progress_interval,
+                    progress_phase="checkpoint",
+                )
+                metric_value_float = compute_checkpoint_score(
+                    metrics,
+                    weight_mean_best_delta_e=args.checkpoint_score_weight_mean_best_delta_e,
+                    weight_median_best_delta_e=args.checkpoint_score_weight_median_best_delta_e,
+                    weight_d2_within_5nm=args.checkpoint_score_weight_d2_within_5nm,
+                    weight_mean_jsd=args.checkpoint_score_weight_mean_jsd,
+                    weight_d3_jsd=args.checkpoint_score_weight_d3_jsd,
+                )
+                metrics_for_selection = metrics
+                if (
+                    args.checkpoint_budget_mode == "recheck_best"
+                    and args.checkpoint_recheck_samples_per_lab > args.checkpoint_samples_per_lab
+                ):
+                    best_so_far = best_checkpoint_tracker["metric_value"]
+                    if best_so_far is None or metric_value_float < float(best_so_far):
+                        metrics_for_selection = evaluate_testing_set_distribution(
+                            bundle=bundle,
+                            test_designs=test_designs,
+                            test_labs=test_labs,
+                            samples_per_lab=args.checkpoint_recheck_samples_per_lab,
+                            seed=args.seed,
+                            progress_callback=progress_logger,
+                            progress_interval=paper_eval_progress_interval,
+                            progress_phase="checkpoint_recheck",
+                        )
+                        metric_value_float = compute_checkpoint_score(
+                            metrics_for_selection,
+                            weight_mean_best_delta_e=args.checkpoint_score_weight_mean_best_delta_e,
+                            weight_median_best_delta_e=args.checkpoint_score_weight_median_best_delta_e,
+                            weight_d2_within_5nm=args.checkpoint_score_weight_d2_within_5nm,
+                            weight_mean_jsd=args.checkpoint_score_weight_mean_jsd,
+                            weight_d3_jsd=args.checkpoint_score_weight_d3_jsd,
+                        )
+                best_so_far = best_checkpoint_tracker["metric_value"]
+                if best_so_far is None or metric_value_float < float(best_so_far):
+                    best_checkpoint_tracker["epoch"] = epoch
+                    best_checkpoint_tracker["metric_value"] = metric_value_float
+                    save_best_model_bundle(bundle, args.output_dir / "generator_checkpoint_best.pt")
+                    _write_checkpoint_state(
+                        output_dir=args.output_dir,
+                        epoch=epoch,
+                        metric_name="paper_reproduction.checkpoint_score",
+                        metric_value=metric_value_float,
+                    )
+                    _log(
+                        "Persisted best checkpoint "
+                        f"(epoch={epoch}, paper_reproduction.checkpoint_score={metric_value_float:.6f}, "
+                        f"mean_best_delta_e={float(metrics_for_selection['mean_best_delta_e']):.6f}, "
+                        f"median_best_delta_e={float(metrics_for_selection['median_best_delta_e']):.6f}, "
+                        f"d2_within_5nm={float(metrics_for_selection['d2_ground_truth_within_5nm_ratio']):.6f})"
+                    )
+                return metric_value_float
 
-    regressor_progress_interval = _default_progress_interval(
-        total_steps=args.regressor_epochs,
-        target_updates=20,
-        max_interval=1000,
-    )
-    training_progress_interval = _default_progress_interval(
-        total_steps=args.epochs,
-        target_updates=50,
-        max_interval=5000,
-    )
-    paper_eval_progress_interval = _default_progress_interval(
-        total_steps=len(test_labs),
-        target_updates=20,
-        max_interval=500,
-    )
-    _log(
-        "Progress logging "
-        f"(regressor_every={regressor_progress_interval} epochs, "
-        f"train_every={training_progress_interval} epochs, "
-        f"paper_eval_every={paper_eval_progress_interval} targets, "
-        f"checkpoint_eval_interval={args.checkpoint_eval_interval}, "
-        f"checkpoint_samples_per_lab={min(args.paper_samples_per_lab, args.checkpoint_samples_per_lab)})"
-    )
+            checkpoint_metric_name = "paper_reproduction.checkpoint_score"
 
-    checkpoint_metric_fn = None
-    checkpoint_metric_name = None
-    checkpoint_metric_mode = "min"
-    best_checkpoint_tracker = {
-        "epoch": None,
-        "metric_value": None,
-    }
-    if args.dataset_source == "paper":
-        def checkpoint_metric_fn(bundle: CganBundle, epoch: int) -> float | None:
-            metrics = evaluate_testing_set_distribution(
-                bundle=bundle,
+        training_bundle = fit_lightweight_cgan(
+            lab_samples,
+            design_samples,
+            epochs=args.epochs,
+            batch_size=args.batch_size,
+            noise_dim=args.noise_dim,
+            generator_learning_rate=args.generator_learning_rate,
+            discriminator_learning_rate=args.discriminator_learning_rate,
+            steps_per_batch=args.steps_per_batch,
+            generator_hidden_dim=args.generator_hidden_dim,
+            generator_depth=args.generator_depth,
+            discriminator_hidden_dim=args.discriminator_hidden_dim,
+            discriminator_depth=args.discriminator_depth,
+            discriminator_conditioning=args.discriminator_conditioning,
+            alpha_start=args.alpha_start,
+            alpha_ramp_epochs=args.alpha_ramp_epochs,
+            max_alpha=args.max_alpha,
+            lab_delta_e_weight=args.lab_delta_e_weight,
+            mode_seeking_weight=args.mode_seeking_weight,
+            seed=args.seed,
+            record_losses=True,
+            device=args.device,
+            regressor_epochs=args.regressor_epochs,
+            checkpoint_metric_fn=checkpoint_metric_fn,
+            checkpoint_metric_name=checkpoint_metric_name,
+            checkpoint_metric_mode=checkpoint_metric_mode,
+            checkpoint_metric_interval=args.checkpoint_eval_interval,
+            checkpoint_patience=args.checkpoint_patience,
+            progress_callback=progress_logger,
+            progress_interval=training_progress_interval,
+            regressor_progress_interval=regressor_progress_interval,
+        )
+
+        final_checkpoint_path = args.output_dir / "generator_checkpoint.pt"
+        best_checkpoint_path = args.output_dir / "generator_checkpoint_best.pt"
+        save_model_bundle(training_bundle, final_checkpoint_path)
+        if training_bundle.best_generator_state_dict is not None:
+            save_best_model_bundle(training_bundle, best_checkpoint_path)
+
+        artifact_bundle = resolve_artifact_bundle(
+            training_bundle,
+            best_checkpoint_path=best_checkpoint_path,
+            device=args.device,
+        )
+        if artifact_bundle.selected_checkpoint_epoch is not None:
+            _log(
+                "Using best checkpoint for final artifact export "
+                f"(epoch={artifact_bundle.selected_checkpoint_epoch})"
+            )
+
+        _log("Collecting candidate records for target colors")
+        record_collection_started_at = time.monotonic()
+        records = collect_candidate_records(
+            bundle=artifact_bundle,
+            lab_samples=lab_samples,
+            design_samples=design_samples,
+            hex_samples=hex_samples,
+            targets=[target.lower() for target in args.targets],
+            sample_count=args.sample_count,
+            top_generated=args.top_generated,
+            seed=args.seed,
+            retrieval_metric=args.retrieval_metric,
+        )
+        record_collection_elapsed_seconds = time.monotonic() - record_collection_started_at
+
+        comparison_records_by_metric: dict[str, list[CandidateRecord]] = {}
+        comparison_elapsed_seconds_by_metric: dict[str, float] = {}
+        for comparison_metric in ("euclidean_lab", "delta_e_2000"):
+            comparison_started_at = time.monotonic()
+            comparison_records_by_metric[comparison_metric] = collect_candidate_records(
+                bundle=artifact_bundle,
+                lab_samples=lab_samples,
+                design_samples=design_samples,
+                hex_samples=hex_samples,
+                targets=[target.lower() for target in args.targets],
+                sample_count=args.sample_count,
+                top_generated=args.top_generated,
+                seed=args.seed,
+                retrieval_metric=comparison_metric,
+            )
+            comparison_elapsed_seconds_by_metric[comparison_metric] = time.monotonic() - comparison_started_at
+
+        comparison_elapsed_seconds_by_metric[args.retrieval_metric] = record_collection_elapsed_seconds
+
+        if args.dataset_source == "paper":
+            _log(
+                "Running final paper evaluation "
+                f"(samples_per_lab={args.paper_samples_per_lab}, test_targets={len(test_labs)})"
+            )
+            reproduction_metrics = evaluate_testing_set_distribution(
+                bundle=artifact_bundle,
                 test_designs=test_designs,
                 test_labs=test_labs,
-                samples_per_lab=min(args.paper_samples_per_lab, args.checkpoint_samples_per_lab),
+                samples_per_lab=args.paper_samples_per_lab,
                 seed=args.seed,
                 progress_callback=progress_logger,
                 progress_interval=paper_eval_progress_interval,
-                progress_phase="checkpoint",
+                progress_phase="final",
             )
-            metric_value_float = compute_checkpoint_score(metrics)
-            best_so_far = best_checkpoint_tracker["metric_value"]
-            if best_so_far is None or metric_value_float < float(best_so_far):
-                best_checkpoint_tracker["epoch"] = epoch
-                best_checkpoint_tracker["metric_value"] = metric_value_float
-                save_model_bundle(bundle, args.output_dir / "generator_checkpoint_best.pt")
-                _write_checkpoint_state(
-                    output_dir=args.output_dir,
-                    epoch=epoch,
-                    metric_name="paper_reproduction.checkpoint_score",
-                    metric_value=metric_value_float,
-                )
-                _log(
-                    "Persisted best checkpoint "
-                    f"(epoch={epoch}, paper_reproduction.checkpoint_score={metric_value_float:.6f}, "
-                    f"mean_best_delta_e={float(metrics['mean_best_delta_e']):.6f}, "
-                    f"median_best_delta_e={float(metrics['median_best_delta_e']):.6f}, "
-                    f"d2_within_5nm={float(metrics['d2_ground_truth_within_5nm_ratio']):.6f})"
-                )
-            return metric_value_float
 
-        checkpoint_metric_name = "paper_reproduction.checkpoint_score"
+        _log("Writing artifacts to disk")
+        write_loss_csv(training_bundle, args.output_dir / "loss_history.csv")
+        write_candidate_csv(records, args.output_dir / "candidate_samples.csv")
+        write_retrieval_comparison_json(
+            comparison_records_by_metric=comparison_records_by_metric,
+            output_path=args.output_dir / "retrieval_metric_comparison.json",
+            elapsed_seconds_by_metric=comparison_elapsed_seconds_by_metric,
+        )
+        artifact_manifest = write_artifact_manifest(
+            output_dir=args.output_dir,
+            selected_checkpoint_name="generator_checkpoint_best.pt",
+            final_checkpoint_name="generator_checkpoint.pt",
+            best_available_checkpoint_name="generator_checkpoint_best.pt",
+        )
+        write_metrics(
+            bundle=artifact_bundle,
+            records=records,
+            targets=[target.lower() for target in args.targets],
+            dataset_size=len(design_samples),
+            args=args,
+            output_path=args.output_dir / "metrics.json",
+            reproduction_metrics=reproduction_metrics,
+            design_bounds_nm=design_bounds_nm,
+            artifact_manifest=artifact_manifest,
+        )
+        write_paper_reproduction_details(
+            reproduction_metrics,
+            args.output_dir / "paper_reproduction_details.npz",
+        )
+        plot_loss_curve(training_bundle, args.output_dir / "loss_curve.png")
+        plot_sampling_comparison(
+            records,
+            [target.lower() for target in args.targets],
+            args.output_dir / "sampling_comparison.png",
+        )
+        plot_candidate_diversity(
+            records,
+            args.targets[0].lower(),
+            args.output_dir / "candidate_diversity.png",
+        )
+        if reproduction_metrics is not None:
+            generated_designs = np.array(reproduction_metrics["generated_designs_nm"], dtype=np.float64)
+            plot_paper_distribution_comparison(
+                test_designs=test_designs,
+                generated_designs=generated_designs.reshape(-1, generated_designs.shape[-1]),
+                output_path=args.output_dir / "paper_figure4_distribution_comparison.png",
+            )
+            plot_paper_solution_metrics(
+                best_delta_e_values=np.array(reproduction_metrics["best_delta_e_values"], dtype=np.float64),
+                solution_group_counts=np.array(reproduction_metrics["solution_group_counts"], dtype=np.float64),
+                output_path=args.output_dir / "paper_figure5_solution_metrics.png",
+            )
+            plot_paper_d2_accuracy(
+                abs_d2_errors_nm=np.array(reproduction_metrics["abs_d2_errors_nm"], dtype=np.float64),
+                output_path=args.output_dir / "paper_figure_s6_d2_accuracy.png",
+            )
 
-    bundle = fit_lightweight_cgan(
-        lab_samples,
-        design_samples,
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        noise_dim=args.noise_dim,
-        learning_rate=args.learning_rate,
-        seed=args.seed,
-        record_losses=True,
-        device=args.device,
-        regressor_epochs=args.regressor_epochs,
-        checkpoint_metric_fn=checkpoint_metric_fn,
-        checkpoint_metric_name=checkpoint_metric_name,
-        checkpoint_metric_mode=checkpoint_metric_mode,
-        checkpoint_metric_interval=args.checkpoint_eval_interval,
-        checkpoint_patience=args.checkpoint_patience,
-        progress_callback=progress_logger,
-        progress_interval=training_progress_interval,
-        regressor_progress_interval=regressor_progress_interval,
-    )
-    _log("Collecting candidate records for target colors")
-    records = collect_candidate_records(
-        bundle=bundle,
-        lab_samples=lab_samples,
-        design_samples=design_samples,
-        hex_samples=hex_samples,
-        targets=[target.lower() for target in args.targets],
-        sample_count=args.sample_count,
-        top_generated=args.top_generated,
-        seed=args.seed,
-    )
-
-    if args.dataset_source == "paper":
+        total_runtime = time.monotonic() - overall_start_time
+        _log(f"Wrote cGAN reproduction artifacts to {args.output_dir}")
         _log(
-            "Running final paper evaluation "
-            f"(samples_per_lab={args.paper_samples_per_lab}, test_targets={len(test_labs)})"
+            "Key outputs: train.log, loss_curve.png, sampling_comparison.png, candidate_diversity.png, "
+            "paper_figure4_distribution_comparison.png, paper_figure5_solution_metrics.png, "
+            "retrieval_metric_comparison.json, metrics.json"
         )
-        reproduction_metrics = evaluate_testing_set_distribution(
-            bundle=bundle,
-            test_designs=test_designs,
-            test_labs=test_labs,
-            samples_per_lab=args.paper_samples_per_lab,
-            seed=args.seed,
-            progress_callback=progress_logger,
-            progress_interval=paper_eval_progress_interval,
-            progress_phase="final",
-        )
-
-    _log("Writing artifacts to disk")
-    write_loss_csv(bundle, args.output_dir / "loss_history.csv")
-    write_candidate_csv(records, args.output_dir / "candidate_samples.csv")
-    save_model_bundle(bundle, args.output_dir / "generator_checkpoint.pt")
-    save_model_bundle(bundle, args.output_dir / "generator_checkpoint_best.pt")
-    artifact_manifest = write_artifact_manifest(
-        output_dir=args.output_dir,
-        selected_checkpoint_name="generator_checkpoint_best.pt",
-        final_checkpoint_name="generator_checkpoint.pt",
-        best_available_checkpoint_name="generator_checkpoint_best.pt",
-    )
-    write_metrics(
-        bundle=bundle,
-        records=records,
-        targets=[target.lower() for target in args.targets],
-        dataset_size=len(design_samples),
-        args=args,
-        output_path=args.output_dir / "metrics.json",
-        reproduction_metrics=reproduction_metrics,
-        design_bounds_nm=design_bounds_nm,
-        artifact_manifest=artifact_manifest,
-    )
-    write_paper_reproduction_details(
-        reproduction_metrics,
-        args.output_dir / "paper_reproduction_details.npz",
-    )
-    plot_loss_curve(bundle, args.output_dir / "loss_curve.png")
-    plot_sampling_comparison(
-        records,
-        [target.lower() for target in args.targets],
-        args.output_dir / "sampling_comparison.png",
-    )
-    plot_candidate_diversity(
-        records,
-        args.targets[0].lower(),
-        args.output_dir / "candidate_diversity.png",
-    )
-    if reproduction_metrics is not None:
-        generated_designs = np.array(reproduction_metrics["generated_designs_nm"], dtype=np.float64)
-        plot_paper_distribution_comparison(
-            test_designs=test_designs,
-            generated_designs=generated_designs.reshape(-1, generated_designs.shape[-1]),
-            output_path=args.output_dir / "paper_figure4_distribution_comparison.png",
-        )
-        plot_paper_solution_metrics(
-            best_delta_e_values=np.array(reproduction_metrics["best_delta_e_values"], dtype=np.float64),
-            solution_group_counts=np.array(reproduction_metrics["solution_group_counts"], dtype=np.float64),
-            output_path=args.output_dir / "paper_figure5_solution_metrics.png",
-        )
-        plot_paper_d2_accuracy(
-            abs_d2_errors_nm=np.array(reproduction_metrics["abs_d2_errors_nm"], dtype=np.float64),
-            output_path=args.output_dir / "paper_figure_s6_d2_accuracy.png",
-        )
-
-    total_runtime = time.monotonic() - overall_start_time
-    _log(f"Wrote cGAN reproduction artifacts to {args.output_dir}")
-    _log(
-        "Key outputs: loss_curve.png, sampling_comparison.png, candidate_diversity.png, "
-        "paper_figure4_distribution_comparison.png, paper_figure5_solution_metrics.png, metrics.json"
-    )
-    _log(f"Total runtime: {_format_duration(total_runtime)}")
+        _log(f"Total runtime: {_format_duration(total_runtime)}")
 
 
 if __name__ == "__main__":

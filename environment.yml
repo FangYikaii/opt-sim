@@ -8,6 +8,7 @@ dependencies:
   - pip
   - pip:
       - fastapi==0.136.0
+      - colour-science==0.4.7
       - httpx==0.28.1
       - matplotlib==3.10.8
       - numpy==2.4.4

@@ -13,9 +13,12 @@ The current repository stage is requirements and technical planning. The selecte
 
 - [Documentation index](docs/README.md): organized map of all project documents.
 - [Algorithm operations guide](docs/planning/algorithm-operations-guide.md): current algorithm status, GPU/training interpretation, backend/frontend usage, and step-by-step operations.
+- [cGAN / optics alignment PRD](docs/planning/cgan-optics-data-alignment-prd.md): planned changes for real D65 / tristimulus data, scaling, colour-science integration, and retrieval metrics.
+- [Colorimetry and cGAN alignment design](docs/architecture/colorimetry-and-cgan-alignment-design.md): technical design for module boundaries, checkpoint migration, and retrieval metric contracts.
 - [Technical proposal](docs/architecture/technical-proposal.md): system architecture, physics model, AI inverse design, Agent workflow, UI direction, outputs, risks, and roadmap.
 - [Requirements breakdown](docs/planning/requirements-breakdown.md): phased implementation tasks with acceptance criteria and verification steps.
 - [ADR-001](docs/decisions/ADR-001-architecture-and-model-choices.md): architecture and model choice rationale.
+- [ADR-002](docs/decisions/ADR-002-use-real-colorimetry-data-and-versioned-cgan-scaling.md): decision record for real colorimetry data, `colour-science`, and checkpoint schema versioning.
 - [DESIGN.md](DESIGN.md): UI design direction for the future Vue frontend.
 - [Source materials](docs/references/source-materials.md): requirement assets and reference PDF notes.
 

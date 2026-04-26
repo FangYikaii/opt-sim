@@ -1,5 +1,0 @@
-{
-  "best_checkpoint_epoch": 1000,
-  "best_checkpoint_metric_name": "paper_reproduction.checkpoint_score",
-  "best_checkpoint_metric_value": 13.15784411986028
-}
