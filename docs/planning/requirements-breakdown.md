@@ -4,6 +4,8 @@
 
 This document breaks the project into implementable, verifiable tasks. The recommended implementation order is foundation first, then vertical slices that connect physics, inverse design, Agent orchestration, and UI.
 
+The May 2026 requirement update adds `prd/3414685.3417802.pdf` as a second product branch. The project must now preserve the existing structural-color implementation while adding a `neural-holography` design mode for phase-only SLM, camera-in-the-loop calibration, and HoloNet-style real-time inference planning.
+
 ## Dependency Graph
 
 ```text
@@ -14,7 +16,15 @@ Project docs and contracts
               -> Candidate ranking and validation
                   -> Agent workflow
                       -> Vue frontend integration
-                          -> Export and scaling
+                      -> Export and scaling
+
+Neural holography branch
+  -> Design-mode contract
+      -> CGH/CITL planning workspace
+          -> Wave propagation and phase optimization
+              -> CITL calibration
+                  -> HoloNet-style inference
+                      -> Phase-map export
 ```
 
 ## Phase 0: Planning Foundation
@@ -262,6 +272,7 @@ Project docs and contracts
 
 - [ ] API can serve a complete single-target design run.
 - [ ] Agent timeline includes requirement parsing, inverse design, simulation, and approval event.
+- [ ] API can serve both `structural-color` and `neural-holography` design modes without breaking old requests.
 - [ ] Backend tests pass.
 
 ## Phase 4: Vue Human-Computer Interface
@@ -325,8 +336,109 @@ Project docs and contracts
 ### Checkpoint: UI
 
 - [ ] User can run a single-color design flow from the UI.
+- [ ] User can select structural-color or neural-holography mode before submitting.
+- [ ] Workspace shows requirement source, output kind, calibration mode, and runtime target for the active mode.
 - [ ] Candidate selection and approval are understandable.
 - [ ] UI remains responsive during backend progress streaming.
+
+## Phase H: Neural Holography / CITL Extension
+
+### Task H0: Fuse New PRD Into Product Contracts
+
+**Description:** Add explicit design-mode branching for `prd/3414685.3417802.pdf` while preserving the existing thin-film route.
+
+**Acceptance criteria:**
+
+- [ ] `DesignRequest` accepts `designMode` with default `structural-color`.
+- [ ] `neural-holography` responses include source paper, output kind, calibration mode, and runtime target.
+- [ ] Runtime artifacts persist the active mode and source paper.
+- [ ] Vue UI exposes mode selection and displays mode context.
+
+**Verification:**
+
+- [ ] Backend API test creates a neural holography run and validates CITL fields.
+- [ ] Frontend build passes with regenerated OpenAPI types.
+
+**Dependencies:** Phase 3 API and Phase 4 workspace shell
+
+**Estimated scope:** Small
+
+### Task H1: Implement CGH Simulation Core
+
+**Description:** Add phase-only SLM simulation and baseline CGH algorithms.
+
+**Acceptance criteria:**
+
+- [ ] Supports angular spectrum or Fresnel propagation for small target images.
+- [ ] Implements GS, WH, and SGD baseline route interfaces.
+- [ ] Reports PSNR and SSIM against target images.
+- [ ] Stores phase-map previews and replay metadata.
+
+**Verification:**
+
+- [ ] Unit tests cover propagation shape, energy sanity, and deterministic replay for a smoke image.
+- [ ] Regression test compares baseline algorithm metrics on a fixed target.
+
+**Dependencies:** Task H0
+
+**Estimated scope:** Large, split by algorithm
+
+### Task H2: Add CITL Calibration Data Model
+
+**Description:** Model camera-in-the-loop calibration datasets and calibrated propagation proxy metadata.
+
+**Acceptance criteria:**
+
+- [ ] Calibration record includes source intensity, per-pixel phase nonlinearity, aberration proxy, camera setup, and version.
+- [ ] Workspace flags missing calibration data before phase-map export.
+- [ ] Artifact manifest records calibration version used for a run.
+
+**Verification:**
+
+- [ ] API tests validate missing/ready calibration states.
+- [ ] Serialization test round-trips calibration manifest.
+
+**Dependencies:** Task H1 can be mocked initially
+
+**Estimated scope:** Medium
+
+### Task H3: Add HoloNet-Style Real-Time Route
+
+**Description:** Add a deployable route for a neural phase generator trained against the calibrated proxy.
+
+**Acceptance criteria:**
+
+- [ ] Workspace distinguishes iterative CITL quality optimization from real-time neural inference.
+- [ ] Model metadata records target resolution, checkpoint, runtime, and validation metrics.
+- [ ] Deployment remains blocked unless captured holdout quality is available.
+
+**Verification:**
+
+- [ ] API test exposes HoloNet route and block/pass state.
+- [ ] Benchmark script reports inference latency on a smoke target.
+
+**Dependencies:** Task H2
+
+**Estimated scope:** Large
+
+### Task H4: Phase-Map Export
+
+**Description:** Export wrapped phase-map frames and calibration manifests.
+
+**Acceptance criteria:**
+
+- [ ] Export output is phase-map based, not grayscale relief height.
+- [ ] Export requires explicit approval.
+- [ ] Manifest records SLM resolution, wavelength/channel setup, calibration version, and replay metrics.
+
+**Verification:**
+
+- [ ] Export test validates phase-map range and manifest fields.
+- [ ] Manual workspace check confirms approval is required.
+
+**Dependencies:** Task H2
+
+**Estimated scope:** Medium
 
 ## Phase 5: Export and Scaling
 

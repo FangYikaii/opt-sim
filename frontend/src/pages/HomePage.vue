@@ -18,6 +18,7 @@ const form = ref<DesignRequest>({
   topK: 3,
   thetaDeg: 0,
   polarization: 'unpolarized',
+  designMode: 'structural-color',
 })
 const requirementTouched = ref(false)
 const submittingSteps = computed(() => [
@@ -175,6 +176,13 @@ async function submitDemoRun(): Promise<void> {
           </label>
 
           <div class="flow-form__grid">
+            <label class="field">
+              <span class="field__label">设计模式</span>
+              <select v-model="form.designMode" class="input">
+                <option value="structural-color">结构色薄膜反演</option>
+                <option value="neural-holography">Neural Holography / CITL</option>
+              </select>
+            </label>
             <label class="field">
               <span class="field__label">{{ t('home.form.targetHex') }}</span>
               <input v-model="form.targetHex" class="input mono" />

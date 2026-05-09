@@ -1,0 +1,48 @@
+{
+  "checkpoint_path": "backend/artifacts/cgan_reproduction_paper_20260426_214303/generator_checkpoint_best.pt",
+  "paper_test_csv": "backend/data/paper-reproduction/testing set.csv",
+  "samples_per_lab": 1000,
+  "seed": 42,
+  "device": "cuda",
+  "training": {
+    "noise_dim": 8,
+    "generator_learning_rate": 0.001,
+    "discriminator_learning_rate": 0.0002,
+    "steps_per_batch": 1,
+    "generator_hidden_dim": 160,
+    "generator_depth": 5,
+    "discriminator_hidden_dim": 128,
+    "discriminator_depth": 4,
+    "discriminator_conditioning": "target_lab",
+    "alpha_start": 0.0,
+    "alpha_ramp_epochs": 2000,
+    "max_alpha": 1.0,
+    "lab_delta_e_weight": 0.0,
+    "mode_seeking_weight": 0.1,
+    "best_checkpoint_epoch": null,
+    "best_checkpoint_metric_name": null,
+    "best_checkpoint_metric_value": null
+  },
+  "paper_reproduction": {
+    "samples_per_lab": 1000,
+    "mean_best_delta_e": 15.980911013035794,
+    "median_best_delta_e": 16.019804373340868,
+    "mean_solution_groups": 3.252,
+    "max_solution_groups": 6,
+    "d2_ground_truth_within_5nm_ratio": 0.6568,
+    "jsd": {
+      "d1": 0.4079623604952187,
+      "d2": 0.6241491193692713,
+      "d3": 0.4447824360298992
+    },
+    "generated_designs_shape": [
+      5000,
+      1000,
+      3
+    ],
+    "details_file": "paper_reproduction_details.npz",
+    "best_delta_e_count": 5000,
+    "solution_group_count": 5000,
+    "abs_d2_error_count": 5000
+  }
+}

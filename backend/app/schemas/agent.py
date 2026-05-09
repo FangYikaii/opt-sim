@@ -16,6 +16,7 @@ class DesignRequest(BaseModel):
     topK: int = Field(default=3, ge=1, le=8)
     thetaDeg: float = Field(default=0.0, ge=0.0, le=89.0)
     polarization: Literal["te", "tm", "unpolarized"] = "unpolarized"
+    designMode: Literal["structural-color", "neural-holography"] = "structural-color"
 
 
 class DesignRunResponse(BaseModel):

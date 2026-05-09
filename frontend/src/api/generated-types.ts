@@ -640,6 +640,12 @@ export interface components {
              * @enum {string}
              */
             polarization: "te" | "tm" | "unpolarized";
+            /**
+             * Designmode
+             * @default structural-color
+             * @enum {string}
+             */
+            designMode: "structural-color" | "neural-holography";
         };
         /** DesignRunResponse */
         DesignRunResponse: {
@@ -783,6 +789,21 @@ export interface components {
         WorkspaceDraft: {
             /** Requirementtext */
             requirementText: string;
+            /**
+             * Designmode
+             * @default structural-color
+             */
+            designMode: string;
+            /**
+             * Referencesource
+             * @default 10.1515_nanoph-2022-0095.pdf
+             */
+            referenceSource: string;
+            /**
+             * Outputkind
+             * @default Thin-film candidate set
+             */
+            outputKind: string;
             /** Targetlabel */
             targetLabel: string;
             /** Targetvalue */
@@ -799,6 +820,16 @@ export interface components {
             heightWindow: string;
             /** Exportmode */
             exportMode: string;
+            /**
+             * Calibrationmode
+             * @default Forward simulation
+             */
+            calibrationMode: string;
+            /**
+             * Runtimetarget
+             * @default Preview-first offline design
+             */
+            runtimeTarget: string;
         };
         /** WorkspaceProject */
         WorkspaceProject: {

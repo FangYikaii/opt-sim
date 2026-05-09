@@ -235,6 +235,18 @@ watch(
 
           <div class="flow-meta-grid">
             <div class="field">
+              <span class="field__label">设计模式</span>
+              <span class="field__value mono">{{ workspace.draft.designMode }}</span>
+            </div>
+            <div class="field">
+              <span class="field__label">需求来源</span>
+              <span class="field__value">{{ workspace.draft.referenceSource }}</span>
+            </div>
+            <div class="field">
+              <span class="field__label">输出对象</span>
+              <span class="field__value">{{ workspace.draft.outputKind }}</span>
+            </div>
+            <div class="field">
               <span class="field__label">{{ workspace.draft.incidenceAngleLabel }}</span>
               <span class="field__value mono">{{ workspace.draft.incidenceAngleValue }}</span>
             </div>
@@ -249,6 +261,14 @@ watch(
             <div class="field">
               <span class="field__label">导出模式</span>
               <span class="field__value mono">{{ workspace.draft.exportMode }}</span>
+            </div>
+            <div class="field">
+              <span class="field__label">标定方式</span>
+              <span class="field__value">{{ workspace.draft.calibrationMode }}</span>
+            </div>
+            <div class="field">
+              <span class="field__label">运行目标</span>
+              <span class="field__value">{{ workspace.draft.runtimeTarget }}</span>
             </div>
           </div>
         </section>

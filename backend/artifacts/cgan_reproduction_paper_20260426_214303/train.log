@@ -1,0 +1,289 @@
+[2026-04-26 21:43:03] Streaming training logs to backend/artifacts/cgan_reproduction_paper_20260426_214303/train.log
+[2026-04-26 21:43:05] Loaded dataset (source=paper, train_samples=45000, test_samples=5000, output_dir=backend/artifacts/cgan_reproduction_paper_20260426_214303)
+[2026-04-26 21:43:05] Runtime (device=cuda, cuda_available=True, torch=2.11.0+cu128)
+[2026-04-26 21:43:05] Progress logging (regressor_every=500 epochs, train_every=2000 epochs, paper_eval_every=250 targets, checkpoint_eval_interval=500, checkpoint_budget_mode=match_final, checkpoint_samples_per_lab=1000, checkpoint_recheck_samples_per_lab=1000, final_samples_per_lab=1000)
+[2026-04-26 21:43:05] Training config (preset=custom, g_lr=0.001, d_lr=0.0002, steps_per_batch=1, g_hidden=160, g_depth=5, d_hidden=128, d_depth=4, d_conditioning=target_lab, alpha_start=0.0, alpha_ramp_epochs=2000, max_alpha=1.0, lab_delta_e_weight=0.0, mode_seeking_weight=0.1, retrieval_metric=delta_e_2000)
+[2026-04-26 21:43:05] Checkpoint score weights (mean_best_delta_e=1.0, median_best_delta_e=0.02, d2_within_5nm=8.0, mean_jsd=0.5, d3_jsd=2.0)
+[2026-04-26 21:43:05] Regressor pretraining started (epochs=10000, batch_size=2048, samples=45000)
+[2026-04-26 21:43:30] Regressor 500/10000 | loss=0.041983 | elapsed=25s | eta=7m49s
+[2026-04-26 21:43:53] Regressor 1000/10000 | loss=0.046135 | elapsed=48s | eta=7m09s
+[2026-04-26 21:44:19] Regressor 1500/10000 | loss=0.018127 | elapsed=1m13s | eta=6m54s
+[2026-04-26 21:44:43] Regressor 2000/10000 | loss=0.013073 | elapsed=1m38s | eta=6m30s
+[2026-04-26 21:45:08] Regressor 2500/10000 | loss=0.006981 | elapsed=2m03s | eta=6m09s
+[2026-04-26 21:45:32] Regressor 3000/10000 | loss=0.006634 | elapsed=2m27s | eta=5m42s
+[2026-04-26 21:45:56] Regressor 3500/10000 | loss=0.004891 | elapsed=2m51s | eta=5m17s
+[2026-04-26 21:46:20] Regressor 4000/10000 | loss=0.005008 | elapsed=3m14s | eta=4m51s
+[2026-04-26 21:46:44] Regressor 4500/10000 | loss=0.005613 | elapsed=3m39s | eta=4m27s
+[2026-04-26 21:47:07] Regressor 5000/10000 | loss=0.003281 | elapsed=4m01s | eta=4m01s
+[2026-04-26 21:47:29] Regressor 5500/10000 | loss=0.003712 | elapsed=4m24s | eta=3m36s
+[2026-04-26 21:47:52] Regressor 6000/10000 | loss=0.002959 | elapsed=4m47s | eta=3m11s
+[2026-04-26 21:48:15] Regressor 6500/10000 | loss=0.004186 | elapsed=5m09s | eta=2m47s
+[2026-04-26 21:48:37] Regressor 7000/10000 | loss=0.003293 | elapsed=5m32s | eta=2m22s
+[2026-04-26 21:49:00] Regressor 7500/10000 | loss=0.002400 | elapsed=5m55s | eta=1m58s
+[2026-04-26 21:49:23] Regressor 8000/10000 | loss=0.002587 | elapsed=6m17s | eta=1m34s
+[2026-04-26 21:49:45] Regressor 8500/10000 | loss=0.003543 | elapsed=6m40s | eta=1m11s
+[2026-04-26 21:50:08] Regressor 9000/10000 | loss=0.003181 | elapsed=7m02s | eta=47s
+[2026-04-26 21:50:32] Regressor 9500/10000 | loss=0.002629 | elapsed=7m27s | eta=24s
+[2026-04-26 21:50:56] Regressor 10000/10000 | loss=0.002048 | elapsed=7m50s | eta=unknown
+[2026-04-26 21:50:56] Regressor pretraining complete in 7m50s
+[2026-04-26 21:50:56] Adversarial training started (epochs=100000, batch_size=2048, samples=45000, device=cuda)
+[2026-04-26 21:52:31] Checkpoint evaluation started at epoch 500 (paper_reproduction.checkpoint_score)
+[2026-04-26 21:52:31] Checkpoint paper evaluation started (5000 targets)
+[2026-04-26 22:03:41] Checkpoint paper evaluation 250/5000 | elapsed=11m10s | eta=3h32m08s
+[2026-04-26 22:14:50] Checkpoint paper evaluation 500/5000 | elapsed=22m20s | eta=3h20m56s
+[2026-04-26 22:26:01] Checkpoint paper evaluation 750/5000 | elapsed=33m30s | eta=3h09m48s
+[2026-04-26 22:37:11] Checkpoint paper evaluation 1000/5000 | elapsed=44m40s | eta=2h58m38s
+[2026-04-26 22:48:22] Checkpoint paper evaluation 1250/5000 | elapsed=55m51s | eta=2h47m34s
+[2026-04-26 22:59:33] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m02s | eta=2h36m26s
+[2026-04-26 23:10:46] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m16s | eta=2h25m20s
+[2026-04-26 23:22:02] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m31s | eta=2h14m17s
+[2026-04-26 23:33:19] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m48s | eta=2h03m12s
+[2026-04-26 23:44:37] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m07s | eta=1h52m07s
+[2026-04-26 23:55:57] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m26s | eta=1h41m00s
+[2026-04-27 00:07:17] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m46s | eta=1h29m51s
+[2026-04-27 00:18:37] Checkpoint paper evaluation 3250/5000 | elapsed=2h26m06s | eta=1h18m40s
+[2026-04-27 00:29:58] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m27s | eta=1h07m29s
+[2026-04-27 00:41:19] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m48s | eta=56m16s
+[2026-04-27 00:52:43] Checkpoint paper evaluation 4000/5000 | elapsed=3h00m12s | eta=45m03s
+[2026-04-27 01:04:07] Checkpoint paper evaluation 4250/5000 | elapsed=3h11m36s | eta=33m49s
+[2026-04-27 01:15:31] Checkpoint paper evaluation 4500/5000 | elapsed=3h23m00s | eta=22m33s
+[2026-04-27 01:26:54] Checkpoint paper evaluation 4750/5000 | elapsed=3h34m23s | eta=11m17s
+[2026-04-27 01:38:17] Checkpoint paper evaluation 5000/5000 | elapsed=3h45m46s | eta=unknown
+[2026-04-27 01:38:17] Checkpoint paper evaluation complete in 3h45m46s
+[2026-04-27 01:38:17] Persisted best checkpoint (epoch=500, paper_reproduction.checkpoint_score=20.182621, mean_best_delta_e=15.980911, median_best_delta_e=16.019804, d2_within_5nm=0.656800)
+[2026-04-27 01:38:17] Checkpoint evaluation complete at epoch 500 | paper_reproduction.checkpoint_score=20.182621 | new best checkpoint
+[2026-04-27 01:39:54] Checkpoint evaluation started at epoch 1000 (paper_reproduction.checkpoint_score)
+[2026-04-27 01:39:54] Checkpoint paper evaluation started (5000 targets)
+[2026-04-27 01:51:03] Checkpoint paper evaluation 250/5000 | elapsed=11m09s | eta=3h31m46s
+[2026-04-27 02:02:12] Checkpoint paper evaluation 500/5000 | elapsed=22m18s | eta=3h20m42s
+[2026-04-27 02:13:22] Checkpoint paper evaluation 750/5000 | elapsed=33m28s | eta=3h09m40s
+[2026-04-27 02:24:35] Checkpoint paper evaluation 1000/5000 | elapsed=44m41s | eta=2h58m43s
+[2026-04-27 02:35:48] Checkpoint paper evaluation 1250/5000 | elapsed=55m55s | eta=2h47m44s
+[2026-04-27 02:47:01] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m07s | eta=2h36m37s
+[2026-04-27 02:58:14] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m20s | eta=2h25m28s
+[2026-04-27 03:09:28] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m34s | eta=2h14m21s
+[2026-04-27 03:20:42] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m48s | eta=2h03m12s
+[2026-04-27 03:31:56] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m02s | eta=1h52m02s
+[2026-04-27 03:43:12] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m18s | eta=1h40m53s
+[2026-04-27 03:54:29] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m35s | eta=1h29m43s
+[2026-04-27 04:05:46] Checkpoint paper evaluation 3250/5000 | elapsed=2h25m52s | eta=1h18m33s
+[2026-04-27 04:17:05] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m11s | eta=1h07m22s
+[2026-04-27 04:28:25] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m31s | eta=56m10s
+[2026-04-27 04:39:42] Checkpoint paper evaluation 4000/5000 | elapsed=2h59m48s | eta=44m57s
+[2026-04-27 04:51:01] Checkpoint paper evaluation 4250/5000 | elapsed=3h11m07s | eta=33m44s
+[2026-04-27 05:02:19] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m25s | eta=22m29s
+[2026-04-27 05:13:36] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m42s | eta=11m15s
+[2026-04-27 05:24:56] Checkpoint paper evaluation 5000/5000 | elapsed=3h45m02s | eta=unknown
+[2026-04-27 05:24:56] Checkpoint paper evaluation complete in 3h45m02s
+[2026-04-27 05:24:56] Checkpoint evaluation complete at epoch 1000 | paper_reproduction.checkpoint_score=21.688270
+[2026-04-27 05:26:32] Checkpoint evaluation started at epoch 1500 (paper_reproduction.checkpoint_score)
+[2026-04-27 05:26:32] Checkpoint paper evaluation started (5000 targets)
+[2026-04-27 05:37:41] Checkpoint paper evaluation 250/5000 | elapsed=11m08s | eta=3h31m40s
+[2026-04-27 05:48:49] Checkpoint paper evaluation 500/5000 | elapsed=22m17s | eta=3h20m32s
+[2026-04-27 06:00:00] Checkpoint paper evaluation 750/5000 | elapsed=33m28s | eta=3h09m36s
+[2026-04-27 06:11:11] Checkpoint paper evaluation 1000/5000 | elapsed=44m39s | eta=2h58m35s
+[2026-04-27 06:22:23] Checkpoint paper evaluation 1250/5000 | elapsed=55m51s | eta=2h47m32s
+[2026-04-27 06:33:35] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m03s | eta=2h36m26s
+[2026-04-27 06:44:49] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m16s | eta=2h25m21s
+[2026-04-27 06:56:03] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m30s | eta=2h14m16s
+[2026-04-27 07:07:18] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m45s | eta=2h03m09s
+[2026-04-27 07:18:31] Checkpoint paper evaluation 2500/5000 | elapsed=1h51m58s | eta=1h51m58s
+[2026-04-27 07:29:46] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m13s | eta=1h40m49s
+[2026-04-27 07:41:03] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m30s | eta=1h29m40s
+[2026-04-27 07:52:20] Checkpoint paper evaluation 3250/5000 | elapsed=2h25m47s | eta=1h18m30s
+[2026-04-27 08:03:36] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m03s | eta=1h07m19s
+[2026-04-27 08:14:53] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m20s | eta=56m07s
+[2026-04-27 08:26:10] Checkpoint paper evaluation 4000/5000 | elapsed=2h59m38s | eta=44m54s
+[2026-04-27 08:37:26] Checkpoint paper evaluation 4250/5000 | elapsed=3h10m53s | eta=33m41s
+[2026-04-27 08:48:41] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m08s | eta=22m28s
+[2026-04-27 08:59:57] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m24s | eta=11m14s
+[2026-04-27 09:11:11] Checkpoint paper evaluation 5000/5000 | elapsed=3h44m39s | eta=unknown
+[2026-04-27 09:11:11] Checkpoint paper evaluation complete in 3h44m39s
+[2026-04-27 09:11:11] Checkpoint evaluation complete at epoch 1500 | paper_reproduction.checkpoint_score=22.473645
+[2026-04-27 09:12:47] Train 2000/100000 | d_loss=0.941491 | g_loss=0.214440 | lab_mse=0.229070 | alpha=1.0000 | elapsed=11h21m52s | eta=556h51m06s
+[2026-04-27 09:12:47] Checkpoint evaluation started at epoch 2000 (paper_reproduction.checkpoint_score)
+[2026-04-27 09:12:47] Checkpoint paper evaluation started (5000 targets)
+[2026-04-27 09:24:00] Checkpoint paper evaluation 250/5000 | elapsed=11m13s | eta=3h33m05s
+[2026-04-27 09:35:14] Checkpoint paper evaluation 500/5000 | elapsed=22m26s | eta=3h21m58s
+[2026-04-27 09:46:27] Checkpoint paper evaluation 750/5000 | elapsed=33m40s | eta=3h10m46s
+[2026-04-27 09:57:41] Checkpoint paper evaluation 1000/5000 | elapsed=44m53s | eta=2h59m33s
+[2026-04-27 10:08:55] Checkpoint paper evaluation 1250/5000 | elapsed=56m07s | eta=2h48m22s
+[2026-04-27 10:20:08] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m20s | eta=2h37m07s
+[2026-04-27 10:31:21] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m34s | eta=2h25m54s
+[2026-04-27 10:42:35] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m48s | eta=2h14m41s
+[2026-04-27 10:53:48] Checkpoint paper evaluation 2250/5000 | elapsed=1h41m01s | eta=2h03m27s
+[2026-04-27 11:05:01] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m14s | eta=1h52m14s
+[2026-04-27 11:16:15] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m28s | eta=1h41m01s
+[2026-04-27 11:27:30] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m43s | eta=1h29m48s
+[2026-04-27 11:38:46] Checkpoint paper evaluation 3250/5000 | elapsed=2h25m59s | eta=1h18m36s
+[2026-04-27 11:50:04] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m17s | eta=1h07m24s
+[2026-04-27 12:01:21] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m34s | eta=56m11s
+[2026-04-27 12:12:36] Checkpoint paper evaluation 4000/5000 | elapsed=2h59m49s | eta=44m57s
+[2026-04-27 12:23:52] Checkpoint paper evaluation 4250/5000 | elapsed=3h11m05s | eta=33m43s
+[2026-04-27 12:35:08] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m20s | eta=22m29s
+[2026-04-27 12:46:25] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m37s | eta=11m15s
+[2026-04-27 12:57:41] Checkpoint paper evaluation 5000/5000 | elapsed=3h44m53s | eta=unknown
+[2026-04-27 12:57:41] Checkpoint paper evaluation complete in 3h44m53s
+[2026-04-27 12:57:41] Checkpoint evaluation complete at epoch 2000 | paper_reproduction.checkpoint_score=22.685057
+[2026-04-27 12:59:16] Checkpoint evaluation started at epoch 2500 (paper_reproduction.checkpoint_score)
+[2026-04-27 12:59:16] Checkpoint paper evaluation started (5000 targets)
+[2026-04-27 13:10:25] Checkpoint paper evaluation 250/5000 | elapsed=11m09s | eta=3h31m53s
+[2026-04-27 13:21:35] Checkpoint paper evaluation 500/5000 | elapsed=22m18s | eta=3h20m44s
+[2026-04-27 13:32:46] Checkpoint paper evaluation 750/5000 | elapsed=33m30s | eta=3h09m47s
+[2026-04-27 13:44:00] Checkpoint paper evaluation 1000/5000 | elapsed=44m44s | eta=2h58m55s
+[2026-04-27 13:55:12] Checkpoint paper evaluation 1250/5000 | elapsed=55m56s | eta=2h47m47s
+[2026-04-27 14:06:25] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m09s | eta=2h36m41s
+[2026-04-27 14:17:39] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m23s | eta=2h25m33s
+[2026-04-27 14:28:54] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m37s | eta=2h14m26s
+[2026-04-27 14:40:08] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m52s | eta=2h03m17s
+[2026-04-27 14:51:24] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m08s | eta=1h52m08s
+[2026-04-27 15:02:41] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m24s | eta=1h40m58s
+[2026-04-27 15:13:57] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m41s | eta=1h29m47s
+[2026-04-27 15:25:15] Checkpoint paper evaluation 3250/5000 | elapsed=2h25m59s | eta=1h18m36s
+[2026-04-27 15:36:33] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m17s | eta=1h07m24s
+[2026-04-27 15:47:51] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m35s | eta=56m12s
+[2026-04-27 15:59:09] Checkpoint paper evaluation 4000/5000 | elapsed=2h59m53s | eta=44m58s
+[2026-04-27 16:10:28] Checkpoint paper evaluation 4250/5000 | elapsed=3h11m11s | eta=33m44s
+[2026-04-27 16:21:44] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m28s | eta=22m30s
+[2026-04-27 16:33:03] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m47s | eta=11m15s
+[2026-04-27 16:44:20] Checkpoint paper evaluation 5000/5000 | elapsed=3h45m04s | eta=unknown
+[2026-04-27 16:44:20] Checkpoint paper evaluation complete in 3h45m04s
+[2026-04-27 16:44:20] Checkpoint evaluation complete at epoch 2500 | paper_reproduction.checkpoint_score=23.810165
+[2026-04-27 16:45:57] Checkpoint evaluation started at epoch 3000 (paper_reproduction.checkpoint_score)
+[2026-04-27 16:45:57] Checkpoint paper evaluation started (5000 targets)
+[2026-04-27 16:57:08] Checkpoint paper evaluation 250/5000 | elapsed=11m11s | eta=3h32m37s
+[2026-04-27 17:08:19] Checkpoint paper evaluation 500/5000 | elapsed=22m22s | eta=3h21m21s
+[2026-04-27 17:19:32] Checkpoint paper evaluation 750/5000 | elapsed=33m36s | eta=3h10m23s
+[2026-04-27 17:30:48] Checkpoint paper evaluation 1000/5000 | elapsed=44m51s | eta=2h59m25s
+[2026-04-27 17:42:02] Checkpoint paper evaluation 1250/5000 | elapsed=56m06s | eta=2h48m17s
+[2026-04-27 17:53:18] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m22s | eta=2h37m10s
+[2026-04-27 18:04:35] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m38s | eta=2h26m02s
+[2026-04-27 18:15:50] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m53s | eta=2h14m50s
+[2026-04-27 18:27:06] Checkpoint paper evaluation 2250/5000 | elapsed=1h41m09s | eta=2h03m38s
+[2026-04-27 18:38:22] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m26s | eta=1h52m26s
+[2026-04-27 18:49:39] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m42s | eta=1h41m13s
+[2026-04-27 19:00:56] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m59s | eta=1h29m59s
+[2026-04-27 19:12:12] Checkpoint paper evaluation 3250/5000 | elapsed=2h26m15s | eta=1h18m45s
+[2026-04-27 19:23:27] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m31s | eta=1h07m30s
+[2026-04-27 19:34:42] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m45s | eta=56m15s
+[2026-04-27 19:45:58] Checkpoint paper evaluation 4000/5000 | elapsed=3h00m01s | eta=45m00s
+[2026-04-27 19:57:12] Checkpoint paper evaluation 4250/5000 | elapsed=3h11m15s | eta=33m45s
+[2026-04-27 20:08:28] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m31s | eta=22m30s
+[2026-04-27 20:19:43] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m46s | eta=11m15s
+[2026-04-27 20:30:56] Checkpoint paper evaluation 5000/5000 | elapsed=3h44m59s | eta=unknown
+[2026-04-27 20:30:56] Checkpoint paper evaluation complete in 3h44m59s
+[2026-04-27 20:30:56] Checkpoint evaluation complete at epoch 3000 | paper_reproduction.checkpoint_score=23.066910
+[2026-04-27 20:32:32] Checkpoint evaluation started at epoch 3500 (paper_reproduction.checkpoint_score)
+[2026-04-27 20:32:32] Checkpoint paper evaluation started (5000 targets)
+[2026-04-27 20:43:39] Checkpoint paper evaluation 250/5000 | elapsed=11m07s | eta=3h31m21s
+[2026-04-27 20:54:46] Checkpoint paper evaluation 500/5000 | elapsed=22m14s | eta=3h20m04s
+[2026-04-27 21:05:51] Checkpoint paper evaluation 750/5000 | elapsed=33m19s | eta=3h08m50s
+[2026-04-27 21:17:00] Checkpoint paper evaluation 1000/5000 | elapsed=44m28s | eta=2h57m54s
+[2026-04-27 21:28:10] Checkpoint paper evaluation 1250/5000 | elapsed=55m38s | eta=2h46m55s
+[2026-04-27 21:39:22] Checkpoint paper evaluation 1500/5000 | elapsed=1h06m50s | eta=2h35m56s
+[2026-04-27 21:50:34] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m03s | eta=2h24m56s
+[2026-04-27 22:01:47] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m15s | eta=2h13m53s
+[2026-04-27 22:12:59] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m27s | eta=2h02m47s
+[2026-04-27 22:24:15] Checkpoint paper evaluation 2500/5000 | elapsed=1h51m43s | eta=1h51m43s
+[2026-04-27 22:35:30] Checkpoint paper evaluation 2750/5000 | elapsed=2h02m59s | eta=1h40m37s
+[2026-04-27 22:46:46] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m14s | eta=1h29m29s
+[2026-04-27 22:58:03] Checkpoint paper evaluation 3250/5000 | elapsed=2h25m31s | eta=1h18m22s
+[2026-04-27 23:09:20] Checkpoint paper evaluation 3500/5000 | elapsed=2h36m48s | eta=1h07m12s
+[2026-04-27 23:20:36] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m04s | eta=56m01s
+[2026-04-27 23:31:53] Checkpoint paper evaluation 4000/5000 | elapsed=2h59m21s | eta=44m50s
+[2026-04-27 23:43:09] Checkpoint paper evaluation 4250/5000 | elapsed=3h10m37s | eta=33m38s
+[2026-04-27 23:54:26] Checkpoint paper evaluation 4500/5000 | elapsed=3h21m54s | eta=22m26s
+[2026-04-28 00:05:43] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m11s | eta=11m13s
+[2026-04-28 00:17:00] Checkpoint paper evaluation 5000/5000 | elapsed=3h44m28s | eta=unknown
+[2026-04-28 00:17:00] Checkpoint paper evaluation complete in 3h44m28s
+[2026-04-28 00:17:00] Checkpoint evaluation complete at epoch 3500 | paper_reproduction.checkpoint_score=23.505372
+[2026-04-28 00:18:36] Train 4000/100000 | d_loss=0.938456 | g_loss=0.325720 | lab_mse=0.235085 | alpha=1.0000 | elapsed=26h27m41s | eta=635h04m15s
+[2026-04-28 00:18:36] Checkpoint evaluation started at epoch 4000 (paper_reproduction.checkpoint_score)
+[2026-04-28 00:18:36] Checkpoint paper evaluation started (5000 targets)
+[2026-04-28 00:29:45] Checkpoint paper evaluation 250/5000 | elapsed=11m08s | eta=3h31m36s
+[2026-04-28 00:40:54] Checkpoint paper evaluation 500/5000 | elapsed=22m17s | eta=3h20m35s
+[2026-04-28 00:52:02] Checkpoint paper evaluation 750/5000 | elapsed=33m26s | eta=3h09m27s
+[2026-04-28 01:03:16] Checkpoint paper evaluation 1000/5000 | elapsed=44m40s | eta=2h58m39s
+[2026-04-28 01:14:28] Checkpoint paper evaluation 1250/5000 | elapsed=55m52s | eta=2h47m36s
+[2026-04-28 01:25:41] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m05s | eta=2h36m31s
+[2026-04-28 01:36:56] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m19s | eta=2h25m28s
+[2026-04-28 01:48:11] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m35s | eta=2h14m22s
+[2026-04-28 01:59:29] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m53s | eta=2h03m18s
+[2026-04-28 02:10:47] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m11s | eta=1h52m11s
+[2026-04-28 02:22:05] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m28s | eta=1h41m01s
+[2026-04-28 02:33:22] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m46s | eta=1h29m51s
+[2026-04-28 02:44:41] Checkpoint paper evaluation 3250/5000 | elapsed=2h26m04s | eta=1h18m39s
+[2026-04-28 02:56:00] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m23s | eta=1h07m27s
+[2026-04-28 03:07:18] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m42s | eta=56m14s
+[2026-04-28 03:18:35] Checkpoint paper evaluation 4000/5000 | elapsed=2h59m59s | eta=45m00s
+[2026-04-28 03:29:52] Checkpoint paper evaluation 4250/5000 | elapsed=3h11m15s | eta=33m45s
+[2026-04-28 03:41:10] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m33s | eta=22m30s
+[2026-04-28 03:52:26] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m49s | eta=11m15s
+[2026-04-28 04:03:42] Checkpoint paper evaluation 5000/5000 | elapsed=3h45m05s | eta=unknown
+[2026-04-28 04:03:42] Checkpoint paper evaluation complete in 3h45m05s
+[2026-04-28 04:03:42] Checkpoint evaluation complete at epoch 4000 | paper_reproduction.checkpoint_score=23.940648
+[2026-04-28 04:05:18] Checkpoint evaluation started at epoch 4500 (paper_reproduction.checkpoint_score)
+[2026-04-28 04:05:18] Checkpoint paper evaluation started (5000 targets)
+[2026-04-28 04:16:30] Checkpoint paper evaluation 250/5000 | elapsed=11m12s | eta=3h32m52s
+[2026-04-28 04:27:41] Checkpoint paper evaluation 500/5000 | elapsed=22m24s | eta=3h21m35s
+[2026-04-28 04:38:52] Checkpoint paper evaluation 750/5000 | elapsed=33m35s | eta=3h10m18s
+[2026-04-28 04:50:05] Checkpoint paper evaluation 1000/5000 | elapsed=44m48s | eta=2h59m11s
+[2026-04-28 05:01:17] Checkpoint paper evaluation 1250/5000 | elapsed=56m00s | eta=2h47m59s
+[2026-04-28 05:12:31] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m13s | eta=2h36m51s
+[2026-04-28 05:23:44] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m26s | eta=2h25m40s
+[2026-04-28 05:34:57] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m39s | eta=2h14m29s
+[2026-04-28 05:46:10] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m53s | eta=2h03m18s
+[2026-04-28 05:57:22] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m04s | eta=1h52m04s
+[2026-04-28 06:08:33] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m16s | eta=1h40m51s
+[2026-04-28 06:19:47] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m29s | eta=1h29m39s
+[2026-04-28 06:31:02] Checkpoint paper evaluation 3250/5000 | elapsed=2h25m44s | eta=1h18m28s
+[2026-04-28 06:42:16] Checkpoint paper evaluation 3500/5000 | elapsed=2h36m59s | eta=1h07m17s
+[2026-04-28 06:53:31] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m13s | eta=56m04s
+[2026-04-28 07:04:47] Checkpoint paper evaluation 4000/5000 | elapsed=2h59m30s | eta=44m52s
+[2026-04-28 07:16:05] Checkpoint paper evaluation 4250/5000 | elapsed=3h10m47s | eta=33m40s
+[2026-04-28 07:27:22] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m04s | eta=22m27s
+[2026-04-28 07:38:38] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m21s | eta=11m14s
+[2026-04-28 07:49:55] Checkpoint paper evaluation 5000/5000 | elapsed=3h44m38s | eta=unknown
+[2026-04-28 07:49:55] Checkpoint paper evaluation complete in 3h44m38s
+[2026-04-28 07:49:55] Checkpoint evaluation complete at epoch 4500 | paper_reproduction.checkpoint_score=23.365729
+[2026-04-28 07:51:32] Checkpoint evaluation started at epoch 5000 (paper_reproduction.checkpoint_score)
+[2026-04-28 07:51:32] Checkpoint paper evaluation started (5000 targets)
+[2026-04-28 08:02:39] Checkpoint paper evaluation 250/5000 | elapsed=11m08s | eta=3h31m25s
+[2026-04-28 08:13:48] Checkpoint paper evaluation 500/5000 | elapsed=22m16s | eta=3h20m27s
+[2026-04-28 08:25:00] Checkpoint paper evaluation 750/5000 | elapsed=33m29s | eta=3h09m42s
+[2026-04-28 08:36:14] Checkpoint paper evaluation 1000/5000 | elapsed=44m42s | eta=2h58m48s
+[2026-04-28 08:47:28] Checkpoint paper evaluation 1250/5000 | elapsed=55m56s | eta=2h47m48s
+[2026-04-28 08:58:42] Checkpoint paper evaluation 1500/5000 | elapsed=1h07m10s | eta=2h36m44s
+[2026-04-28 09:09:57] Checkpoint paper evaluation 1750/5000 | elapsed=1h18m25s | eta=2h25m38s
+[2026-04-28 09:21:12] Checkpoint paper evaluation 2000/5000 | elapsed=1h29m40s | eta=2h14m31s
+[2026-04-28 09:32:27] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m55s | eta=2h03m21s
+[2026-04-28 09:43:44] Checkpoint paper evaluation 2500/5000 | elapsed=1h52m12s | eta=1h52m12s
+[2026-04-28 09:55:02] Checkpoint paper evaluation 2750/5000 | elapsed=2h03m30s | eta=1h41m03s
+[2026-04-28 10:06:20] Checkpoint paper evaluation 3000/5000 | elapsed=2h14m48s | eta=1h29m52s
+[2026-04-28 10:17:38] Checkpoint paper evaluation 3250/5000 | elapsed=2h26m06s | eta=1h18m40s
+[2026-04-28 10:28:57] Checkpoint paper evaluation 3500/5000 | elapsed=2h37m25s | eta=1h07m28s
+[2026-04-28 10:40:15] Checkpoint paper evaluation 3750/5000 | elapsed=2h48m43s | eta=56m14s
+[2026-04-28 10:51:33] Checkpoint paper evaluation 4000/5000 | elapsed=3h00m01s | eta=45m00s
+[2026-04-28 11:02:51] Checkpoint paper evaluation 4250/5000 | elapsed=3h11m20s | eta=33m46s
+[2026-04-28 11:14:08] Checkpoint paper evaluation 4500/5000 | elapsed=3h22m37s | eta=22m31s
+[2026-04-28 11:25:23] Checkpoint paper evaluation 4750/5000 | elapsed=3h33m51s | eta=11m15s
+[2026-04-28 11:36:38] Checkpoint paper evaluation 5000/5000 | elapsed=3h45m07s | eta=unknown
+[2026-04-28 11:36:39] Checkpoint paper evaluation complete in 3h45m07s
+[2026-04-28 11:36:39] Checkpoint evaluation complete at epoch 5000 | paper_reproduction.checkpoint_score=23.214022
+[2026-04-28 11:38:16] Checkpoint evaluation started at epoch 5500 (paper_reproduction.checkpoint_score)
+[2026-04-28 11:38:16] Checkpoint paper evaluation started (5000 targets)
+[2026-04-28 11:49:21] Checkpoint paper evaluation 250/5000 | elapsed=11m05s | eta=3h30m37s
+[2026-04-28 12:00:25] Checkpoint paper evaluation 500/5000 | elapsed=22m09s | eta=3h19m25s
+[2026-04-28 12:11:29] Checkpoint paper evaluation 750/5000 | elapsed=33m13s | eta=3h08m15s
+[2026-04-28 12:22:36] Checkpoint paper evaluation 1000/5000 | elapsed=44m21s | eta=2h57m22s
+[2026-04-28 12:33:44] Checkpoint paper evaluation 1250/5000 | elapsed=55m29s | eta=2h46m26s
+[2026-04-28 12:44:52] Checkpoint paper evaluation 1500/5000 | elapsed=1h06m37s | eta=2h35m26s
+[2026-04-28 12:56:00] Checkpoint paper evaluation 1750/5000 | elapsed=1h17m44s | eta=2h24m22s
+[2026-04-28 13:07:09] Checkpoint paper evaluation 2000/5000 | elapsed=1h28m53s | eta=2h13m20s
+[2026-04-28 13:18:16] Checkpoint paper evaluation 2250/5000 | elapsed=1h40m00s | eta=2h02m14s
+[2026-04-28 13:29:25] Checkpoint paper evaluation 2500/5000 | elapsed=1h51m09s | eta=1h51m09s
+[2026-04-28 13:40:32] Checkpoint paper evaluation 2750/5000 | elapsed=2h02m16s | eta=1h40m02s
+[2026-04-28 13:51:41] Checkpoint paper evaluation 3000/5000 | elapsed=2h13m25s | eta=1h28m57s
+[2026-04-28 14:02:50] Checkpoint paper evaluation 3250/5000 | elapsed=2h24m34s | eta=1h17m51s
+[2026-04-28 14:13:59] Checkpoint paper evaluation 3500/5000 | elapsed=2h35m43s | eta=1h06m44s
+[2026-04-28 14:25:09] Checkpoint paper evaluation 3750/5000 | elapsed=2h46m53s | eta=55m38s

@@ -27,6 +27,9 @@ class RunSummary(BaseModel):
 
 class WorkspaceDraft(BaseModel):
     requirementText: str
+    designMode: str = "structural-color"
+    referenceSource: str = "10.1515_nanoph-2022-0095.pdf"
+    outputKind: str = "Thin-film candidate set"
     targetLabel: str
     targetValue: str
     incidenceAngleLabel: str
@@ -35,6 +38,8 @@ class WorkspaceDraft(BaseModel):
     polarizationValue: str
     heightWindow: str
     exportMode: str
+    calibrationMode: str = "Forward simulation"
+    runtimeTarget: str = "Preview-first offline design"
 
 
 class TargetAsset(BaseModel):

@@ -6,15 +6,18 @@ This folder is the single entry point for project documentation. Use it to find 
 
 1. [Project README](../README.md): quick project overview and current next step.
 2. [Technical proposal](architecture/technical-proposal.md): full system plan and engineering direction.
-3. [Requirements breakdown](planning/requirements-breakdown.md): phased tasks, acceptance criteria, and verification plan.
-4. [cGAN / optics alignment PRD](planning/cgan-optics-data-alignment-prd.md): planned alignment for real D65 / tristimulus data, scaling, colour-science integration, and retrieval metrics.
-5. [Colorimetry and cGAN alignment design](architecture/colorimetry-and-cgan-alignment-design.md): module boundaries, interfaces, checkpoint migration, and retrieval-metric design.
-6. [ADR-001](decisions/ADR-001-architecture-and-model-choices.md): why the current architecture and model choices were accepted.
-7. [ADR-002](decisions/ADR-002-use-real-colorimetry-data-and-versioned-cgan-scaling.md): why real colorimetry data, `colour-science`, and versioned scaling metadata are the new baseline.
-8. [UI design guide](../DESIGN.md): Claude Code inspired visual and interaction direction.
-9. [Workspace UX spec](design/workspace-ux-spec.md): implementable information architecture, flows, states, and responsive behavior.
-10. [Component spec](design/component-spec.md): core workspace module definitions and interaction details.
-11. [Algorithm operations guide](planning/algorithm-operations-guide.md): how to interpret current algorithm quality, run the stack, and use the new overview UI.
+3. [Project plain-language report](architecture/opt-sim-project-plain-report-20260509.md): long-form Chinese explanation of the algorithm/physics stack and the software engineering work.
+4. [Vibe coding analysis report](architecture/opt-sim-vibe-coding-analysis-20260509.md): how this project uses LLMs, agents, frameworks, skills, and memory in practice.
+5. [Requirements breakdown](planning/requirements-breakdown.md): phased tasks, acceptance criteria, and verification plan.
+6. [cGAN / optics alignment PRD](planning/cgan-optics-data-alignment-prd.md): planned alignment for real D65 / tristimulus data, scaling, colour-science integration, and retrieval metrics.
+7. [Neural holography CITL PRD](planning/neural-holography-citl-prd.md): requirement delta and implementation plan for `prd/3414685.3417802.pdf`.
+8. [Colorimetry and cGAN alignment design](architecture/colorimetry-and-cgan-alignment-design.md): module boundaries, interfaces, checkpoint migration, and retrieval-metric design.
+9. [ADR-001](decisions/ADR-001-architecture-and-model-choices.md): why the current architecture and model choices were accepted.
+10. [ADR-002](decisions/ADR-002-use-real-colorimetry-data-and-versioned-cgan-scaling.md): why real colorimetry data, `colour-science`, and versioned scaling metadata are the new baseline.
+11. [UI design guide](../DESIGN.md): Claude Code inspired visual and interaction direction.
+12. [Workspace UX spec](design/workspace-ux-spec.md): implementable information architecture, flows, states, and responsive behavior.
+13. [Component spec](design/component-spec.md): core workspace module definitions and interaction details.
+14. [Algorithm operations guide](planning/algorithm-operations-guide.md): how to interpret current algorithm quality, run the stack, and use the new overview UI.
 
 ## Directory Structure
 

@@ -37,6 +37,52 @@ def test_workspace_detail_includes_model_and_decision_support() -> None:
     assert payload["decisionSupport"]["headline"]
 
 
+def test_neural_holography_design_run_uses_citl_context() -> None:
+    create_response = client.post(
+        "/api/agent/design-run",
+        json={
+            "requirementText": "Plan a camera-in-the-loop holographic display workflow for a 1080p target.",
+            "targetHex": "#6f8fd8",
+            "topK": 3,
+            "thetaDeg": 0.0,
+            "polarization": "unpolarized",
+            "designMode": "neural-holography",
+        },
+    )
+
+    assert create_response.status_code == 200
+    payload = create_response.json()
+
+    assert payload["activeRun"]["title"].startswith("Neural holography CITL brief")
+    assert payload["draft"]["designMode"] == "neural-holography"
+    assert "3414685.3417802.pdf" in payload["draft"]["referenceSource"]
+    assert payload["draft"]["calibrationMode"] == "Camera-in-the-loop calibration"
+    assert payload["draft"]["outputKind"] == "Phase-only SLM hologram route"
+
+    # CGH candidates should be present with simulation metrics
+    assert len(payload["candidates"]) >= 1
+    cgh_ids = {c["id"] for c in payload["candidates"]}
+    assert cgh_ids.issubset({"cgh-gs", "cgh-wh", "cgh-sgd"})
+    for c in payload["candidates"]:
+        metric_labels = {m["label"] for m in c["metrics"]}
+        assert "PSNR" in metric_labels
+        assert "SSIM" in metric_labels
+
+    assert any("cgh" in c["id"] for c in payload["constraints"])
+    assert "phase" in payload["exportEstimate"]["format"].lower()
+    assert "neural holography" in payload["timeline"][0]["title"].lower()
+
+    run_id = payload["activeRun"]["id"]
+    workspace_response = client.get(f"/api/runs/{run_id}/workspace")
+    artifact_id = workspace_response.json()["artifacts"][0]["id"]
+    artifact_response = client.get(f"/api/artifacts/{artifact_id}")
+    metadata = {item["label"]: item["value"] for item in artifact_response.json()["metadata"]}
+
+    assert metadata["design_mode"] == "neural-holography"
+    assert "3414685.3417802.pdf" in metadata["reference_source"]
+    assert metadata["calibration_mode"] == "Camera-in-the-loop calibration"
+
+
 def test_workspace_missing_run_returns_404_payload() -> None:
     response = client.get("/api/runs/run-does-not-exist/workspace")
 

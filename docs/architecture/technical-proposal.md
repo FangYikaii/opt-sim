@@ -12,6 +12,11 @@ The first implementation will focus on an explainable MVP:
 - Provide a Vue frontend with a Claude Code inspired workspace UI.
 - Use Python for backend services, physics computation, AI training/inference, and export.
 
+The updated scope now includes a second explicit mode from `prd/3414685.3417802.pdf`:
+
+- `structural-color`: the existing thin-film/cGAN route for Ag-SiO2-Ag and manufacturing-oriented color candidates.
+- `neural-holography`: a phase-only SLM route for CGH baselines, camera-in-the-loop calibration, and HoloNet-style real-time 1080p inference planning.
+
 ## 2. Input Requirements From Existing Materials
 
 The `/需求` assets describe three core tasks:
@@ -67,6 +72,24 @@ Implementation implication:
 - For MVP, normal incidence can be the default because it is faster, easier to validate, and matches the referenced paper's basic thin-film setup.
 - Oblique incidence and multi-view response should be added as the second stage to support angle-dependent effects.
 
+### 3.3 Neural Holography Reference
+
+Reference paper: `prd/3414685.3417802.pdf`, "Neural Holography with Camera-in-the-loop Training".
+
+Key ideas to integrate:
+
+- Computer-generated holography has a runtime versus image-quality tradeoff: direct methods are fast, iterative methods can be higher quality, and HoloNet targets real-time quality after training.
+- Simulation-only wave propagation can fail on real hardware because of model mismatch.
+- Camera-in-the-loop optimization directly compares target images with physically captured holographic replay.
+- A differentiable calibrated proxy should model source intensity variation, SLM phase nonlinearity, and optical aberrations.
+- Phase-only SLM outputs are a different artifact class from grayscale relief height maps.
+
+Implementation implication:
+
+- Keep structural-color and neural-holography as separate design modes in the API and UI.
+- Add planning routes for simulation-only CGH, CITL optimization, and HoloNet-style deployment before implementing full optical training.
+- Gate phase-map export on calibration readiness and captured replay metrics such as PSNR/SSIM.
+
 ## 4. System Architecture
 
 ```text
@@ -88,6 +111,9 @@ Python API Backend
   |     +-- Spectrum to XYZ/Lab/sRGB conversion
   |     +-- Multi-angle renderer
   |     +-- Process constraint checker
+  |     +-- CGH wave propagation model
+  |     +-- SLM phase-map simulator
+  |     +-- CITL calibration proxy
   |
   +-- Inverse Design Engine
   |     +-- Sampling dataset generator
@@ -98,6 +124,7 @@ Python API Backend
   +-- Export Engine
         +-- 100 x 100 design preview export
         +-- tiled high-resolution grayscale map export
+        +-- phase-map and calibration-manifest export
         +-- metadata/report export
 ```
 
@@ -291,7 +318,19 @@ Internal tool-like functions:
 - `complete_views(seed_views, description, view_grid)`
 - `rank_candidates(candidates, target, constraints)`
 - `export_grayscale_map(design_field, output_spec)`
+- `plan_holography_run(target_images, slm_spec, calibration_state)`
+- `optimize_phase_citl(target_image, calibrated_proxy, capture_config)`
+- `export_phase_map(phase_frames, calibration_manifest)`
 - `write_report(run_id)`
+
+### 7.4 Design Mode Branching
+
+The Agent must branch early by `designMode`:
+
+- `structural-color` uses target color/image, TMM simulation, inverse-design candidates, DeltaE, manufacturability, and grayscale relief export planning.
+- `neural-holography` uses target image anchors, CGH algorithm selection, SLM phase-map outputs, CITL calibration readiness, PSNR/SSIM replay gates, and phase-map export planning.
+
+This branching prevents the system from mixing thin-film thickness constraints with SLM phase-map requirements.
 
 ## 8. Human-Computer Interaction
 
@@ -322,6 +361,13 @@ Each design run should export:
 - `simulation_report.md`: target comparison, DeltaE metrics, process constraints, selected candidate rationale.
 - `run_manifest.json`: reproducibility metadata and software versions.
 
+Neural holography runs should export a different package:
+
+- `phase_maps/`: wrapped phase patterns for the selected SLM/channel setup.
+- `calibration_manifest.json`: SLM response, source intensity, aberration proxy, camera setup, and calibration version.
+- `replay_report.md`: target versus simulated/captured PSNR, SSIM, runtime, and known model mismatch.
+- `holonet_checkpoint/`: optional trained real-time model artifacts when HoloNet-style inference is available.
+
 ## 10. MVP Acceptance Criteria
 
 Physics:
@@ -347,11 +393,13 @@ Frontend:
 - Vue app provides Claude Code style three-panel workspace.
 - User can inspect target vs simulated color, candidate parameters, and constraint status.
 - User can trigger export and download artifacts.
+- User can choose `structural-color` or `neural-holography` mode and see the active requirement source, output kind, calibration mode, and runtime target.
 
 Export:
 
 - Generate a downsampled grayscale preview.
 - Generate a tiled high-resolution output plan. Full 160k x 320k export can be deferred to a chunked writer if storage/time is large.
+- For neural holography, generate a phase-map export plan only after CITL calibration and replay-quality gates are reviewed.
 
 ## 11. Risks and Mitigations
 

@@ -1693,6 +1693,15 @@
             ],
             "title": "Polarization",
             "default": "unpolarized"
+          },
+          "designMode": {
+            "type": "string",
+            "enum": [
+              "structural-color",
+              "neural-holography"
+            ],
+            "title": "Designmode",
+            "default": "structural-color"
           }
         },
         "type": "object",
@@ -2148,6 +2157,21 @@
             "type": "string",
             "title": "Requirementtext"
           },
+          "designMode": {
+            "type": "string",
+            "title": "Designmode",
+            "default": "structural-color"
+          },
+          "referenceSource": {
+            "type": "string",
+            "title": "Referencesource",
+            "default": "10.1515_nanoph-2022-0095.pdf"
+          },
+          "outputKind": {
+            "type": "string",
+            "title": "Outputkind",
+            "default": "Thin-film candidate set"
+          },
           "targetLabel": {
             "type": "string",
             "title": "Targetlabel"
@@ -2179,6 +2203,16 @@
           "exportMode": {
             "type": "string",
             "title": "Exportmode"
+          },
+          "calibrationMode": {
+            "type": "string",
+            "title": "Calibrationmode",
+            "default": "Forward simulation"
+          },
+          "runtimeTarget": {
+            "type": "string",
+            "title": "Runtimetarget",
+            "default": "Preview-first offline design"
           }
         },
         "type": "object",

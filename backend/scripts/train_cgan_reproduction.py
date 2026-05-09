@@ -1471,7 +1471,7 @@ def write_metrics(
         },
         "runtime": get_torch_runtime_info(args.device),
         "training": {
-            "experiment_preset": args.experiment_preset,
+            "experiment_preset": getattr(args, "experiment_preset", None),
             "epochs": args.epochs,
             "batch_size": args.batch_size,
             "noise_dim": args.noise_dim,
