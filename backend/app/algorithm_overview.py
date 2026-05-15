@@ -278,12 +278,17 @@ def _headline_metrics(
             state="pass" if best_experiment.cganBeatsRetrievalCount > 0 else "warning",
         )
     )
+
+    training_device = (
+        latest_experiment.device if latest_experiment.device != "unknown" else best_experiment.device
+    )
+    training_device_name = latest_experiment.deviceName or best_experiment.deviceName
     metrics.append(
         AlgorithmHeadlineMetric(
             label="Latest Training Device",
-            value=latest_experiment.device.upper(),
-            detail=latest_experiment.deviceName or "Device name unavailable.",
-            state="pass" if latest_experiment.device == "cuda" else "warning",
+            value=training_device.upper(),
+            detail=training_device_name or "Device name unavailable.",
+            state="pass" if training_device == "cuda" else "warning",
         )
     )
 
@@ -413,22 +418,22 @@ def _operation_steps() -> list[AlgorithmOperationStep]:
             id="step-2",
             title="Start the backend API",
             description="The backend exposes inverse-design APIs, workspace data, and this algorithm overview.",
-            command=f"cd {repo_root}\nconda activate opt_sim\nuvicorn backend.app.main:app --reload --port 8000",
-            expectedResult="Open http://127.0.0.1:8000/api/health and receive `{\\\"status\\\":\\\"ok\\\"}`.",
+            command=f"cd {repo_root}\nconda activate opt_sim\nuvicorn backend.app.main:app --reload --port 8002",
+            expectedResult="Open http://127.0.0.1:8002/api/health and receive `{\\\"status\\\":\\\"ok\\\"}`.",
         ),
         AlgorithmOperationStep(
             id="step-3",
             title="Start the frontend workspace",
             description="The Vue app shows algorithm status, candidate ranking, and the operator guide.",
             command=f"cd {repo_root}/frontend\nnpm run dev",
-            expectedResult="Open http://127.0.0.1:5173 and see the home page with the algorithm overview panel.",
+            expectedResult="Open http://127.0.0.1:9002 and see the home page with the algorithm overview panel.",
         ),
         AlgorithmOperationStep(
             id="step-4",
             title="Submit a demo business request",
             description="Send one requirement sentence and one target color to create a reviewable run.",
             command=(
-                "curl -X POST http://127.0.0.1:8000/api/agent/design-run \\\n"
+                "curl -X POST http://127.0.0.1:8002/api/agent/design-run \\\n"
                 "  -H 'Content-Type: application/json' \\\n"
                 "  -d '{\"requirementText\":\"Reproduce a warm copper structural color with the Ag-SiO2-Ag paper route.\","
                 "\"targetHex\":\"#bf6f4f\",\"topK\":3}'"

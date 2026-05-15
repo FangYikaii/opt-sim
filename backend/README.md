@@ -21,7 +21,7 @@ conda activate opt_sim
 ```bash
 cd /home/fangyikai/code/opt-sim
 conda activate opt_sim
-uvicorn backend.app.main:app --reload --port 8000
+uvicorn backend.app.main:app --reload --port 8002
 ```
 
 The backend is now GPU-aware for the lightweight cGAN path. By default it uses CUDA when `torch.cuda.is_available()` is true and falls back to CPU otherwise.
@@ -42,7 +42,7 @@ Optional overrides:
 ```bash
 cd /home/fangyikai/code/opt-sim
 conda activate opt_sim
-OPT_SIM_TORCH_DEVICE=auto python3 -m uvicorn backend.app.main:app --reload --port 8000
+OPT_SIM_TORCH_DEVICE=auto python3 -m uvicorn backend.app.main:app --reload --port 8002
 OPT_SIM_TORCH_DEVICE=cuda python3 -u backend/scripts/train_cgan_reproduction.py --device cuda
 ```
 

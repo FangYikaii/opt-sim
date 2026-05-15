@@ -850,13 +850,13 @@ export function provideI18n(): I18nValue {
       'Start the backend API': '启动后端接口',
       'The backend exposes inverse-design APIs, workspace data, and this algorithm overview.':
         '后端负责提供逆向设计接口、工作区数据，以及算法概况信息。',
-      'Open http://127.0.0.1:8000/api/health and receive `{\"status\":\"ok\"}`.':
-        '打开 http://127.0.0.1:8000/api/health，并返回 `{\"status\":\"ok\"}`。',
+      'Open http://127.0.0.1:8002/api/health and receive `{\"status\":\"ok\"}`.':
+        '打开 http://127.0.0.1:8002/api/health，并返回 `{\"status\":\"ok\"}`。',
       'Start the frontend workspace': '启动前端工作台',
       'The Vue app shows algorithm status, candidate ranking, and the operator guide.':
         '前端页面会展示算法状态、候选方案排序和操作说明。',
-      'Open http://127.0.0.1:5173 and see the home page with the algorithm overview panel.':
-        '打开 http://127.0.0.1:5173，可以看到带算法概况的首页。',
+      'Open http://127.0.0.1:9002 and see the home page with the algorithm overview panel.':
+        '打开 http://127.0.0.1:9002，可以看到带算法概况的首页。',
       'Submit a demo business request': '提交示例业务需求',
       'Send one requirement sentence and one target color to create a reviewable run.':
         '输入一句业务需求和一个目标颜色，即可生成可评审的方案单。',

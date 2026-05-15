@@ -9,7 +9,7 @@ import type {
   WorkspaceService,
 } from '../api/contracts'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8002'
 
 class ApiClientError extends Error {
   code: string

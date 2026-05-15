@@ -44,19 +44,19 @@ That means:
 ```bash
 cd /home/fangyikai/code/opt-sim
 conda activate opt_sim
-uvicorn backend.app.main:app --reload --port 8000
+uvicorn backend.app.main:app --reload --port 8002
 ```
 
 Health check:
 
 ```bash
-curl http://127.0.0.1:8000/api/health
+curl http://127.0.0.1:8002/api/health
 ```
 
 Algorithm status endpoint:
 
 ```bash
-curl http://127.0.0.1:8000/api/algorithm-overview
+curl http://127.0.0.1:8002/api/algorithm-overview
 ```
 
 ## 5. Start the frontend
@@ -69,7 +69,7 @@ npm run dev
 Open:
 
 ```text
-http://127.0.0.1:5173
+http://127.0.0.1:9002
 ```
 
 The home page now shows:
@@ -89,7 +89,7 @@ The workspace page now also shows:
 Either use the home-page form or call the API directly:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/agent/design-run \
+curl -X POST http://127.0.0.1:8002/api/agent/design-run \
   -H 'Content-Type: application/json' \
   -d '{"requirementText":"Reproduce a warm copper structural color with the Ag-SiO2-Ag paper route.","targetHex":"#bf6f4f","topK":3}'
 ```
